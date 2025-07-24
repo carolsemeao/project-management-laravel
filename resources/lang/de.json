@@ -1,0 +1,18 @@
+{
+    "Issues": "Issues",
+    "Projects": "Projekte",
+    "Dashboard": "Dashboard",
+    "Search projects, issues...": "Suche nach Projekten, Issues...",
+    "Total Projects": "Anzahl Projekte",
+    "Back to Issues": "zurück zur Übersicht",
+    "Description": "Beschreibung",
+    "Welcome back, :Name": "Willkommen zurück, :Name",
+    "Manage your finances more effectively": "Verwalten Sie Ihre Finanzen effektiver",
+    "Open Issues": "Offene Issues",
+    "of :totalIssues total issues": "von insgesamt :totalIssues",
+    "Hours Logged": "Stunden rapportiert",
+    "Across all projects": "Über alle Projekte",
+    "Completed": "Abgeschlossen",
+    "Projects this month": "Projekte diesen Monat",
+    ":numberOfActiveProjects active project": ":numberOfActiveProjects aktives Projekt"
+}

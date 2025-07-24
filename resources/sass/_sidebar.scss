@@ -1,0 +1,360 @@
+.sidebar {
+	width: 16em;
+	min-height: 100vh;
+	height: 100vh;
+	flex-shrink: 0;
+	transition: width 0.3s ease-in-out;
+}
+
+.sidebar-nav {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.sidebar-toggle-btn {
+	z-index: 1060;
+	border: none;
+	box-shadow: none;
+	background-color: transparent;
+	padding: 8px;
+	border-radius: 6px;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background-color: rgba(0, 0, 0, 0.1);
+	}
+}
+
+.sidebar-close-btn {
+	z-index: 1060;
+	border: none;
+	box-shadow: none;
+	background-color: transparent;
+	padding: 8px;
+	border-radius: 6px;
+	transition: background-color 0.2s ease;
+	color: white;
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+}
+
+.main-content {
+	height: 100vh;
+	overflow-y: auto;
+	flex: 1;
+}
+
+// Layout styles - prevent horizontal overflow during transitions
+.layout-container {
+	height: 100vh;
+	overflow: hidden;
+	max-width: 100vw;
+}
+
+// Prevent horizontal scrollbars in Bootstrap row
+.sidebar.row {
+	margin: 0;
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+// Custom scrollbar for webkit browsers
+.sidebar-nav::-webkit-scrollbar,
+.main-content::-webkit-scrollbar {
+	width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track,
+.main-content::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.3);
+	border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.2);
+	border-radius: 3px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.5);
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+	background: rgba(0, 0, 0, 0.3);
+}
+
+// Sidebar text elements - prevent wrapping
+.sidebar-text {
+	white-space: nowrap;
+	transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+// Sidebar header
+.sidebar-header {
+	padding-inline: 0.5rem;
+
+	.sidebar-text {
+		white-space: nowrap;
+		overflow: hidden;
+	}
+}
+
+// Sidebar navigation styles
+.sidebar .nav-link {
+	transition: all 0.2s ease-in-out;
+	border-radius: 0.5rem;
+	position: relative;
+	display: flex;
+	align-items: center;
+
+	span {
+		line-height: 1.25;
+		white-space: nowrap;
+		transition: 0.2s ease-in-out;
+	}
+
+	&:is(:hover, :focus, :active) {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+
+	&.active {
+		background-color: rgba(255, 255, 255, 0.15);
+	}
+}
+
+.sidebar-icon {
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+	transition: all 0.2s ease-in-out;
+}
+
+.feather {
+	stroke-width: 1.5px;
+}
+
+// Sidebar footer
+.sidebar-footer {
+	.btn {
+		transition: all 0.2s ease-in-out;
+
+		.sidebar-text {
+			white-space: nowrap;
+		}
+	}
+}
+
+// Desktop behavior - sidebar collapse
+@media (min-width: 992px) {
+	.sidebar.collapsed {
+		width: 5em;
+
+		.sidebar-header {
+			text-align: center;
+			padding: 1rem 0.5rem !important;
+
+			// Only hide the text, leave the icon unchanged
+			.sidebar-text {
+				opacity: 0;
+				transform: translateX(-10px);
+				max-width: 0;
+				margin-left: 0 !important;
+				display: none !important;
+			}
+
+			.feather {
+				margin-inline: auto;
+			}
+		}
+
+		.nav-link {
+			padding: 0.75rem 0.5rem !important;
+
+			.sidebar-icon {
+				margin: 0 !important;
+			}
+
+			span {
+				max-width: 0;
+				margin: 0 !important;
+				opacity: 0;
+			}
+		}
+
+		.sidebar-footer {
+			text-align: center;
+			padding: 1rem 0.5rem !important;
+
+			.btn {
+				justify-content: center;
+				width: 100%;
+
+				img {
+					margin: 0 !important;
+				}
+
+				> div,
+				.sidebar-text,
+				i[data-feather='chevron-up'] {
+					opacity: 0;
+					transform: translateX(-10px);
+					display: none !important;
+				}
+			}
+		}
+
+		// Tooltip-like hover effect for collapsed items
+		.nav-link:hover {
+			position: relative;
+
+			&::after {
+				content: attr(title);
+				position: absolute;
+				left: 100%;
+				top: 50%;
+				transform: translateY(-50%);
+				background: rgba(0, 0, 0, 0.8);
+				color: white;
+				padding: 0.5rem 0.75rem;
+				border-radius: 0.375rem;
+				font-size: 0.875rem;
+				white-space: nowrap;
+				z-index: 1000;
+				opacity: 0;
+				pointer-events: none;
+				transition: opacity 0.2s ease-in-out;
+			}
+		}
+	}
+
+	// Expanded state - ensure smooth transitions back
+	.sidebar:not(.collapsed) {
+		.sidebar-text {
+			opacity: 1;
+			transform: translateX(0);
+		}
+
+		.nav-link span {
+			opacity: 1;
+			transform: translateX(0);
+		}
+
+		.sidebar-header {
+			text-align: left;
+		}
+
+		.sidebar-footer {
+			text-align: left;
+
+			.btn > div,
+			.btn .sidebar-text,
+			.btn i {
+				opacity: 1;
+				transform: translateX(0);
+			}
+		}
+	}
+}
+
+// Mobile responsiveness
+@media (max-width: 991.98px) {
+	.sidebar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 1050;
+		transform: translateX(-100%);
+		width: 250px;
+		transition: transform 0.3s ease-in-out;
+
+		&.show {
+			transform: translateX(0);
+		}
+	}
+
+	.main-content {
+		margin-left: 0 !important;
+		width: 100%;
+	}
+
+	.sidebar-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 1040;
+		opacity: 0;
+		visibility: hidden;
+		transition: all 0.3s ease;
+
+		&.show {
+			opacity: 1;
+			visibility: visible;
+		}
+	}
+
+	// Mobile touch targets
+	.sidebar .nav-link {
+		min-height: 48px;
+		padding: 12px 16px !important;
+	}
+
+	.sidebar-footer .btn {
+		min-height: 56px;
+		padding: 12px 16px;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.header-search {
+		display: none !important;
+	}
+
+	.sidebar {
+		width: 280px;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.main-content .p-4 {
+		padding: 1rem !important;
+	}
+
+	.sidebar {
+		width: 100vw;
+	}
+
+	// Very small screens
+	.sidebar-header {
+		padding: 16px !important;
+	}
+
+	.sidebar .nav-link {
+		padding: 16px 20px !important;
+	}
+
+	.sidebar-footer {
+		padding: 16px !important;
+	}
+}
+
+// Header modal styles
+.modal-dialog-top {
+	margin-top: 0;
+	margin-bottom: auto;
+}
+
+@media (max-width: 767.98px) {
+	.modal-dialog-top {
+		margin: 0;
+		max-width: 100%;
+	}
+}
