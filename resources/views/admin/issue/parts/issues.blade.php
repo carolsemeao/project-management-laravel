@@ -1,3 +1,8 @@
+@php
+    $projects = \App\Models\Project::all();
+    $statuses = \App\Models\Status::all();
+    $priorities = \App\Models\Priority::all();
+@endphp
 <table class="table table-hover">
     <thead>
         <tr>
@@ -45,41 +50,19 @@
                 <td>
                     @if((!isset($hideProjectColumn) || !$hideProjectColumn) && !request()->routeIs('admin.projects.show'))
                         <select class="form-select form-select-sm status-select" data-issue-id="{{ $issue->id }}"
-                            data-original-status="{{ $issue->issue_status }}" name="issue_status">
-                            <option value="waiting_for_planning" {{ $issue->issue_status === 'waiting_for_planning' ? 'selected' : '' }}>Waiting for Planning</option>
-                            <option value="planned" {{ $issue->issue_status === 'planned' ? 'selected' : '' }}>Planned
-                            </option>
-                            <option value="in_progress" {{ $issue->issue_status === 'in_progress' ? 'selected' : '' }}>In
-                                Progress</option>
-                            <option value="on_hold" {{ $issue->issue_status === 'on_hold' ? 'selected' : '' }}>On Hold
-                            </option>
-                            <option value="feedback" {{ $issue->issue_status === 'feedback' ? 'selected' : '' }}>Feedback
-                            </option>
-                            <option value="resolved" {{ $issue->issue_status === 'resolved' ? 'selected' : '' }}>Resolved
-                            </option>
-                            <option value="closed" {{ $issue->issue_status === 'closed' ? 'selected' : '' }}>Closed
-                            </option>
-                            <option value="rejected" {{ $issue->issue_status === 'rejected' ? 'selected' : '' }}>Rejected
-                            </option>
+                            data-original-status="{{ $issue->status_id }}" name="status_id">
+                            @foreach ($statuses as $status)
+                                <option value="{{ $status->id }}" {{ $issue->status_id == $status->id ? 'selected' : '' }}>
+                                    {{ Str::title(str_replace('_', ' ', $status->name)) }}
+                                </option>
+                            @endforeach
                         </select>
                     @else
-                        @php
-                            $statusLabel = match ($issue->issue_status) {
-                                'waiting_for_planning' => __('Waiting for Planning'),
-                                'planned' => __('Planned'),
-                                'in_progress' => __('In Progress'),
-                                'feedback' => __('Feedback'),
-                                'closed' => __('Closed'),
-                                'rejected' => __('Rejected'),
-                                'open' => __('Open'),
-                                default => ucfirst(str_replace('_', ' ', $issue->issue_status))
-                            };
-                        @endphp
-                        <x-badge :label="$statusLabel" />
+                        <x-badge :label="Str::title(str_replace('_', ' ', $issue->status->name))" />
                     @endif
                 </td>
                 <td>
-                    <x-priority_badge :priority="$issue->issue_priority" />
+                    <x-priority_badge :priority="$issue->priority->name" />
                 </td>
                 <td>
                     <div class="d-flex align-items-center">

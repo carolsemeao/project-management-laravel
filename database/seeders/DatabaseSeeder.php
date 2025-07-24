@@ -13,12 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a test user first
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-
         // Run seeders in the correct order to handle dependencies
         $this->call([
             TeamRoleSeeder::class,      // Creates teams and roles first

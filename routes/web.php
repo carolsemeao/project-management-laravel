@@ -32,7 +32,7 @@ Route::get('/dashboard', function () {
 
     // Get dynamic issue counts
     $totalIssues = \App\Models\Issue::count();
-    $openIssues = \App\Models\Issue::where('issue_status', '!=', 'closed')->count();
+    $openIssues = \App\Models\Issue::where('status_id', '!=', 6)->count();
 
     // Get dynamic project counts
     $totalProjects = \App\Models\Project::count();
@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/issues', [IssueController::class, 'ShowIssues'])->name('admin.issues');
     Route::get('/dashboard/issues/{id}', [IssueController::class, 'ShowSingleIssue'])->name('admin.issues.show');
     Route::get('/dashboard/issues/{id}/edit', [IssueController::class, 'ShowSingleIssueEdit'])->name('admin.issues.edit');
+    Route::put('/dashboard/issues/{id}', [IssueController::class, 'UpdateIssue'])->name('admin.issues.update');
     Route::patch('/dashboard/issues/{id}/status', [IssueController::class, 'UpdateStatus'])->name('admin.issues.update-status');
 
     // Projects routes

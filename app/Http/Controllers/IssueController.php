@@ -25,7 +25,7 @@ class IssueController extends Controller
     {
         try {
             $request->validate([
-                'status' => 'required|string|in:waiting_for_planning,planned,in_progress,on_hold,feedback,closed,rejected,resolved'
+                'status_id' => 'required|integer|exists:status,id'
             ]);
 
             $issue = Issue::findOrFail($id);
@@ -39,7 +39,7 @@ class IssueController extends Controller
             }
             
             $issue->update([
-                'issue_status' => $request->status
+                'status_id' => $request->status_id
             ]);
 
             return response()->json([
@@ -169,6 +169,76 @@ class IssueController extends Controller
     public function ShowSingleIssueEdit($id)
     {
         $issue = Issue::findOrFail($id);
-        return view('admin.issue.admin_issue_single_edit', compact('issue'));
+        
+        // Check if user can modify this issue
+        if (!$this->userCanModifyIssue($issue, Auth::user())) {
+            abort(403, 'You do not have permission to edit this issue');
+        }
+        
+        // Get data for dropdowns
+        $projects = \App\Models\Project::all();
+        $users = User::all();
+        $statuses = \App\Models\Status::all();
+        $priorities = \App\Models\Priority::all();
+        
+        return view('admin.issue.admin_issue_single_edit', compact('issue', 'projects', 'users', 'statuses', 'priorities'));
+    }
+
+    /**
+     * Update an issue
+     */
+    public function UpdateIssue(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'issue_title' => 'required|string|max:255',
+                'issue_description' => 'nullable|string',
+                'status_id' => 'required|integer|exists:status,id',
+                'priority_id' => 'required|integer|exists:priorities,id',
+                'project_id' => 'nullable|integer|exists:projects,id',
+                'assigned_to_user_id' => 'nullable|integer|exists:users,id',
+                'issue_due_date' => 'nullable|date',
+                'estimated_time_hours' => 'nullable|numeric|min:0',
+            ]);
+
+            $issue = Issue::findOrFail($id);
+            
+            // Check if user has permission to update this issue
+            if (!$this->userCanModifyIssue($issue, Auth::user())) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You do not have permission to update this issue'
+                ], 403);
+            }
+
+            // Convert hours to minutes
+            $estimatedTimeMinutes = null;
+            if ($request->filled('estimated_time_hours')) {
+                $estimatedTimeMinutes = round($request->estimated_time_hours * 60);
+            }
+
+            $issue->update([
+                'issue_title' => $request->issue_title,
+                'issue_description' => $request->issue_description,
+                'status_id' => $request->status_id,
+                'priority_id' => $request->priority_id,
+                'project_id' => $request->project_id,
+                'assigned_to_user_id' => $request->assigned_to_user_id,
+                'issue_due_date' => $request->issue_due_date,
+                'estimated_time_minutes' => $estimatedTimeMinutes,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Issue updated successfully',
+                'issue' => $issue->fresh(['status', 'priority', 'project', 'assignedUser'])
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update issue: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

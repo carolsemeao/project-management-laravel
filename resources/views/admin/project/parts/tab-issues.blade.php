@@ -4,7 +4,7 @@
             <div>
                 <h2 class="card-title">Project Issues</h2>
                 <small class="text-muted">
-                    {{ __(':totalIssues total issues • :openIssues open', ['totalIssues' => $project->issues->count(), 'openIssues' => $project->issues()->where('issue_status', '!=', 'closed')->count()]) }}
+                    {{ __(':totalIssues total issues • :openIssues open', ['totalIssues' => $project->issues->count(), 'openIssues' => $project->issues()->where('status_id', '!=', 6)->count()]) }}
                 </small>
             </div>
             <x-button-primary btnType="dark" classes="d-flex align-items-center justify-content-center"

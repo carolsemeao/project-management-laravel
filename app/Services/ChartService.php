@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Issue;
 use App\Models\Project;
+use App\Models\Status;
+use App\Models\Priority;
 use Illuminate\Support\Facades\DB;
 
 class ChartService
@@ -39,8 +41,9 @@ class ChartService
     public function createProjectIssuePriorityChart(Project $project): array
     {
         $projectPriorityDistribution = $project->issues()
-            ->select('issue_priority', DB::raw('count(*) as total'))
-            ->groupBy('issue_priority')
+            ->join('priorities', 'issues.priority_id', '=', 'priorities.id')
+            ->select('priorities.name', 'priorities.color', DB::raw('count(*) as total'))
+            ->groupBy('priorities.id', 'priorities.name', 'priorities.color')
             ->get();
 
         // Handle empty data
@@ -48,9 +51,9 @@ class ChartService
             return $this->createEmptyChartData('No priority data available');
         }
 
-        $labels = $projectPriorityDistribution->map(fn($item) => ucfirst($item->issue_priority ?? 'Unknown'))->toArray();
+        $labels = $projectPriorityDistribution->map(fn($item) => ucfirst($item->name ?? 'Unknown'))->toArray();
         $data = $projectPriorityDistribution->pluck('total')->toArray();
-        $colors = $projectPriorityDistribution->map(fn($item) => $this->priorityColors[$item->issue_priority ?? 'unknown'] ?? '#6c757d')->toArray();
+        $colors = $projectPriorityDistribution->map(fn($item) => $item->color ?? '#6c757d')->toArray();
 
         return [
             'type' => 'bar',
@@ -89,8 +92,9 @@ class ChartService
     public function createProjectIssueStatusChart(Project $project): array
     {
         $projectIssueDistribution = $project->issues()
-            ->select('issue_status', DB::raw('count(*) as total'))
-            ->groupBy('issue_status')
+            ->join('status', 'issues.status_id', '=', 'status.id')
+            ->select('status.name', DB::raw('count(*) as total'))
+            ->groupBy('status.id', 'status.name')
             ->get();
 
         // Handle empty data
@@ -98,9 +102,9 @@ class ChartService
             return $this->createEmptyChartData('No issues found for this project');
         }
 
-        $labels = $projectIssueDistribution->map(fn($item) => ucwords(str_replace('_', ' ', $item->issue_status ?? 'Unknown')))->toArray();
+        $labels = $projectIssueDistribution->map(fn($item) => ucwords(str_replace('_', ' ', $item->name ?? 'Unknown')))->toArray();
         $data = $projectIssueDistribution->pluck('total')->toArray();
-        $colors = $projectIssueDistribution->map(fn($item) => $this->statusColors[$item->issue_status ?? 'unknown'] ?? '#6c757d')->toArray();
+        $colors = $projectIssueDistribution->map(fn($item) => $this->statusColors[$item->name ?? 'unknown'] ?? '#6c757d')->toArray();
 
         return [
             'type' => 'pie',
@@ -135,8 +139,9 @@ class ChartService
      */
     public function createIssuesStatusBarChart(): array
     {
-        $statusData = Issue::select('issue_status', DB::raw('count(*) as total'))
-            ->groupBy('issue_status')
+        $statusData = Issue::join('status', 'issues.status_id', '=', 'status.id')
+            ->select('status.name', DB::raw('count(*) as total'))
+            ->groupBy('status.id', 'status.name')
             ->get();
 
         // Handle empty data
@@ -144,9 +149,9 @@ class ChartService
             return $this->createEmptyChartData('No status data available');
         }
 
-        $labels = $statusData->map(fn($item) => ucwords(str_replace('_', ' ', $item->issue_status ?? 'Unknown')))->toArray();
+        $labels = $statusData->map(fn($item) => ucwords(str_replace('_', ' ', $item->name ?? 'Unknown')))->toArray();
         $data = $statusData->pluck('total')->toArray();
-        $colors = $statusData->map(fn($item) => $this->statusColors[$item->issue_status ?? 'unknown'] ?? '#6c757d')->toArray();
+        $colors = $statusData->map(fn($item) => $this->statusColors[$item->name ?? 'unknown'] ?? '#6c757d')->toArray();
 
         return [
             'type' => 'bar',

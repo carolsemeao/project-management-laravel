@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('issues', function (Blueprint $table) {
-            // Update the existing project_id column to be the right type and nullable
+            // Rename issue_project_id to project_id and update type
+            $table->renameColumn('issue_project_id', 'project_id');
             $table->unsignedBigInteger('project_id')->nullable()->change();
         });
         
@@ -26,8 +27,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('issues', function (Blueprint $table) {
-            // Revert to original type
+            // Revert to original type and name
             $table->integer('project_id')->nullable()->change();
+            $table->renameColumn('project_id', 'issue_project_id');
         });
     }
 };

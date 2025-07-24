@@ -27,25 +27,7 @@
                     <div class="p-4 flex-grow-1">
                         <div class="content-page">
                             <div class="content">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
-                                            <div class="flex-grow-1 mb-5">
-                                                <div class="col-12">
-                                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                                        <a href="{{ route('admin.issues') }}"
-                                                            class="text-decoration-none">←
-                                                            {{ __('Back to Issues') }}</a>
-                                                    </div>
-                                                </div>
-                                                <div class="card bg-warning border-warning p-2 bg-opacity-25">
-                                                    <h1 class="fw-bold m-0">@yield('page_title')</h1>
-                                                    <p class="text-muted m-0">@yield('page_subtitle')</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                @include('admin.issue.parts.header')
                                 @yield('maincontent')
                             </div>
                         </div>

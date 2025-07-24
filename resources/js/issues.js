@@ -1,32 +1,18 @@
 document.addEventListener('DOMContentLoaded', function () {
-	// console.log('DOM loaded, initializing status selects...');
-
 	const statusSelects = document.querySelectorAll('.status-select');
-	// console.log('Found', statusSelects.length, 'status selects');
 
 	// Exit early if no status selects found
-	if (statusSelects.length === 0) {
-		// console.log('No status selects found on this page');
-		return;
-	}
+	if (statusSelects.length === 0) return;
 
 	// Check if we have CSRF token
 	const csrfToken = document.querySelector('meta[name="csrf-token"]');
 	if (!csrfToken) {
-		//console.error('CSRF token not found!');
 		return;
 	}
 
 	// Check if toast element exists
 	const toastElement = document.getElementById('statusToast');
 	if (!toastElement) {
-		// console.error('Status toast element not found!');
-		return;
-	}
-
-	// Check if bootstrap is available
-	if (typeof window.bootstrap === 'undefined') {
-		//console.error('Bootstrap is not available!');
 		return;
 	}
 
@@ -34,27 +20,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	statusSelects.forEach((select) => {
 		select.addEventListener('change', function () {
-			// console.log('Status select changed for issue:', this.dataset.issueId);
-
 			const issueId = this.dataset.issueId;
 			const newStatus = this.value;
 			const originalStatus = this.dataset.originalStatus;
 
-			// console.log('Issue ID:', issueId);
-			// console.log('New Status:', newStatus);
-			// console.log('Original Status:', originalStatus);
-
 			// Don't make request if status hasn't actually changed
 			if (newStatus === originalStatus) {
-				// console.log('Status unchanged, skipping request');
 				return;
 			}
 
 			// Disable select while updating
 			this.disabled = true;
-			// console.log('Making AJAX request to update status...');
 
-			fetch(`/admin/issues/${issueId}/status`, {
+			fetch(`/dashboard/issues/${issueId}/status`, {
 				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json',
@@ -66,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				}),
 			})
 				.then((response) => {
-					// console.log('Response status:', response.status);
+					console.log('Response status:', response.status);
 					if (!response.ok) {
 						throw new Error(`HTTP error! status: ${response.status}`);
 					}

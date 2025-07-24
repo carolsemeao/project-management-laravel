@@ -13,5 +13,5 @@
     @if ($priority === 'urgent' || $priority === 'immediate')
         <i class="bi bi-exclamation-triangle"></i>
     @endif
-    {{ ucfirst($priority) }}
+    {{ Str::ucfirst(str_replace('_', ' ', $priority)) }}
 </span>

@@ -1,6 +1,22 @@
 @extends('admin.issue.admin_issue_single_template')
 @section('title', 'Issue Details')
 @section('page_title', $issue->issue_title)
+@section('back_to_route', route('admin.issues'))
+@section('back_to_text', __('Back to Issues'))
+@section('header_actions')
+    <div class="btn-group">
+        <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center"
+            furtherActions="data-bs-toggle=modal data-bs-target=#logTimeModal">
+            <i data-feather="plus" class="me-2" style="width: 16px; height: 16px;"></i>
+            {{ __('Log Time') }}
+        </x-button-primary>
+        <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center" isLink=true
+            href="{{ route('admin.issues.edit', $issue->id) }}">
+            <i data-feather="edit" class="me-2" style="width: 16px; height: 16px;"></i>
+            {{ __('Edit Issue') }}
+        </x-button-primary>
+    </div>
+@endsection
 
 @section('maincontent')
     <div class="row g-4">
@@ -9,11 +25,7 @@
             <!-- Issue Details Card -->
             <div class="card mb-4">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-4">
-                        <h5 class="card-title">{{ __('Issue Details') }}</h5>
-                        <a href="{{ route('admin.issues.edit', $issue->id) }}" aria-label="{{ __('Edit Issue') }}"><i
-                                data-feather="settings" style="width: 16px; height: 16px;"></i></a>
-                    </div>
+                    <h2 class="card-title h5 mb-4">{{ __('Issue Details') }}</h2>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-1">
@@ -33,7 +45,7 @@
                             <div class="mb-1">
                                 <strong class="text-muted small">{{ __('Priority') }}</strong>
                                 <p class="mb-0 mt-1">
-                                    <x-priority_badge :priority="$issue->issue_priority" />
+                                    <x-priority_badge :priority="$issue->priority->name" />
                                 </p>
                             </div>
                         </div>
@@ -81,19 +93,7 @@
                             <div class="mb-1">
                                 <strong class="text-muted small">{{ __('Status') }}</strong>
                                 <p class="mb-0 mt-1">
-                                    @php
-                                        $statusLabel = match ($issue->issue_status) {
-                                            'waiting_for_planning' => __('Waiting for Planning'),
-                                            'planned' => __('Planned'),
-                                            'in_progress' => __('In Progress'),
-                                            'feedback' => __('Feedback'),
-                                            'closed' => __('Closed'),
-                                            'rejected' => __('Rejected'),
-                                            'open' => __('Open'),
-                                            default => ucfirst(str_replace('_', ' ', $issue->issue_status))
-                                        };
-                                    @endphp
-                                    <x-badge :label="$statusLabel" />
+                                    <x-badge :label="Str::title(str_replace('_', ' ', $issue->status->name))" />
                                 </p>
                             </div>
                         </div>
@@ -281,10 +281,9 @@
                     <h5 class="card-title mb-3">{{ __('Quick Actions') }}</h5>
                     <div class="d-grid gap-2">
                         <x-button-primary btnType="outline-secondary"
-                            classes="d-flex align-items-center justify-content-center"
-                            furtherActions="data-bs-toggle=modal data-bs-target=#logTimeModal">
-                            <i data-feather="plus" class="me-2" style="width: 16px; height: 16px;"></i>
-                            {{ __('Log Time') }}
+                            classes="d-flex align-items-center justify-content-center">
+                            <i data-feather="trash" class="me-2" style="width: 16px; height: 16px;"></i>
+                            {{ __('Delete Issue') }}
                         </x-button-primary>
                         <x-button-primary btnType="dark" classes="w-100">
                             {{ __('Close Issue') }}

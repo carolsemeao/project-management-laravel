@@ -10,16 +10,16 @@ class Issue extends Model
     protected $fillable = [
         'issue_title',
         'issue_description',
-        'issue_status',
-        'issue_priority',
+        'status_id',
+        'priority_id',
         'issue_due_date',
-        'issue_accumulated_time',
-        'estimated_time_minutes',        // New estimated time field
-        'logged_time_minutes',           // New logged time field
-        'project_id',                   // Updated from issue_project_id
-        'issue_assigned_to',        // Keep old string column for now
-        'assigned_to_user_id',      // New foreign key column
-        'issue_created_by',         // Keep old string column for now  
+        'issue_accumulated_time',   // TODO: Remove this column
+        'estimated_time_minutes',
+        'logged_time_minutes',
+        'project_id',
+        'issue_assigned_to',        // TODO: Remove this column
+        'assigned_to_user_id',
+        'issue_created_by',         // TODO: Remove this column
         'created_by_user_id',       // New foreign key column
     ];
 
@@ -28,7 +28,7 @@ class Issue extends Model
 
     protected $casts = [
         'issue_due_date' => 'date',
-        'issue_accumulated_time' => 'decimal:2',
+        'issue_accumulated_time' => 'decimal:2',  // TODO: Remove this column
         'estimated_time_minutes' => 'integer',
         'logged_time_minutes' => 'integer',
     ];
@@ -39,6 +39,22 @@ class Issue extends Model
     public function project()
     {
         return $this->belongsTo(Project::class, 'project_id');
+    }
+
+    /**
+     * Get the status of this issue
+     */
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    /**
+     * Get the priority of this issue
+     */
+    public function priority()
+    {
+        return $this->belongsTo(Priority::class);
     }
 
     /**
@@ -72,6 +88,15 @@ class Issue extends Model
     {
         if (!$this->estimated_time_minutes) return null;
         return TimeEntry::formatMinutes($this->estimated_time_minutes);
+    }
+
+    /**
+     * Get estimated time in hours
+     */
+    public function getEstimatedTimeHoursAttribute()
+    {
+        if (!$this->estimated_time_minutes) return null;
+        return round($this->estimated_time_minutes / 60, 2);
     }
 
     /**

@@ -50,7 +50,7 @@ class Project extends Model
     public function openIssues()
     {
         return $this->hasMany(Issue::class, 'project_id')
-                   ->where('issue_status', '!=', 'closed');
+                   ->where('status_id', '!=', 6);
     }
 
     /**
@@ -91,7 +91,7 @@ class Project extends Model
         $totalIssues = $this->issues()->count();
         if ($totalIssues === 0) return 0;
         
-        $closedIssues = $this->issues()->where('issue_status', 'closed')->count();
+        $closedIssues = $this->issues()->where('status_id', '=', 6)->count();
         return round(($closedIssues / $totalIssues) * 100);
     }
 
@@ -100,7 +100,7 @@ class Project extends Model
      */
     public function getIssuesByStatus($status)
     {
-        return $this->issues()->where('issue_status', $status)->count();
+        return $this->issues()->where('status_id', $status)->count();
     }
 
     /**
@@ -152,6 +152,17 @@ class Project extends Model
                 'assigned_at' => now(),
             ]);
         }
+    }
+
+    /**
+     * Assign a team to this project
+     */
+    public function assignTeam(int $teamId)
+    {
+        $this->teams()->attach($teamId, [
+            'status' => 'active',
+            'assigned_at' => now(),
+        ]);
     }
 
     /**

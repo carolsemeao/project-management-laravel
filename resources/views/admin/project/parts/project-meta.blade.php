@@ -1,7 +1,7 @@
 @php
     $totalIssues = $project->issues()->count();
-    $openIssues = $project->issues()->where('issue_status', '!=', 'closed')->count();
-    $issuesInProgress = $project->issues()->where('issue_status', 'in_progress')->count();
+    $openIssues = $project->issues()->where('status_id', '!=', 6)->count();
+    $issuesInProgress = $project->issues()->where('status_id', '==', 3)->count();
     $totalLoggedTime = $project->getTotalLoggedTimeMinutes();
 @endphp
 <div class="row gy-0 gx-4">
