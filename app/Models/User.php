@@ -178,15 +178,8 @@ class User extends Authenticatable
      */
     public function isAssignedToProject(int $projectId)
     {
-        // Check direct assignment
-        if ($this->projects()->where('projects.id', $projectId)->exists()) {
-            return true;
-        }
-        
-        // Check through teams
-        return $this->teams()->whereHas('projects', function ($query) use ($projectId) {
-            $query->where('projects.id', $projectId);
-        })->exists();
+        // Check direct assignment to project
+        return $this->projects()->where('projects.id', $projectId)->exists();
     }
 
     /**

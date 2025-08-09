@@ -6,7 +6,10 @@
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+// Icons
+@import 'mixins';
+@import 'icons';
 
 // other files
 @import 'sidebar';

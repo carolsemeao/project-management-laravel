@@ -37,8 +37,8 @@ class ProjectSeeder extends Seeder
             'description' => 'Complete overhaul of company website with modern design and improved UX',
             'start_date' => Carbon::now()->subDays(30),
             'due_date' => Carbon::now()->addDays(60),
-            'status' => 'active',
-            'priority' => 'high',
+            'status_id' => 2, // active
+            'priority_id' => 3, // high
             'color' => '#007bff',
             'budget' => 50000.00,
             'created_by_user_id' => $user->id,
@@ -50,8 +50,8 @@ class ProjectSeeder extends Seeder
             'description' => 'Native iOS and Android app for customer engagement',
             'start_date' => Carbon::now()->addDays(7),
             'due_date' => Carbon::now()->addDays(120),
-            'status' => 'planning',
-            'priority' => 'medium',
+            'status_id' => 1, // planning
+            'priority_id' => 2, // medium
             'color' => '#28a745',
             'budget' => 75000.00,
             'created_by_user_id' => $user->id,
@@ -63,8 +63,8 @@ class ProjectSeeder extends Seeder
             'description' => 'Internal analytics dashboard for business intelligence',
             'start_date' => Carbon::now()->subDays(15),
             'due_date' => Carbon::now()->addDays(45),
-            'status' => 'active',
-            'priority' => 'urgent',
+            'status_id' => 2, // active
+            'priority_id' => 4, // urgent
             'color' => '#dc3545',
             'budget' => 30000.00,
             'created_by_user_id' => $user->id,

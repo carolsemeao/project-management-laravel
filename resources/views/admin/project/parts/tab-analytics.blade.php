@@ -40,7 +40,12 @@
                 // Issue Status Chart
                 const statusCtx = document.getElementById('projectIssueStatusChart');
                 if (statusCtx) {
-                    new Chart(statusCtx, @json($projectIssueStatusChart));
+                    const statusChart = new Chart(statusCtx, @json($projectIssueStatusChart));
+
+                    // Reset animation delay after initial animation completes
+                    setTimeout(() => {
+                        statusChart.options.animation.delay = undefined;
+                    }, 1000); // Wait for initial animation + delay to complete
                 }
             @endif
 
@@ -48,7 +53,12 @@
                     // Priority Chart
                     const priorityCtx = document.getElementById('projectIssuePriorityChart');
                     if (priorityCtx) {
-                        new Chart(priorityCtx, @json($projectIssuePriorityChart));
+                        const priorityChart = new Chart(priorityCtx, @json($projectIssuePriorityChart));
+
+                        // Reset animation delay after initial animation completes
+                        setTimeout(() => {
+                            priorityChart.options.animation.delay = undefined;
+                        }, 1000); // Wait for initial animation + delay to complete
                     }
                 @endif
                 });

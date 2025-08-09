@@ -1,3 +1,3 @@
-@props(['label', 'textColor' => 'text-dark', 'classes' => ''])
+@props(['label', 'textColor' => 'text-dark', 'classes' => 'bg-light'])
 
-<span class="badge bg-light {{ $textColor }} {{ $classes }}">{{ $label }}</span>
+<span class="badge {{ $textColor }} {{ $classes }}">{{ $label }}</span>

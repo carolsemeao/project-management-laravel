@@ -11,7 +11,7 @@
     </div>
     <a href="{{ route('admin.offer.admin_offers_create', ['project_id' => $project->id]) }}"
         class="btn btn-dark d-flex align-items-center justify-content-center">
-        <i data-feather="plus" class="me-2" style="width: 16px; height: 16px;"></i>
+        <span class="icon icon-sm icon-plus me-2"></span>
         {{ __('New Offer') }}
     </a>
 </div>
@@ -36,7 +36,7 @@
 
                         <div class="mb-2">
                             <small class="text-muted">
-                                <i data-feather="user" style="width: 12px; height: 12px;"></i>
+                                <span class="icon icon-xs icon-user me-2"></span>
                                 {{ $offer->customer->name }}
                             </small>
                         </div>
@@ -44,7 +44,7 @@
                         @if($offer->valid_until)
                             <div class="mb-2">
                                 <small class="text-muted">
-                                    <i data-feather="calendar" style="width: 12px; height: 12px;"></i>
+                                    <span class="icon icon-xs icon-calendar me-2"></span>
                                     Valid until: {{ $offer->valid_until->format('M j, Y') }}
                                 </small>
                             </div>
@@ -72,12 +72,13 @@
     </div>
 @else
     <div class="text-center py-5">
-        <i data-feather="file-text" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
-        <h5 class="text-muted">No offers yet</h5>
-        <p class="text-muted">Create your first offer for this project.</p>
-        <a href="{{ route('admin.offer.admin_offers_create', ['project_id' => $project->id]) }}" class="btn btn-primary">
-            <i data-feather="plus" class="me-2" style="width: 16px; height: 16px;"></i>
-            Create First Offer
+        <span class="icon icon-huge icon-file-text me-2"></span>
+        <h5 class="text-muted">{{ __('No offers yet') }}</h5>
+        <p class="text-muted">{{ __('Create your first offer for this project.') }}</p>
+        <a href="{{ route('admin.offer.admin_offers_create', ['project_id' => $project->id]) }}"
+            class="btn btn-primary d-inline-flex align-items-center justify-content-center">
+            <span class="icon icon-sm icon-plus me-2"></span>
+            {{ __('Create First Offer') }}
         </a>
     </div>
 @endif

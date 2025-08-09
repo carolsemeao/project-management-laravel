@@ -1,0 +1,147 @@
+.icon {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+	transition: all 0.2s ease-in-out;
+
+	&.icon-sm {
+		width: 16px;
+		height: 16px;
+	}
+
+	&.icon-xs {
+		width: 12px;
+		height: 12px;
+	}
+
+	&.icon-lg {
+		width: 28px;
+		height: 28px;
+	}
+
+	&.icon-huge {
+		width: 48px;
+		height: 48px;
+	}
+
+	&.icon-alert-circle:before {
+		@include icon('alert-circle');
+	}
+
+	&.icon-alert-triangle:before {
+		@include icon('alert-triangle');
+	}
+
+	&.icon-arrow-left:before {
+		@include icon('arrow-left');
+	}
+
+	&.icon-arrow-right:before {
+		@include icon('arrow-right');
+	}
+
+	&.icon-bug:before {
+		@include icon('bug');
+	}
+
+	&.icon-buildings:before {
+		@include icon('buildings');
+	}
+
+	&.icon-calendar:before {
+		@include icon('calendar');
+	}
+
+	&.icon-chevron-down:before {
+		@include icon('chevron-down');
+	}
+
+	&.icon-clock:before {
+		@include icon('clock');
+	}
+
+	&.icon-dollar-sign:before {
+		@include icon('dollar-sign');
+	}
+
+	&.icon-edit:before {
+		@include icon('edit');
+	}
+
+	&.icon-file-text:before {
+		@include icon('file-text');
+	}
+
+	&.icon-folder:before {
+		@include icon('folder');
+	}
+
+	&.icon-git-branch:before {
+		@include icon('git-branch');
+	}
+
+	&.icon-heart:before {
+		@include icon('heart');
+	}
+
+	&.icon-home:before {
+		@include icon('home');
+	}
+
+	&.icon-log-out:before {
+		@include icon('log-out');
+	}
+
+	&.icon-mail:before {
+		@include icon('mail');
+	}
+
+	&.icon-menu:before {
+		@include icon('menu');
+	}
+
+	&.icon-phone:before {
+		@include icon('phone');
+	}
+
+	&.icon-plus:before {
+		@include icon('plus');
+	}
+
+	&.icon-save:before {
+		@include icon('save');
+	}
+
+	&.icon-search:before {
+		@include icon('search');
+	}
+
+	&.icon-settings:before {
+		@include icon('settings');
+	}
+
+	&.icon-target:before {
+		@include icon('target');
+	}
+
+	&.icon-trash:before {
+		@include icon('trash-2');
+	}
+
+	&.icon-trending-up:before {
+		@include icon('trending-up');
+	}
+
+	&.icon-user:before {
+		@include icon('user');
+	}
+
+	&.icon-users:before {
+		@include icon('users');
+	}
+
+	&.icon-x:before {
+		@include icon('x');
+	}
+}

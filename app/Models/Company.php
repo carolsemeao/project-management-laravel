@@ -47,4 +47,12 @@ class Company extends Model
     {
         return $this->status === 'active';
     }
+
+    /**
+     * Get all projects for this company
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }

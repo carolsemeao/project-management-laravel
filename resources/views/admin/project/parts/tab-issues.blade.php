@@ -4,12 +4,16 @@
             <div>
                 <h2 class="card-title">Project Issues</h2>
                 <small class="text-muted">
-                    {{ __(':totalIssues total issues • :openIssues open', ['totalIssues' => $project->issues->count(), 'openIssues' => $project->issues()->where('status_id', '!=', 6)->count()]) }}
+                    @php
+                        $closedStatusId = App\Models\Status::where('name', 'closed')->value('id');
+                        $openIssues = $project->issues()->where('status_id', '!=', $closedStatusId)->count();
+                    @endphp
+                    {{ __(':totalIssues total issues • :openIssues open', ['totalIssues' => $project->issues->count(), 'openIssues' => $openIssues]) }}
                 </small>
             </div>
             <x-button-primary btnType="dark" classes="d-flex align-items-center justify-content-center"
                 furtherActions="data-bs-toggle=modal data-bs-target=#logTimeModal">
-                <i data-feather="plus" class="me-2" style="width: 16px; height: 16px;"></i>
+                <span class="icon icon-sm icon-plus me-2"></span>
                 {{ __('New Issue') }}
             </x-button-primary>
         </div>

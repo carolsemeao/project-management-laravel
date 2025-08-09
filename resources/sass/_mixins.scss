@@ -1,0 +1,13 @@
+@mixin icon($name) {
+	content: '';
+	display: block;
+	width: 100%;
+	height: 100%;
+	mask: {
+		image: url('/public/frontend/assets/icons/#{$name}.svg');
+		repeat: no-repeat;
+		position: center;
+		size: contain;
+	}
+	background-color: currentColor;
+}

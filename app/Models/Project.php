@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class Project extends Model
 {
@@ -15,10 +16,12 @@ class Project extends Model
         'description',
         'due_date',
         'start_date',
-        'status',
-        'priority',
+        'status_id',
+        'priority_id',
         'color',
         'budget',
+        'company_id',
+        'customer_id',
         'created_by_user_id',
     ];
 
@@ -37,6 +40,32 @@ class Project extends Model
     }
 
     /**
+     * Get the status of this project
+     */
+    public function status()
+    {
+        return $this->belongsTo(ProjectStatus::class, 'status_id');
+    }
+
+    public function getFormattedStatusName()
+    {
+        return  Str::title(str_replace('_', ' ', $this->status->name));
+    }
+
+    /**
+     * Get the priority of this project
+     */
+    public function priority()
+    {
+        return $this->belongsTo(ProjectPriority::class, 'priority_id');
+    }
+
+    public function getFormattedPriorityName()
+    {
+        return  Str::title(str_replace('_', ' ', $this->priority->name));
+    }
+
+    /**
      * Get all issues in this project
      */
     public function issues()
@@ -49,8 +78,9 @@ class Project extends Model
      */
     public function openIssues()
     {
+        $closedStatusId = Status::where('name', 'closed')->value('id');
         return $this->hasMany(Issue::class, 'project_id')
-                   ->where('status_id', '!=', 6);
+                   ->where('status_id', '!=', $closedStatusId);
     }
 
     /**
@@ -83,6 +113,34 @@ class Project extends Model
         return $this->hasMany(ProjectUser::class);
     }
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    /**
+     * Get the customer (contact person) for this project
+     */
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
+    /**
+     * Get available customers for this project (filtered by company)
+     */
+    public function getAvailableCustomers()
+    {
+        if (!$this->company_id) {
+            return collect();
+        }
+        
+        return Customer::where('company_id', $this->company_id)
+                      ->where('status', 'active')
+                      ->orderBy('name')
+                      ->get();
+    }
+
     /**
      * Get project progress percentage (based on closed issues)
      */
@@ -91,7 +149,8 @@ class Project extends Model
         $totalIssues = $this->issues()->count();
         if ($totalIssues === 0) return 0;
         
-        $closedIssues = $this->issues()->where('status_id', '=', 6)->count();
+        $closedStatusId = Status::where('name', 'closed')->value('id');
+        $closedIssues = $this->issues()->where('status_id', '=', $closedStatusId)->count();
         return round(($closedIssues / $totalIssues) * 100);
     }
 
@@ -103,12 +162,17 @@ class Project extends Model
         return $this->issues()->where('status_id', $status)->count();
     }
 
+    public function getOpenIssuesCount()
+    {
+        return $this->issues()->where('status_id', '!=', 6)->count();
+    }
+
     /**
      * Check if project is overdue
      */
     public function isOverdue()
     {
-        return $this->due_date && $this->due_date->isPast() && $this->status !== 'completed';
+        return $this->due_date && $this->due_date->isPast() && $this->status->name !== 'completed';
     }
 
     /**
@@ -116,7 +180,7 @@ class Project extends Model
      */
     public function isDueSoon()
     {
-        if (!$this->due_date || $this->status === 'completed') return false;
+        if (!$this->due_date || $this->status->name === 'completed') return false;
         
         $daysUntilDue = Carbon::now()->diffInDays($this->due_date, false);
         return $daysUntilDue >= 0 && $daysUntilDue <= 7;
@@ -185,7 +249,9 @@ class Project extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->whereHas('status', function ($q) {
+            $q->where('name', '!=', 'closed');
+        });
     }
 
     /**
@@ -193,7 +259,9 @@ class Project extends Model
      */
     public function scopeByStatus($query, $status)
     {
-        return $query->where('status', $status);
+        return $query->whereHas('status', function ($q) use ($status) {
+            $q->where('name', $status);
+        });
     }
 
     /**
@@ -202,8 +270,6 @@ class Project extends Model
     public function scopeForUser($query, $userId)
     {
         return $query->whereHas('users', function ($q) use ($userId) {
-            $q->where('users.id', $userId);
-        })->orWhereHas('teams.users', function ($q) use ($userId) {
             $q->where('users.id', $userId);
         });
     }
@@ -422,5 +488,10 @@ class Project extends Model
             'offer_hours' => $this->getFormattedTotalOfferHours(),
             'remaining' => TimeEntry::formatMinutes($remainingMinutes)
         ];
+    }
+
+    public function getStatus()
+    {
+        return $this->status ? $this->status->display_name : 'Unknown';
     }
 }

@@ -1,59 +1,42 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@extends('admin.project.admin_project_single_template')
+@section('title', 'Project / ' . $project->name)
+@section('page_title')
+    <div class="d-flex align-items-center">
+        <span class="me-2 rounded-circle d-inline-block"
+            style="width: 20px; height: 20px; background-color: {{ $project->color }};"></span>
+        <span>{{ $project->name }}</span>
+    </div>
+    @if ($project->isOverdue())
+        <x-badge :label="__('Overdue')" textColor="text-danger" classes="ms-1 small" />
+    @elseif($project->isDueSoon())
+        <x-badge :label="__('Due Soon')" textColor="text-warning" classes="ms-1 small" />
+    @endif
+@endsection
+@section('page_subtitle', $project->description)
+@section('back_to_route', route('admin.projects'))
+@section('back_to_text', __('Back to Projects'))
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>@yield('title')</title>
-        <!-- Styles / Scripts -->
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-        @endif
-    </head>
+@section('header_actions')
+    <div class="btn-group">
+        <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center" isLink="true"
+            href="{{ route('admin.projects.edit', $project->id) }}">
+            <span class="icon icon-sm icon-edit me-2"></span>
+            {{ __('Edit') }}
+        </x-button-primary>
+        <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center">
+            <span class="icon icon-sm icon-settings me-2"></span>
+            {{ __('Settings') }}
+        </x-button-primary>
+    </div>
+@endsection
 
-    <body>
-        <div class="container-fluid p-0 layout-container">
-            <!-- Mobile overlay -->
-            <div class="sidebar-overlay" id="sidebarOverlay"></div>
-            <div class="row g-0 h-100">
-                <div class="col-auto sidebar bg-dark" id="sidebar">
-                    @include('admin.body.sidebar')
-                </div>
+@section('project-header')
+    @include('admin.project.parts.header', ['project' => $project])
+@endsection
 
-                <div class="col main-content d-flex flex-column" id="mainContent">
-                    @include('admin.body.header')
 
-                    <div class="p-4 flex-grow-1">
-                        <div class="content-page">
-                            <div class="content">
-                                <div class="row">
-                                    <div class="col-12">
-                                        @include('admin.project.parts.header', ['project' => $project])
-                                    </div>
-                                </div>
-                                @include('admin.project.parts.project-meta', ['project' => $project])
-                                @include('admin.project.parts.tabs')
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-auto">
-                        @include('admin.body.footer')
-                    </div>
-                </div>
-            </div>
 
-            <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                @if(Session::has('message'))
-                    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-                        <div class="toast-body bg-{{ Session::get('alert-type', 'primary') }} text-white">
-                            {{ Session::get('message') }}
-                            <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="toast"
-                                aria-label="Close"></button>
-                        </div>
-                    </div>
-                @endif
-            </div>
-    </body>
-
-</html>
+@section('maincontent')
+    @include('admin.project.parts.project-meta', ['project' => $project])
+    @include('admin.project.parts.tabs')
+@endsection

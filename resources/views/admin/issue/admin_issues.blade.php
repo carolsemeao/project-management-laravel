@@ -1,7 +1,22 @@
 @extends('admin.admin_master')
-@section('title', 'Team Issues')
-@section('page_title', 'Team Issues')
+@section('title', 'Issues')
+@section('page_title', 'Issues')
 @section('page_subtitle', 'Track and manage project issues')
+@section('header_actions')
+    <div class="d-flex align-items-center gap-2">
+        <select class="form-select" id="project_id" name="project_id" onchange="filterIssues(event)">
+            <option value="">{{ __('All Projects') }}</option>
+            @foreach ($projects as $project)
+                <option value="{{ $project->id }}">{{ $project->name }}</option>
+            @endforeach
+        </select>
+        <x-button-primary btnType="dark" classes="d-flex align-items-center justify-content-center text-nowrap"
+            isLink="true" href="{{ route('admin.issues.create') }}">
+            <span class="icon icon-sm icon-plus me-2"></span>
+            {{ __('New Issue') }}
+        </x-button-primary>
+    </div>
+@endsection
 @section('maincontent')
     <div class="card">
         <div class="card-header">
@@ -10,16 +25,6 @@
         </div>
         <div class="card-body">
             @include('admin.issue.parts.issues', ['issues' => $issues])
-        </div>
-    </div>
-
-    <!-- Toast for feedback -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="statusToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-body d-flex justify-content-between align-items-center">
-                <span id="statusToastText"></span>
-                <button type="button" class="btn-close text-white ms-2" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
         </div>
     </div>
 @endsection

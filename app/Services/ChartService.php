@@ -70,6 +70,9 @@ class ChartService
                 ]
             ],
             'options' => [
+                'interaction' => [
+                    'includeInvisible' => true,
+                ],
                 'responsive' => true,
                 'maintainAspectRatio' => false,
                 'plugins' => [
@@ -81,6 +84,9 @@ class ChartService
                     'y' => [
                         'beginAtZero' => true
                     ]
+                ],
+                'animation' => [
+                    'delay' => 500
                 ]
             ]
         ];
@@ -128,8 +134,12 @@ class ChartService
                 'plugins' => [
                     'legend' => [
                         'position' => 'bottom'
-                    ]
-                ]
+                    ],
+                ],
+                'animation' => [
+                    'delay' => 500
+                ],
+                'hoverOffset' => 10
             ]
         ];
     }
@@ -182,6 +192,9 @@ class ChartService
                     'y' => [
                         'beginAtZero' => true
                     ]
+                ],
+                'animation' => [
+                    'delay' => 500
                 ]
             ]
         ];
@@ -192,8 +205,9 @@ class ChartService
      */
     public function createProjectStatusChart(): array
     {
-        $projectStatusDistribution = Project::select('status', DB::raw('count(*) as total'))
-            ->groupBy('status')
+        $projectStatusDistribution = Project::join('project_statuses', 'projects.status_id', '=', 'project_statuses.id')
+            ->select('project_statuses.name', DB::raw('count(*) as total'))
+            ->groupBy('project_statuses.id', 'project_statuses.name')
             ->get();
 
         // Handle empty data
@@ -209,9 +223,9 @@ class ChartService
             'cancelled' => '#9ECAD6'
         ];
 
-        $labels = $projectStatusDistribution->map(fn($item) => ucwords(str_replace('_', ' ', $item->status ?? 'Unknown')))->toArray();
+        $labels = $projectStatusDistribution->map(fn($item) => ucwords(str_replace('_', ' ', $item->name ?? 'Unknown')))->toArray();
         $data = $projectStatusDistribution->pluck('total')->toArray();
-        $colors = $projectStatusDistribution->map(fn($item) => $statusColorMapping[$item->status ?? 'unknown'] ?? '#6c757d')->toArray();
+        $colors = $projectStatusDistribution->map(fn($item) => $item->color ?? $statusColorMapping[$item->name ?? 'unknown'] ?? '#6c757d')->toArray();
 
         return [
             'type' => 'pie',
@@ -235,8 +249,12 @@ class ChartService
                 'plugins' => [
                     'legend' => [
                         'position' => 'bottom'
-                    ]
-                ]
+                    ],
+                ],
+                'animation' => [
+                    'delay' => 500
+                ],
+                'hoverOffset' => 10
             ]
         ];
     }

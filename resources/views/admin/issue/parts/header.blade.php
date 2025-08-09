@@ -5,7 +5,7 @@
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <a href="@yield('back_to_route')" class="text-decoration-none d-flex align-items-center">
-                            <i data-feather="arrow-left" class="me-2" style="width: 16px; height: 16px;"></i>
+                            <span class="icon icon-sm icon-arrow-left me-2"></span>
                             @yield('back_to_text')
                         </a>
                         @yield('header_actions')

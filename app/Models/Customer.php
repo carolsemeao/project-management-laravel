@@ -52,4 +52,12 @@ class Customer extends Model
     {
         return $this->status === 'active';
     }
+
+    /**
+     * Get all projects for this customer
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }

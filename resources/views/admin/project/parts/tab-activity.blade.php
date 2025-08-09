@@ -10,7 +10,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
-                                <i data-feather="clock" class="me-2" style="width: 16px; height: 16px;"></i>
+                                <span class="icon icon-sm icon-clock me-2"></span>
                                 <div>
                                     <h5 class="card-title">
                                         <a href="{{ route('admin.issues.show', $timeEntry->issue->id) }}"

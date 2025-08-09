@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Issue extends Model
 {
@@ -47,6 +48,11 @@ class Issue extends Model
     public function status()
     {
         return $this->belongsTo(Status::class);
+    }
+
+    public function getFormattedStatus()
+    {
+        return Str::title(str_replace('_', ' ', $this->status->name));
     }
 
     /**

@@ -7,8 +7,14 @@ use App\Http\Controllers\TimeTrackingController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\OfferController;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ChartController;
+
+use App\Models\Status;
+use App\Models\Project;
+use App\Models\ProjectStatus;
+use Carbon\Carbon;
+
 
 Route::get('/language/{locale}', function ($locale) {
     app()->setLocale($locale);
@@ -21,8 +27,12 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $today = \Carbon\Carbon::now()->settings(['locale' => app()->getLocale()]);
+    $today = Carbon::now()->settings(['locale' => app()->getLocale()]);
     $dateMessage = $today->format('l, j.F.Y');
+    $user = Auth::user();
+    $projectStatus = ProjectStatus::all();
+    $status = Status::all();
+    $projects = Project::all();
 
     // Create charts using the controller
     $chartController = app(ChartController::class);
@@ -31,24 +41,28 @@ Route::get('/dashboard', function () {
     $issueStatusBarChart = $charts['issueStatusBarChart'];
 
     // Get dynamic issue counts
-    $totalIssues = \App\Models\Issue::count();
-    $openIssues = \App\Models\Issue::where('status_id', '!=', 6)->count();
+    $totalIssues = $user->assignedIssues()->count() + $user->createdIssues()->count();
+    
+    // Get closed status ID (status with name 'closed')
+    $closedStatusId = $status->where('name', 'closed')->value('id');
+    $openIssues = $user->assignedIssues()->where('status_id', '!=', $closedStatusId)->count() + $user->createdIssues()->where('status_id', '!=', $closedStatusId)->count();
 
     // Get dynamic project counts
-    $totalProjects = \App\Models\Project::count();
-    $activeProjects = \App\Models\Project::active()->count();
-    $completedProjectsInMonth = \App\Models\Project::where('status', 'completed')->where('created_at', '>=', now()->startOfMonth())->count();
+    $totalProjects = $user->projects()->count();
+    $activeProjects = $user->projects()->active()->count();
+    
+    // Get completed status ID (status with name 'completed')
+    $completedStatusId = $projectStatus->where('name', 'completed')->value('id');
+    $completedProjectsInMonth = $projects->where('status_id', $completedStatusId)
+        ->where('created_at', '>=', now()->startOfMonth())
+        ->count();
     
     // Get total logged time for current user across all projects
-    $totalLoggedTime = \Illuminate\Support\Facades\Auth::user()->getFormattedTotalLoggedTime();
+    $totalLoggedTime = $user->getFormattedTotalLoggedTime();
     
     return view('admin.index', compact('dateMessage', 'totalIssues', 'openIssues', 'totalLoggedTime', 'activeProjects', 'totalProjects', 'projectStatusChart', 'issueStatusBarChart', 'completedProjectsInMonth'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-/* Route::get('/dashboard', function () {
-    return view('admin.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
-*/
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -67,15 +81,26 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/store', [AdminController::class, 'ProfileStore'])->name('profile.store');
     Route::post('/profile/password/update', [AdminController::class, 'PasswordUpdate'])->name('admin.password.update');
 
+    // Issues routes
     Route::get('/dashboard/issues', [IssueController::class, 'ShowIssues'])->name('admin.issues');
+    Route::get('/dashboard/issues/create', [IssueController::class, 'ShowCreateIssue'])->name('admin.issues.create');
+    Route::post('/dashboard/issues/create', [IssueController::class, 'CreateIssue'])->name('admin.issues.create-issue');
     Route::get('/dashboard/issues/{id}', [IssueController::class, 'ShowSingleIssue'])->name('admin.issues.show');
     Route::get('/dashboard/issues/{id}/edit', [IssueController::class, 'ShowSingleIssueEdit'])->name('admin.issues.edit');
     Route::put('/dashboard/issues/{id}', [IssueController::class, 'UpdateIssue'])->name('admin.issues.update');
-    Route::patch('/dashboard/issues/{id}/status', [IssueController::class, 'UpdateStatus'])->name('admin.issues.update-status');
+    Route::delete('/dashboard/issues/{id}', [IssueController::class, 'DeleteIssue'])->name('admin.issues.destroy');
+    Route::put('/dashboard/issues/{id}/close', [IssueController::class, 'CloseIssue'])->name('admin.issues.close');
 
     // Projects routes
     Route::get('/dashboard/projects', [ProjectsController::class, 'ShowProjects'])->name('admin.projects');
+    Route::get('/dashboard/projects/create', [ProjectsController::class, 'ShowCreateProject'])->name('admin.projects.create');
+    Route::post('/dashboard/projects/create', [ProjectsController::class, 'CreateProject'])->name('admin.projects.create-project');
     Route::get('/dashboard/projects/{id}', [ProjectsController::class, 'ShowSingleProject'])->name('admin.projects.show');
+    Route::get('/dashboard/projects/{id}/edit', [ProjectsController::class, 'ShowSingleProjectEdit'])->name('admin.projects.edit');
+    Route::put('/dashboard/projects/{id}', [ProjectsController::class, 'UpdateProject'])->name('admin.projects.update');
+    Route::delete('/dashboard/projects/{id}', [ProjectsController::class, 'DeleteProject'])->name('admin.projects.destroy'); // Done
+    Route::post('/dashboard/projects/{id}/complete', [ProjectsController::class, 'CompleteProject'])->name('admin.projects.complete');
+    Route::post('/dashboard/projects/{id}/hold', [ProjectsController::class, 'HoldProject'])->name('admin.projects.hold');
     
     // Offers routes
     Route::resource('/dashboard/offers', OfferController::class, [
@@ -94,10 +119,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/offers/{offer}/send', [OfferController::class, 'markAsSent'])->name('admin.offers.send');
     Route::post('/dashboard/offers/{offer}/accept', [OfferController::class, 'markAsAccepted'])->name('admin.offers.accept');
     Route::post('/dashboard/offers/{offer}/reject', [OfferController::class, 'markAsRejected'])->name('admin.offers.reject');
-    
-    // User assignment routes
-    Route::patch('/dashboard/issues/{id}/assignment', [IssueController::class, 'UpdateAssignment'])->name('admin.issues.update-assignment');
-    
+        
     // Time tracking routes
     Route::post('/dashboard/issues/{id}/time', [TimeTrackingController::class, 'logTime'])->name('admin.issues.log-time');
     Route::patch('/dashboard/issues/{id}/estimate', [TimeTrackingController::class, 'setEstimate'])->name('admin.issues.set-estimate');
@@ -105,7 +127,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/dashboard/time-entries/{id}', [TimeTrackingController::class, 'deleteTimeEntry'])->name('admin.time-entries.delete');
     Route::get('/dashboard/time/summary', [TimeTrackingController::class, 'getUserTimeSummary'])->name('admin.time.summary');
     
-    // Chart API routes (simplified for the 4 required charts only)
+    // Chart API routes
     Route::get('/api/charts/data', [ChartController::class, 'getChartData'])->name('api.charts.data');
     Route::get('/api/charts/colors', [ChartController::class, 'getChartColors'])->name('api.charts.colors');
 });

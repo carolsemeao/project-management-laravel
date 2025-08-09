@@ -48,29 +48,15 @@ class TimeTrackingController extends Controller
                 ], 400);
             }
 
-            return response()->json([
-                'success' => true,
+            return redirect()->back()->with([
                 'message' => 'Time logged successfully',
-                'time_entry' => [
-                    'id' => $timeEntry->id,
-                    'formatted_time' => $timeEntry->formatted_time,
-                    'description' => $timeEntry->description,
-                    'work_date' => $timeEntry->work_date->format('d/m/Y'),
-                    'user_name' => $timeEntry->user->name,
-                ],
-                'issue_progress' => [
-                    'logged_time' => $issue->fresh()->formatted_logged_time,
-                    'estimated_time' => $issue->formatted_estimated_time,
-                    'percentage' => $issue->getTimeProgressPercentage(),
-                    'status' => $issue->getTimeTrackingStatus(),
-                ]
+                'alert-type' => 'success'
             ]);
-
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to log time: ' . $e->getMessage()
-            ], 500);
+            return redirect()->back()->with([
+                'message' => 'Failed to log time: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ]);
         }
     }
 

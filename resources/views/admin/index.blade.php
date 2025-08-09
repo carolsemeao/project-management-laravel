@@ -47,8 +47,8 @@
     <div class="row mt-4">
         <div class="col-lg-6">
             <div class="card h-100">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Project Status Distribution</h5>
+                    <div class="card-body">
+                    <h5 class="card-title mb-3">{{ __('Project Status Distribution') }}</h5>
                     <div class="chart-container d-flex justify-content-center" style="height: 300px;">
                         <canvas id="projectStatusChart" width="300" height="300"></canvas>
                     </div>
@@ -58,7 +58,7 @@
         <div class="col-lg-6">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title mb-3">Issue Status Overview</h5>
+                    <h5 class="card-title mb-3">{{ __('Issue Status Overview') }}</h5>
                     <div class="chart-container d-flex justify-content-center" style="height: 300px;">
                         <canvas id="issueStatusBarChart" width="300" height="300"></canvas>
                     </div>
@@ -72,13 +72,23 @@
         // Project Status Chart
         const projectStatusCtx = document.getElementById('projectStatusChart');
         if (projectStatusCtx) {
-            new Chart(projectStatusCtx, @json($projectStatusChart));
+            const projectStatusChart = new Chart(projectStatusCtx, @json($projectStatusChart));
+            
+            // Reset animation delay after initial animation completes
+            setTimeout(() => {
+                projectStatusChart.options.animation.delay = undefined;
+            }, 1000); // Wait for initial animation + delay to complete
         }
 
         // Issue Status Bar Chart
         const issueStatusCtx = document.getElementById('issueStatusBarChart');
         if (issueStatusCtx) {
-            new Chart(issueStatusCtx, @json($issueStatusBarChart));
+            const issueStatusChart = new Chart(issueStatusCtx, @json($issueStatusBarChart));
+            
+            // Reset animation delay after initial animation completes
+            setTimeout(() => {
+                issueStatusChart.options.animation.delay = undefined;
+            }, 1000); // Wait for initial animation + delay to complete
         }
     });
     </script>

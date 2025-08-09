@@ -1,13 +1,14 @@
 import './bootstrap';
-import feather from 'feather-icons';
+//import feather from 'feather-icons';
 import './mobile-menu';
-import './issues';
+import './issue';
+import './projects';
 
 // Import Chart.js and make it available globally
 import Chart from 'chart.js/auto';
 window.Chart = Chart;
 
-feather.replace();
+//feather.replace();
 
 import Alpine from 'alpinejs';
 
@@ -96,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	// Toast notifications - only show notification toasts, not status update toasts
-	const toastElements = document.querySelectorAll('.toast:not(#statusToast)');
+	const toastElements = document.querySelectorAll('.toast');
 	if (toastElements.length > 0) {
 		toastElements.forEach(function (toastElement) {
 			const toast = new bootstrap.Toast(toastElement);

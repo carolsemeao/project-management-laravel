@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Services\ChartService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChartController extends Controller
 {
@@ -69,6 +70,13 @@ class ChartController extends Controller
                     return response()->json(['error' => 'Project ID required'], 400);
                 }
                 $project = Project::findOrFail($projectId);
+                
+                // Check if user is assigned to this project
+                $user = Auth::user();
+                if (!$user->isAssignedToProject($project->id)) {
+                    return response()->json(['error' => 'You do not have permission to view charts for this project.'], 403);
+                }
+                
                 $chart = $this->chartService->createProjectIssueStatusChart($project);
                 break;
 
@@ -78,6 +86,13 @@ class ChartController extends Controller
                     return response()->json(['error' => 'Project ID required'], 400);
                 }
                 $project = Project::findOrFail($projectId);
+                
+                // Check if user is assigned to this project
+                $user = Auth::user();
+                if (!$user->isAssignedToProject($project->id)) {
+                    return response()->json(['error' => 'You do not have permission to view charts for this project.'], 403);
+                }
+                
                 $chart = $this->chartService->createProjectIssuePriorityChart($project);
                 break;
 

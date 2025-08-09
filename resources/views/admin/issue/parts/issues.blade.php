@@ -6,22 +6,31 @@
 <table class="table table-hover">
     <thead>
         <tr>
-            <th>Issue</th>
-            @if((!isset($hideProjectColumn) || !$hideProjectColumn) && !request()->routeIs('admin.projects.show'))
-                <th>Project</th>
+            <th>{{ __('ID') }}</th>
+            <th>{{ __('Issue') }}</th>
+            @if((!isset($hideProjectColumn) || !$hideProjectColumn))
+                <th>{{ __('Project') }}</th>
             @endif
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Assignee</th>
-            <th>Due Date</th>
-            @if((!isset($hideProjectColumn) || !$hideProjectColumn) && !request()->routeIs('admin.projects.show'))
-                <th>Time logged</th>
+            <th>{{ __('Status') }}</th>
+            <th>{{ __('Priority') }}</th>
+            <th>{{ __('Assignee') }}</th>
+            <th>{{ __('Due Date') }}</th>
+            @if((!isset($hideProjectColumn) || !$hideProjectColumn))
+                <th>{{ __('Time logged') }}</th>
             @endif
+            <th class="text-end">{{ __('Edit') }}</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($issues as $issue)
-            <tr>
+            <tr data-project-id="{{ $issue->project_id ?? '' }}">
+                <td>
+                    <strong>
+                        <a href="{{ route('admin.issues.show', $issue->id) }}" class="text-decoration-none">
+                            #{{ $issue->id }}
+                        </a>
+                    </strong>
+                </td>
                 <td>
                     <div>
                         <strong>
@@ -34,7 +43,7 @@
                         @endif
                     </div>
                 </td>
-                @if((!isset($hideProjectColumn) || !$hideProjectColumn) && !request()->routeIs('admin.projects.show'))
+                @if((!isset($hideProjectColumn) || !$hideProjectColumn))
                     <td>
                         <p class="mb-0 d-flex align-items-center">
                             @if($issue->project)
@@ -48,18 +57,7 @@
                     </td>
                 @endif
                 <td>
-                    @if((!isset($hideProjectColumn) || !$hideProjectColumn) && !request()->routeIs('admin.projects.show'))
-                        <select class="form-select form-select-sm status-select" data-issue-id="{{ $issue->id }}"
-                            data-original-status="{{ $issue->status_id }}" name="status_id">
-                            @foreach ($statuses as $status)
-                                <option value="{{ $status->id }}" {{ $issue->status_id == $status->id ? 'selected' : '' }}>
-                                    {{ Str::title(str_replace('_', ' ', $status->name)) }}
-                                </option>
-                            @endforeach
-                        </select>
-                    @else
-                        <x-badge :label="Str::title(str_replace('_', ' ', $issue->status->name))" />
-                    @endif
+                    <x-badge :label="$issue->getFormattedStatus()" />
                 </td>
                 <td>
                     <x-priority_badge :priority="$issue->priority->name" />
@@ -68,31 +66,37 @@
                     <div class="d-flex align-items-center">
                         @if($issue->assignedUser)
                             <div>
-                                <i data-feather="user" class="me-1" style="width: 14px; height: 14px;"></i>
+                                <span class="icon icon-xs icon-user me-1"></span>
                                 {{ $issue->assignedUser->name }}
                             </div>
                         @elseif($issue->issue_assigned_to)
                             <x-badge :label="$issue->issue_assigned_to" textColor="text-muted" classes="small" />
                         @else
-                            <span class="text-muted small">Unassigned</span>
+                            <span class="text-muted small">{{ __('Unassigned') }}</span>
                         @endif
                     </div>
                 </td>
                 <td>
                     <div class="d-flex align-items-center">
-                        <i data-feather="calendar" class="me-1" style="width: 14px; height: 14px;"></i>
-                        {{ $issue->due_date ? $issue->due_date->format('d/m/Y') : 'Not set' }}
+                        <span class="icon icon-xs icon-calendar me-1"></span>
+                        {{ $issue->issue_due_date ? $issue->issue_due_date->format('d/m/Y') : 'Not set' }}
                     </div>
                 </td>
-                @if((!isset($hideProjectColumn) || !$hideProjectColumn) && !request()->routeIs('admin.projects.show'))
+                @if((!isset($hideProjectColumn) || !$hideProjectColumn))
                     <td>
                         <div class="d-flex align-items-center">
-                            <i data-feather="clock" class="me-1" style="width: 14px; height: 14px;"></i>
+                            <span class="icon icon-xs icon-clock me-1"></span>
                             {{ $issue->getFormattedLoggedTimeAttribute() ?? '0h' }} / <span class="text-muted">
                                 {{ $issue->getFormattedEstimatedTimeAttribute() ?? '0h' }}</span>
                         </div>
                     </td>
                 @endif
+
+                <td class="text-end">
+                    <a href="{{ route('admin.issues.edit', $issue->id) }}" class="text-decoration-none">
+                        <span class="icon icon-sm icon-edit" aria-label="Edit"></span>
+                    </a>
+                </td>
             </tr>
         @endforeach
     </tbody>

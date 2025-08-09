@@ -6,14 +6,14 @@
     <div class="col-6">
         <div class="card h-100">
             <div class="card-body">
-                <h2 class="card-title">Project information</h2>
+                <h2 class="card-title">{{ __('Project information') }}</h2>
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="mb-1">
                             <strong class="text-muted small">{{ __('Status') }}</strong>
                             <p class="mb-0 mt-1">
-                                <x-badge :label="ucfirst($project->status)"
-                                    textColor="text-{{ $project->status === 'active' ? 'success' : ($project->status === 'planning' ? 'warning' : 'secondary') }}" />
+                                <x-badge :label="$project->getFormattedStatusName()"
+                                    textColor="text-{{ $project->status->name === 'active' ? 'success' : ($project->status->name === 'planning' ? 'warning' : 'secondary') }}" />
                             </p>
                         </div>
                     </div>
@@ -21,7 +21,7 @@
                         <div class="mb-1">
                             <strong class="text-muted small">{{ __('Created') }}</strong>
                             <p class="mb-0 mt-1">
-                                <i data-feather="calendar" class="me-1" style="width: 14px; height: 14px;"></i>
+                                <span class="icon icon-xs icon-calendar me-1"></span>
                                 {{ $project->created_at ? $project->created_at->format('d/m/Y') : __('Not set') }}
                             </p>
                         </div>
@@ -31,7 +31,7 @@
                         <div class="mb-1">
                             <strong class="text-muted small">{{ __('Due Date') }}</strong>
                             <p class="mb-0 mt-1">
-                                <i data-feather="calendar" class="me-1" style="width: 14px; height: 14px;"></i>
+                                <span class="icon icon-xs icon-calendar me-1"></span>
                                 {{ $project->due_date ? $project->due_date->format('d/m/Y') : __('Not set') }}
                                 @if($project->isOverdue())
                                     <x-badge :label="__('Overdue')" textColor="text-danger" classes="ms-1 small" />
@@ -46,7 +46,7 @@
                         <div class="mb-1">
                             <strong class="text-muted small">{{ __('Team Size') }}</strong>
                             <p class="mb-0 mt-1">
-                                <i data-feather="users" class="me-1" style="width: 14px; height: 14px;"></i>
+                                <span class="icon icon-xs icon-users me-1"></span>
                                 {{ __(':assignedMembers :members', ['assignedMembers' => $project->users()->count(), 'members' => Str::plural('member', $project->users()->count())]) }}
                                 @if($project->isOverdue())
                                     <x-badge :label="__('Overdue')" textColor="text-danger" classes="ms-1 small" />
@@ -56,6 +56,26 @@
                             </p>
                         </div>
                     </div>
+                    <div class="col-6">
+                        <div class="mb-1">
+                            <strong class="text-muted small">{{ __('Customer') }}</strong>
+                            <p class="mb-0 mt-1">
+                                <span class="icon icon-xs icon-buildings me-1"></span>
+                                {{ $project->company->name ?? __('Not set') }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="mb-1">
+                            <strong class="text-muted small">{{ __('Contact') }}</strong>
+                            <p class="mb-0 mt-1">
+                                <span class="icon icon-xs icon-user me-1"></span>
+                                {{ $project->customer->name ?? __('Not set') }}
+                            </p>
+                        </div>
+                    </div>
+
                     <div class="col-12">
                         <div class="mb-1">
                             <div class="d-flex justify-content-between align-items-center mb-1">
@@ -69,9 +89,6 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        @php
-                            $timeProgress = $project->getCombinedTimeProgress();
-                        @endphp
                         <div class="mb-1">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <strong class="text-muted small">{{ __('Time Progress') }}</strong>
@@ -94,28 +111,28 @@
                         </div>
                     </div>
 
-
-
-                    <div class="col-12">
-                        <div class="mt-2">
-                            <h2>{{ __('Recent Offer') }}</h2>
-                            @foreach($recentOffer as $offer)
-                                <div class="card">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h3>{{ $offer->name }}</h3>
-                                            <small class="text-muted">{{ $offer->customer->company->name }} •
-                                                {{ Str::ucfirst($offer->status) }}</small>
-                                        </div>
-                                        <div class="text-end">
-                                            <strong>{{ $offer->getFormattedTotal() }}</strong>
-                                            <small class="text-muted d-block">{{ $offer->getTotalHours() }}</small>
+                    @if($recentOffer->count() > 0)
+                        <div class="col-12">
+                            <div class="mt-2">
+                                <h2 class="card-title">{{ __('Recent Offer') }}</h2>
+                                @foreach($recentOffer as $offer)
+                                    <div class="card bg-secondary-subtle">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h3>{{ $offer->name }}</h3>
+                                                <small class="text-muted">{{ $offer->customer->company->name }} •
+                                                    {{ Str::ucfirst($offer->status) }}</small>
+                                            </div>
+                                            <div class="text-end">
+                                                <strong>{{ $offer->getFormattedTotal() }}</strong>
+                                                <small class="text-muted d-block">{{ $offer->getTotalHours() }}</small>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -123,30 +140,34 @@
     <div class="col-6">
         <div class="card h-100">
             <div class="card-body">
-                <h2 class="card-title">Quick actions</h2>
+                <h2 class="card-title">{{ __('Quick actions') }}</h2>
                 <div class="d-grid gap-2">
-                    <x-button-primary btnType="dark" classes="w-100">
-                        <i data-feather="edit" class="me-2" style="width: 16px; height: 16px;"></i>
+                    <x-button-primary btnType="dark" classes="w-100" isLink="true"
+                        href="{{ route('admin.projects.edit', $project->id) }}">
+                        <span class="icon icon-sm icon-edit me-2"></span>
                         {{ __('Edit project details') }}
                     </x-button-primary>
                     <x-button-primary btnType="outline-secondary"
                         classes="d-flex align-items-center justify-content-center"
-                        furtherActions="data-bs-toggle=modal data-bs-target=#logTimeModal">
+                        furtherActions="type=button data-bs-toggle=modal data-bs-target=#confirm-project-complete">
                         {{ __('Mark as complete') }}
                     </x-button-primary>
                     <x-button-primary btnType="outline-secondary"
                         classes="d-flex align-items-center justify-content-center"
-                        furtherActions="data-bs-toggle=modal data-bs-target=#logTimeModal">
+                        furtherActions="type=button data-bs-toggle=modal data-bs-target=#confirm-project-hold">
                         {{ __('Put on Hold') }}
                     </x-button-primary>
                     <x-button-primary btnType="outline-danger"
                         classes="d-flex align-items-center justify-content-center"
-                        furtherActions="data-bs-toggle=modal data-bs-target=#logTimeModal">
-                        <i data-feather="trash-2" class="me-2" style="width: 16px; height: 16px;"></i>
+                        furtherActions="data-bs-toggle=modal data-bs-target=#confirm-project-delete">
+                        <span class="icon icon-sm icon-trash me-2"></span>
                         {{ __('Archive project') }}
                     </x-button-primary>
                 </div>
             </div>
         </div>
     </div>
+    @include('admin.project.modals.project-complete')
+    @include('admin.project.modals.project-on-hold')
+    @include('admin.project.modals.delete-project')
 </div>

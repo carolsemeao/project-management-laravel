@@ -128,13 +128,6 @@
 	}
 }
 
-.sidebar-icon {
-	width: 20px;
-	height: 20px;
-	flex-shrink: 0;
-	transition: all 0.2s ease-in-out;
-}
-
 .feather {
 	stroke-width: 1.5px;
 }
@@ -180,7 +173,7 @@
 				margin: 0 !important;
 			}
 
-			span {
+			.sidebar-text {
 				max-width: 0;
 				margin: 0 !important;
 				opacity: 0;

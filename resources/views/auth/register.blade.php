@@ -33,7 +33,10 @@
                                         <div class="form-group mb-3">
                                             <label for="password" class="form-label">Passwort</label>
                                             <input class="form-control" type="password" required="" id="password"
-                                                name="password" placeholder="Passwort eingeben">
+                                                name="password" placeholder="Passwort eingeben" minlength="8">
+                                            @error('password')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
                                         </div>
 
                                         <div class="form-group mb-3">
