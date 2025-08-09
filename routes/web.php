@@ -40,6 +40,33 @@ Route::get('/dashboard', function () {
     $projectStatusChart = $charts['projectStatusChart'];
     $issueStatusBarChart = $charts['issueStatusBarChart'];
 
+    // Get user issues with custom priority sorting
+    $userIssues = $user->assignedIssues()
+        ->with(['priority'])
+        ->where('status_id', '!=', 6)
+        ->get()
+        ->sortBy(function ($issue) {
+            // Define priority order: immediate=1, urgent=2, high=3, everything else=4
+            $priorityOrder = [
+                'immediate' => 1,
+                'urgent' => 2, 
+                'high' => 3
+            ];
+            
+            $priorityName = $issue->priority ? $issue->priority->name : null;
+            $priorityWeight = $priorityOrder[$priorityName] ?? 4;
+            
+            // Combine priority weight with due date for secondary sorting
+            // Format: priority weight + due date (or far future if no due date)
+            $dueDate = $issue->issue_due_date ? $issue->issue_due_date->format('Y-m-d') : '9999-12-31';
+            
+            return $priorityWeight . '_' . $dueDate;
+        })
+        ->take(5);
+
+    // Get user projects
+    $userProjects = $user->projects()->get();
+
     // Get dynamic issue counts
     $totalIssues = $user->assignedIssues()->count() + $user->createdIssues()->count();
     
@@ -60,7 +87,7 @@ Route::get('/dashboard', function () {
     // Get total logged time for current user across all projects
     $totalLoggedTime = $user->getFormattedTotalLoggedTime();
     
-    return view('admin.index', compact('dateMessage', 'totalIssues', 'openIssues', 'totalLoggedTime', 'activeProjects', 'totalProjects', 'projectStatusChart', 'issueStatusBarChart', 'completedProjectsInMonth'));
+    return view('admin.index', compact('dateMessage', 'totalIssues', 'openIssues', 'totalLoggedTime', 'activeProjects', 'totalProjects', 'projectStatusChart', 'issueStatusBarChart', 'completedProjectsInMonth', 'userIssues', 'userProjects'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

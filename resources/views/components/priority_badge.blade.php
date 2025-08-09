@@ -3,6 +3,7 @@
 @php
     $badgeClass = match ($priority) {
         'low' => 'text-success',
+        'normal' => 'text-dark',
         'high' => 'text-warning',
         'urgent' => 'text-danger',
         'immediate' => 'text-danger',

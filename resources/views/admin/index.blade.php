@@ -67,30 +67,59 @@
         </div>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Project Status Chart
-        const projectStatusCtx = document.getElementById('projectStatusChart');
-        if (projectStatusCtx) {
-            const projectStatusChart = new Chart(projectStatusCtx, @json($projectStatusChart));
-            
-            // Reset animation delay after initial animation completes
-            setTimeout(() => {
-                projectStatusChart.options.animation.delay = undefined;
-            }, 1000); // Wait for initial animation + delay to complete
-        }
-
-        // Issue Status Bar Chart
-        const issueStatusCtx = document.getElementById('issueStatusBarChart');
-        if (issueStatusCtx) {
-            const issueStatusChart = new Chart(issueStatusCtx, @json($issueStatusBarChart));
-            
-            // Reset animation delay after initial animation completes
-            setTimeout(() => {
-                issueStatusChart.options.animation.delay = undefined;
-            }, 1000); // Wait for initial animation + delay to complete
-        }
-    });
-    </script>
-
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <div>
+                            <h5 class="card-title mb-1">{{ __('Issues') }}</h5>
+                            <p class="text-muted mb-0">{{ __('Open issues across all projects') }}</p>
+                        </div>
+                        <div>
+                            <a href="{{ route('admin.issues') }}" class="btn btn-link text-decoration-none d-flex align-items-center text-dark small p-0">
+                                {{ __('View All') }}
+                            </a>
+                        </div>
+                    </div>
+                    @include('admin.issue.parts.issues-teaser')
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">{{ __('Active Projects') }}</h5>
+                    <p class="text-muted mb-0">{{ __('Current projects in progress') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Project Status Chart
+            const projectStatusCtx = document.getElementById('projectStatusChart');
+            if (projectStatusCtx) {
+                const projectStatusChart = new Chart(projectStatusCtx, @json($projectStatusChart));
+                
+                // Reset animation delay after initial animation completes
+                setTimeout(() => {
+                    projectStatusChart.options.animation.delay = undefined;
+                }, 1000); // Wait for initial animation + delay to complete
+            }
+
+            // Issue Status Bar Chart
+            const issueStatusCtx = document.getElementById('issueStatusBarChart');
+            if (issueStatusCtx) {
+                const issueStatusChart = new Chart(issueStatusCtx, @json($issueStatusBarChart));
+                
+                // Reset animation delay after initial animation completes
+                setTimeout(() => {
+                    issueStatusChart.options.animation.delay = undefined;
+                }, 1000); // Wait for initial animation + delay to complete
+            }
+        });
+    </script>
+@endpush

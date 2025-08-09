@@ -63,6 +63,11 @@ class Issue extends Model
         return $this->belongsTo(Priority::class);
     }
 
+    public function getFormattedPriority()
+    {
+        return Str::title(str_replace('_', ' ', $this->priority->name));
+    }
+
     /**
      * Get all time entries for this issue
      */
