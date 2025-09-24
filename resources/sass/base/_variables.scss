@@ -1,24 +1,24 @@
 @use './fonts';
 
 // Body
-$base-color: #0e2148;
-$body-bg: #f8fafc;
-$primary: #7965c1;
-$primary-color: #7965c1;
-$primary-hover: #483aa0;
-$accent: #e3d095;
-$accent-hover: #caaf6d;
+$base-color: #0e2148 !default;
+$body-bg: #f8fafc !default;
+$primary: #7965c1 !default;
+$primary-color: #7965c1 !default;
+$primary-hover: #483aa0 !default;
+$accent: #e3d095 !default;
+$accent-hover: #caaf6d !default;
 
 // Typography
-$font-family-sans-serif: fonts.$font-family-sans-serif;
-$font-family-base: fonts.$font-family-sans-serif;
-$font-size-base: 1rem;
-$line-height-base: 1.2;
+$font-family-sans-serif: fonts.$font-family-sans-serif !default;
+$font-family-base: fonts.$font-family-sans-serif !default;
+$font-size-base: 1rem !default;
+$line-height-base: 1.2 !default;
 
 // Buttons
-$btn-close-color: #fff;
-$border-color: #dee2e6;
-$btn-color: #fff;
-$btn-hover-color: #fff;
-$btn-outline-color: #007bff;
-$btn-outline-hover-color: #fff;
+$btn-close-color: #fff !default;
+$border-color: #dee2e6 !default;
+$btn-color: #fff !default;
+$btn-hover-color: #fff !default;
+$btn-outline-color: #007bff !default;
+$btn-outline-hover-color: #fff !default;
