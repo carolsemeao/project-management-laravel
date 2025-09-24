@@ -1,0 +1,39 @@
+.status {
+	background-color: var(--_status-bg, transparent);
+	border: 1px solid var(--_status-border, transparent);
+
+	&--overdue {
+		--_status-bg: var(--bs-danger-bg-subtle);
+		--_status-border: var(--bs-danger-border-subtle);
+	}
+
+	&--due-soon {
+		--_status-bg: var(--bs-warning-bg-subtle);
+		--_status-border: var(--bs-warning-border-subtle);
+	}
+}
+
+.status-list {
+	margin-bottom: 0.75rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.status-circle {
+	@extend .status;
+	display: inline-block;
+	width: 0.75em;
+	height: 0.75em;
+	border-radius: 50%;
+
+	&--overdue {
+		@extend .status--overdue;
+	}
+
+	&--due-soon {
+		@extend .status--due-soon;
+	}
+}

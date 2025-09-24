@@ -16,9 +16,9 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
-                                    <div class="flex-grow-1">
-                                        <h1 class="fw-bold m-0">@yield('page_title')</h1>
-                                        <p class="text-muted m-0">@yield('page_subtitle')</p>
+                                    <div class="page-title">
+                                        <h1>@yield('page_title')</h1>
+                                        <p>@yield('page_subtitle')</p>
                                     </div>
                                     @yield('header_actions')
                                 </div>
@@ -36,17 +36,7 @@
     </div>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    @if(Session::has('message'))
-        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-            <div class="toast-body bg-{{ Session::get('alert-type', 'primary') }} text-white">
-                {{ Session::get('message') }}
-                <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
-        </div>
-    @endif
-</div>
+@include('components.toast')
 
 @stack('scripts')
 @include('admin.foot')

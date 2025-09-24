@@ -149,17 +149,17 @@
                     </x-button-primary>
                     <x-button-primary btnType="outline-secondary"
                         classes="d-flex align-items-center justify-content-center"
-                        furtherActions="type=button data-bs-toggle=modal data-bs-target=#confirm-project-complete">
+                        furtherActions="type=button onclick=document.getElementById('confirm-project-complete').showModal()">
                         {{ __('Mark as complete') }}
                     </x-button-primary>
                     <x-button-primary btnType="outline-secondary"
                         classes="d-flex align-items-center justify-content-center"
-                        furtherActions="type=button data-bs-toggle=modal data-bs-target=#confirm-project-hold">
+                        furtherActions="type=button onclick=document.getElementById('confirm-project-hold').showModal()">
                         {{ __('Put on Hold') }}
                     </x-button-primary>
                     <x-button-primary btnType="outline-danger"
                         classes="d-flex align-items-center justify-content-center"
-                        furtherActions="data-bs-toggle=modal data-bs-target=#confirm-project-delete">
+                        furtherActions="onclick=document.getElementById('confirm-project-delete').showModal()">
                         <span class="icon icon-sm icon-trash me-2"></span>
                         {{ __('Archive project') }}
                     </x-button-primary>

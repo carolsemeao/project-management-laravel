@@ -1,0 +1,18 @@
+.badge {
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+	padding-left: 0.5rem;
+	font-size: 0.7875rem;
+	border-radius: 0.25rem;
+	background: var(--_badge-background, transparent);
+	border: 1px solid var(--_badge-border-color, var(--bs-border-color));
+	font-weight: 500;
+	color: var(--_badge-color, var(--bs-body-color));
+
+	&--icon {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		font-weight: 600;
+	}
+}

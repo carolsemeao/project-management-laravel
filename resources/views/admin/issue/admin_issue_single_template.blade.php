@@ -26,15 +26,5 @@
     </div>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    @if(Session::has('message'))
-        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-            <div class="toast-body bg-{{ Session::get('alert-type', 'primary') }} text-white">
-                {{ Session::get('message') }}
-                <button type="button" class="btn-close btn-close-white float-end" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
-        </div>
-    @endif
-</div>
+@include('components.toast')
 @include('admin.foot')

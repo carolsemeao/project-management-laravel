@@ -96,12 +96,24 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 
-	// Toast notifications - only show notification toasts, not status update toasts
+	// Toast notifications - replaced Bootstrap with custom implementation
 	const toastElements = document.querySelectorAll('.toast');
 	if (toastElements.length > 0) {
 		toastElements.forEach(function (toastElement) {
-			const toast = new bootstrap.Toast(toastElement);
-			toast.show();
+			// Show toast and auto-hide after delay
+			toastElement.style.display = 'block';
+			const delay = toastElement.dataset.delay || 5000;
+			setTimeout(() => {
+				toastElement.style.display = 'none';
+			}, delay);
+
+			// Handle close button
+			const closeBtn = toastElement.querySelector('.toast-close');
+			if (closeBtn) {
+				closeBtn.addEventListener('click', () => {
+					toastElement.style.display = 'none';
+				});
+			}
 		});
 	}
 });

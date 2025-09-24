@@ -1,0 +1,14 @@
+.button {
+	&--link {
+		text-decoration: none;
+		display: flex;
+		align-items: center;
+		padding: 0;
+		font-size: 0.875em;
+		color: rgba(var(--bs-dark-rgb), var(--bs-text-opacity));
+
+		&:is(:hover, :focus, :active) {
+			color: var(--bs-dark);
+		}
+	}
+}

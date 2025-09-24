@@ -11,3 +11,9 @@
 	}
 	background-color: currentColor;
 }
+
+@mixin make-grid($width: 12em, $row-gap: 1.5rem) {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax($width, 1fr));
+	gap: $row-gap 1.5rem;
+}

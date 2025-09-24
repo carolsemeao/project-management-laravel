@@ -1,23 +1,21 @@
-// Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
+@use 'abstracts/mixins';
 
-// Variables
-@import 'variables';
+@use 'base/typography';
+@use 'base/layout';
 
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';
+@use 'icons';
 
-// Icons
-@import 'mixins';
-@import 'icons';
+@use 'components/issue-card';
+@use 'components/status';
+@use 'components/badge';
+@use 'components/card';
+@use 'components/chart';
+@use 'components/button';
 
-// other files
-@import 'sidebar';
-@import 'card';
-@import 'avatar';
-@import 'badge';
-@import 'form';
+@use 'sidebar';
+@use 'avatar';
+@use 'form';
 
-@view-transition {
-	navigation: auto;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,24 +1,32 @@
 <div class="mt-4">
+    <div class="status-list">
+        <div>
+            <span class="status-circle status-circle--overdue"></span>
+            {{ __('Overdue') }}
+        </div>
+        <div>
+            <span class="status-circle status-circle--due-soon"></span>
+            {{ __('Due soon') }}
+        </div>
+    </div>
+    
     @foreach ($userIssues as $issue)
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">{{ $issue->issue_title }}</h5>
-                <p class="card-text text-muted">{{ $issue->issue_description }}</p>
-
-                <div class="text-muted small">
-                    <span
-                        class="d-block mb-1 @if ($issue->issue_due_date && $issue->issue_due_date->isPast()) text-danger @elseif($issue->issue_due_date && $issue->issue_due_date->isToday()) text-warning @endif">
-                        <span class="icon icon-xs icon-calendar me-1"></span>
-                        {{$issue->issue_due_date ? $issue->issue_due_date->format('d/m/Y') : __('No due date')}}
-                    </span>
+        <a href="{{ route('admin.issues.show', $issue->id) }}"
+            class="issue-card @if ($issue->isOverdue())status status--overdue @elseif($issue->isDueSoon())status status--due-soon @endif">
+            <div class="issue-card__body">
+                <span
+                    class="issue-card__body-date @if ($issue->isOverdue())issue-card__body-date--overdue @elseif($issue->isDueSoon())issue-card__body-date--due-soon @endif">
+                    <span class="icon icon-xs icon-calendar me-1"></span>
+                    {{$issue->issue_due_date ? $issue->issue_due_date->format('d/m/Y') : __('No due date')}}
+                </span>
+                <h3 class="issue-card__body-title">{{ $issue->issue_title }}</h3>
+                <p class="issue-card__body-description">{{ $issue->issue_description }}</p>
+                <div class="issue-card__body-tags">
                     <x-badge :label="$issue->getFormattedStatus()" />
-                </div>
-
-                <div class="d-flex align-items-center gap-1">
                     <x-badge :label="$issue->project->name" />
                     <x-priority_badge :priority="$issue->priority->name" />
                 </div>
             </div>
-        </div>
+        </a>
     @endforeach
 </div>

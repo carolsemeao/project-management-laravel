@@ -253,11 +253,11 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">{{ __('Quick Actions') }}</h5>
-                    <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center w-100 mb-2 mt-3" furtherActions="data-bs-toggle=modal data-bs-target=#confirm-project-complete">
+                    <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center w-100 mb-2 mt-3" furtherActions="onclick=document.getElementById('confirm-project-complete').showModal()">
                         <span class="icon icon-sm icon-target me-2"></span>
                         {{ __('Mark as completed') }}
                     </x-button-primary>
-                    <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center w-100" furtherActions="data-bs-toggle=modal data-bs-target=#confirm-project-hold">
+                    <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center w-100" furtherActions="onclick=document.getElementById('confirm-project-hold').showModal()">
                         <span class="icon icon-sm icon-settings me-2"></span>
                         {{ __('Put on hold') }}
                     </x-button-primary>

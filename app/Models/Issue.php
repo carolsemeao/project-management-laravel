@@ -68,6 +68,20 @@ class Issue extends Model
         return Str::title(str_replace('_', ' ', $this->priority->name));
     }
 
+    public function isOverdue()
+    {
+        return $this->issue_due_date && $this->issue_due_date->isPast();
+    }
+
+    public function isDueSoon()
+    {
+        if ($this->issue_due_date) {
+            $daysUntilDue = now()->diffInDays($this->issue_due_date, false);
+            return $daysUntilDue >= 0 && $daysUntilDue <= 3;
+        }
+        return false;
+    }
+
     /**
      * Get all time entries for this issue
      */

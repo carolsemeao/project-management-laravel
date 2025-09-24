@@ -1,3 +1,5 @@
+@use './abstracts/mixins';
+
 .icon {
 	display: inline-block;
 	width: 20px;
@@ -26,122 +28,122 @@
 	}
 
 	&.icon-alert-circle:before {
-		@include icon('alert-circle');
+		@include mixins.icon('alert-circle');
 	}
 
 	&.icon-alert-triangle:before {
-		@include icon('alert-triangle');
+		@include mixins.icon('alert-triangle');
 	}
 
 	&.icon-arrow-left:before {
-		@include icon('arrow-left');
+		@include mixins.icon('arrow-left');
 	}
 
 	&.icon-arrow-right:before {
-		@include icon('arrow-right');
+		@include mixins.icon('arrow-right');
 	}
 
 	&.icon-bug:before {
-		@include icon('bug');
+		@include mixins.icon('bug');
 	}
 
 	&.icon-buildings:before {
-		@include icon('buildings');
+		@include mixins.icon('buildings');
 	}
 
 	&.icon-calendar:before {
-		@include icon('calendar');
+		@include mixins.icon('calendar');
 	}
 
 	&.icon-chevron-down:before {
-		@include icon('chevron-down');
+		@include mixins.icon('chevron-down');
 	}
 
 	&.icon-clock:before {
-		@include icon('clock');
+		@include mixins.icon('clock');
 	}
 
 	&.icon-dollar-sign:before {
-		@include icon('dollar-sign');
+		@include mixins.icon('dollar-sign');
 	}
 
 	&.icon-edit:before {
-		@include icon('edit');
+		@include mixins.icon('edit');
 	}
 
 	&.icon-file-text:before {
-		@include icon('file-text');
+		@include mixins.icon('file-text');
 	}
 
 	&.icon-folder:before {
-		@include icon('folder');
+		@include mixins.icon('folder');
 	}
 
 	&.icon-git-branch:before {
-		@include icon('git-branch');
+		@include mixins.icon('git-branch');
 	}
 
 	&.icon-heart:before {
-		@include icon('heart');
+		@include mixins.icon('heart');
 	}
 
 	&.icon-home:before {
-		@include icon('home');
+		@include mixins.icon('home');
 	}
 
 	&.icon-log-out:before {
-		@include icon('log-out');
+		@include mixins.icon('log-out');
 	}
 
 	&.icon-mail:before {
-		@include icon('mail');
+		@include mixins.icon('mail');
 	}
 
 	&.icon-menu:before {
-		@include icon('menu');
+		@include mixins.icon('menu');
 	}
 
 	&.icon-phone:before {
-		@include icon('phone');
+		@include mixins.icon('phone');
 	}
 
 	&.icon-plus:before {
-		@include icon('plus');
+		@include mixins.icon('plus');
 	}
 
 	&.icon-save:before {
-		@include icon('save');
+		@include mixins.icon('save');
 	}
 
 	&.icon-search:before {
-		@include icon('search');
+		@include mixins.icon('search');
 	}
 
 	&.icon-settings:before {
-		@include icon('settings');
+		@include mixins.icon('settings');
 	}
 
 	&.icon-target:before {
-		@include icon('target');
+		@include mixins.icon('target');
 	}
 
 	&.icon-trash:before {
-		@include icon('trash-2');
+		@include mixins.icon('trash-2');
 	}
 
 	&.icon-trending-up:before {
-		@include icon('trending-up');
+		@include mixins.icon('trending-up');
 	}
 
 	&.icon-user:before {
-		@include icon('user');
+		@include mixins.icon('user');
 	}
 
 	&.icon-users:before {
-		@include icon('users');
+		@include mixins.icon('users');
 	}
 
 	&.icon-x:before {
-		@include icon('x');
+		@include mixins.icon('x');
 	}
 }

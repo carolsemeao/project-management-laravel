@@ -1,0 +1,13 @@
+@use '../abstracts/mixins';
+
+.card-grid {
+	margin-bottom: 2rem;
+
+	&--lg {
+		@include mixins.make-grid($width: 33em);
+	}
+
+	&--sm {
+		@include mixins.make-grid($width: 19em);
+	}
+}

@@ -1,7 +1,3 @@
-import 'bootstrap';
-import * as bootstrap from 'bootstrap';
-window.bootstrap = bootstrap;
-
 /**
  * Load jQuery globally for libraries that depend on it
  */

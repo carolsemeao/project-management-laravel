@@ -1,0 +1,68 @@
+@use '../base/variables';
+
+.issue-card {
+	text-decoration: none;
+
+	&:not(:last-child) {
+		margin-bottom: 0.875rem;
+	}
+
+	&__body {
+		&-date {
+			display: block;
+			white-space: nowrap;
+			font-weight: 500;
+			font-size: 0.75rem;
+			margin-bottom: 1.25em;
+
+			&--overdue {
+				color: variables.$accent-hover;
+			}
+
+			&--due-soon {
+				color: variables.$accent;
+			}
+		}
+
+		&-title {
+			font-size: 1.125rem;
+			font-weight: 600;
+			margin-bottom: 0.25em;
+		}
+
+		&-description {
+			margin-bottom: 1em;
+			color: variables.$base-color;
+		}
+
+		&-tags {
+			display: flex;
+			align-items: center;
+			gap: 0.5em;
+		}
+	}
+
+	&.status--overdue {
+		.badge {
+			--_badge-background: variables.$accent-hover;
+			--_badge-border-color: variables.$accent-hover;
+			--_badge-color: variables.$accent-hover;
+		}
+
+		.issue-card__body-title {
+			color: variables.$accent-hover;
+		}
+	}
+
+	&.status--due-soon {
+		.badge {
+			--_badge-background: variables.$accent;
+			--_badge-border-color: variables.$accent;
+			--_badge-color: variables.$accent;
+		}
+
+		.issue-card__body-title {
+			color: variables.$accent;
+		}
+	}
+}

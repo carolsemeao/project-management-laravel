@@ -4,9 +4,14 @@
 @section('back_to_route', route('admin.issues'))
 @section('back_to_text', __('Back to Issues'))
 @section('header_actions')
+    <div class="join">
+        <button class="btn join-item">Button</button>
+        <button class="btn join-item">Button</button>
+        <button class="btn join-item">Button</button>
+    </div>
     <div class="btn-group">
         <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center"
-            furtherActions="data-bs-toggle=modal data-bs-target=#logTimeModal type=button">
+            furtherActions="onclick=document.getElementById('logTimeModal').showModal() type=button">
             <span class="icon icon-sm icon-plus me-2"></span>
             {{ __('Log Time') }}
         </x-button-primary>
