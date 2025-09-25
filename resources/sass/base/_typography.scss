@@ -44,14 +44,6 @@ p:not(:last-child) {
 	margin-bottom: 1em;
 }
 
-a {
-	color: variables.$primary;
-}
-
 .page-title {
 	flex-grow: 1;
-
-	p {
-		color: variables.$base-color;
-	}
 }

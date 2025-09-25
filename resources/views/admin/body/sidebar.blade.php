@@ -1,99 +1,127 @@
-<div class="d-flex flex-column h-100">
-    <div class="sidebar-header px-3 py-4 border-bottom border-secondary flex-shrink-0">
-        <div class="d-flex align-items-center justify-content-between text-white">
-            <div class="d-flex align-items-center">
-                <span class="icon icon-clock sidebar-icon"></span>
-                <span class="sidebar-text ms-2">Project Manager</span>
-            </div>
-            <!-- Close button for mobile only -->
-            <button class="sidebar-close-btn d-lg-none" id="sidebarClose" type="button">
-                <span class="icon icon-x"></span>
+<aside class="sidebar bg-base-100 w-80">
+    <div class="sidebar-content p-3 md:p-0 flex-1">
+        <div class="sidebar-header hidden md:block mb-5">
+            [Logo goes here]
+        </div>
+        <div class="join block md:hidden mb-5">
+            <input type="text" placeholder="{{ __('Search projects, issues..') }}" name="search" id="search"
+                class="input join-item w-60 md:w-80" />
+            <button class="btn join-item">
+                <span class="icon icon-sm icon-search"></span>
             </button>
         </div>
+        <nav class="sidebar-nav p-0 md:p-3">
+            <ul class="menu">
+                <li>
+                    <a href="{{ route('dashboard') }}" title="Dashboard"
+                        class="{{Route::currentRouteName() == 'dashboard' ? ' menu-active' : ''}}">
+                        <span class="icon icon-home sidebar-icon"></span>
+                        {{ __('Dashboard') }}
+                    </a>
+                </li>
+
+                <li>
+                    <span class="menu-title">
+                        <span class="icon icon-folder sidebar-icon"></span>
+                        {{ __('Projects') }}
+                    </span>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="{{ route('admin.projects') }}" title="All Projects"
+                                class="{{Route::currentRouteName() == 'admin.projects' ? 'menu-active' : ''}}">
+                                {{ __('All Projects') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.projects.create') }}" title="Create New Project"
+                                class="{{Route::currentRouteName() == 'admin.projects.create' ? 'menu-active' : ''}}">
+                                {{ __('Create New Project') }}
+                            </a>
+                        </li>
+                    </ul>
+
+                </li>
+                <li>
+                    <span class="menu-title">
+                        <span class="icon icon-bug sidebar-icon"></span>
+                        {{ __('Issues') }}
+                    </span>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="{{ route('admin.issues') }}" title="All Issues"
+                                class="{{Route::currentRouteName() == 'admin.issues' ? 'menu-active' : ''}}">
+                                {{ __('All Issues') }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.issues.create') }}" title="Create New Issue"
+                                class="{{Route::currentRouteName() == 'admin.issues.create' ? 'menu-active' : ''}}">
+                                {{ __('Create New Issue') }}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <div class="divider my-1"></div>
+
+                <li>
+                    <a href="#" title="Customers">
+                        <span class="icon icon-users sidebar-icon"></span>
+                        {{ __('Customers') }}
+                    </a>
+                </li>
+                <li>
+                    <a href="#" title="Offers">
+                        <span class="icon icon-file-text sidebar-icon"></span>
+                        {{ __('Offers') }}
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
-
-    <nav class="sidebar-nav flex-grow-1 px-3 py-3 overflow-y-auto">
-        <ul class="nav flex-column gap-1">
-            <li class="nav-item">
-                <a href="{{ route('dashboard') }}" title="Dashboard"
-                    class="nav-link d-flex align-items-center py-3 text-white text-decoration-none{{Route::currentRouteName() == 'dashboard' ? ' active' : ''}}">
-                    <span class="icon icon-home sidebar-icon"></span>
-                    <span class="sidebar-text ms-3">{{ __('Dashboard') }}</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="{{ route('admin.projects') }}" title="Projects"
-                    class="nav-link d-flex align-items-center py-3 text-white text-decoration-none{{Route::currentRouteName() == 'admin.projects' || Route::currentRouteName() == 'admin.projects.show' || Route::currentRouteName() == 'admin.projects.create' || Route::currentRouteName() == 'admin.projects.edit' ? ' active' : ''}}">
-                    <span class="icon icon-folder sidebar-icon"></span>
-                    <span class="sidebar-text ms-3">{{ __('Projects') }}</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="{{ route('admin.issues') }}" title="Issues"
-                    class="nav-link d-flex align-items-center py-3 text-white text-decoration-none{{Route::currentRouteName() == 'admin.issues' || Route::currentRouteName() == 'admin.issues.show' || Route::currentRouteName() == 'admin.issues.create' || Route::currentRouteName() == 'admin.issues.edit' ? ' active' : ''}}">
-                    <span class="icon icon-bug sidebar-icon"></span>
-                    <span class="sidebar-text ms-3">{{ __('Issues') }}</span>
-                </a>
-            </li>
-
-            <hr class="my-2 border-secondary">
-
-            <li class="nav-item">
-                <a href="#" title="Customers"
-                    class="nav-link d-flex align-items-center py-3 text-white text-decoration-none">
-                    <span class="icon icon-users sidebar-icon"></span>
-                    <span class="sidebar-text ms-3">{{ __('Customers') }}</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" title="Offers"
-                    class="nav-link d-flex align-items-center py-3 text-white text-decoration-none">
-                    <span class="icon icon-file-text sidebar-icon"></span>
-                    <span class="sidebar-text ms-3">{{ __('Offers') }}</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 
     @php
         $id = Auth::user()->id;
         $profileData = App\Models\User::find($id);
     @endphp
 
-    <div class="sidebar-footer py-3 px-3 border-top border-secondary flex-shrink-0">
-        <div class="dropdown dropup">
-            <button class="btn p-0 d-flex align-items-center gap-2 border-0 bg-transparent w-100 text-start text-white"
-                data-bs-toggle="dropdown">
-                <img src="{{ (!empty($profileData->photo)) ? url('upload/user_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
-                    alt="User" class="rounded-circle avatar-sm">
-                <div class="d-flex flex-column align-items-start sidebar-text overflow-hidden">
-                    <small class="fw-medium mb-0 text-truncate w-100">{{ $profileData->name ?? 'User' }}</small>
+    <div class="sidebar-footer">
+        <div class="dropdown dropdown-top">
+            <div tabindex="0" role="button" class="dropdown-trigger">
+                <div class="avatar">
+                    <div class="w-8 rounded-full">
+                        <img src="{{ (!empty($profileData->photo)) ? url('upload/user_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
+                            alt="User">
+                    </div>
                 </div>
-                <span class="icon icon-sm icon-chevron-down sidebar-text ms-auto"></span>
-            </button>
-
-            <div class="dropdown-menu dropdown-menu-end shadow border-0 w-100">
-                <a href="{{ route('admin.profile') }}"
-                    class="dropdown-item d-flex align-items-center gap-2 py-2 text-dark">
-                    <span class="icon icon-sm icon-user"></span>
-                    My Account
-                </a>
-
-                <a href="#" class="dropdown-item d-flex align-items-center gap-2 py-2 text-dark">
-                    <span class="icon icon-sm icon-settings"></span>
-                    Settings
-                </a>
-
-                <div class="dropdown-divider"></div>
-
-                <a href="{{ route('admin.logout') }}"
-                    class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger">
-                    <span class="icon icon-sm icon-log-out"></span>
-                    Logout
-                </a>
+                <small class="font-medium mb-0 overflow-hidden text-ellipsis">{{ $profileData->name ?? 'User' }}</small>
+                <span class="icon icon-sm icon-chevron-down sidebar-text"></span>
             </div>
+            <ul tabindex="0" class="dropdown-content menu">
+                <li>
+                    <a href="{{ route('admin.profile') }}">
+                        <span class="icon icon-sm icon-user"></span>
+                        {{ __('My Account') }}
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="icon icon-sm icon-settings"></span>
+                        {{ __('Settings') }}
+                    </a>
+                </li>
+
+                <div class="divider my-0"></div>
+
+                <li>
+                    <a href="{{ route('admin.logout') }}">
+                        <span class="icon icon-sm icon-log-out"></span>
+                        {{ __('Logout') }}
+                    </a>
+                </li>
+            </ul>
         </div>
+        @include('components.theme-switcher')
     </div>
-</div>
+</aside>

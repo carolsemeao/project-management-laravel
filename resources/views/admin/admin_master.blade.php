@@ -1,40 +1,36 @@
 @include('admin.head')
-<div class="container-fluid p-0 layout-container">
-    <!-- Mobile overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="row g-0 h-100">
-        <div class="col-auto sidebar bg-dark" id="sidebar">
-            @include('admin.body.sidebar')
-        </div>
+<div class="drawer lg:drawer-open">
+    <input id="drawer" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content flex flex-col items-center justify-center">
+        @include('admin.body.header')
 
-        <div class="col main-content d-flex flex-column" id="mainContent">
-            @include('admin.body.header')
+        <main class="w-full layout-container">
 
-            <div class="p-4 flex-grow-1">
-                <div class="content-page">
+            <div class="main-content" id="mainContent">
+                <div class="content-container">
                     <div class="content">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
-                                    <div class="page-title">
-                                        <h1>@yield('page_title')</h1>
-                                        <p>@yield('page_subtitle')</p>
-                                    </div>
-                                    @yield('header_actions')
-                                </div>
+                        <div class="content__header">
+                            <div class="page-title">
+                                <h1>@yield('page_title')</h1>
+                                <p>@yield('page_subtitle')</p>
                             </div>
+                            @yield('header_actions')
                         </div>
                         @yield('maincontent')
                     </div>
+                    <div class="mt-auto">
+                        @include('admin.body.footer')
+                    </div>
                 </div>
             </div>
-
-            <div class="mt-auto">
-                @include('admin.body.footer')
-            </div>
-        </div>
+        </main>
+    </div>
+    <div class="drawer-side z-40">
+        <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+        @include('admin.body.sidebar')
     </div>
 </div>
+
 
 @include('components.toast')
 

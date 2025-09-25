@@ -19,9 +19,5 @@ export default {
 		},
 	},
 
-	daisyui: {
-		themes: ['light', 'dark', 'valentine'],
-	},
-
-	plugins: [forms, require('daisyui')],
+	plugins: [forms],
 };

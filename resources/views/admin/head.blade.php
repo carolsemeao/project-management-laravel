@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="valentine">
 
     <head>
         <meta charset="utf-8">
@@ -8,7 +8,7 @@
         <title>@yield('title')</title>
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+            @vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
         @endif
     </head>
 
