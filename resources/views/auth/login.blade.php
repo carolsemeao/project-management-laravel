@@ -1,81 +1,85 @@
-@extends('auth.body.header')
+@extends('auth.auth_master')
 @section('title', 'Login')
 @section('content')
-    <!-- Begin page -->
-    <div class="account-page vh-100">
-        <div class="container-fluid p-0 h-100">
-            <div class="row align-items-center g-0 h-100">
-                <div class="col-xl-6">
-                    <div class="row">
-                        <div class="col-md-7 mx-auto">
-                            <div class="mb-0 border-0 p-md-5 p-lg-0 p-4">
-                                <div class="mb-4 p-0">
-                                    <a href="index.html" class="auth-logo h2">
-                                        <i class="bi bi-alarm"></i> <!-- TODO: Logo here -->
-                                    </a>
-                                </div>
+    <main class="main-content max-w-[100rem] w-full mx-auto py-15 grow flex items-center" id="mainContent">
+        <div class="content grid grid-cols-1 md:grid-cols-2 gap-x-5 items-center w-full">
+            <div>
+                <h1 class="text-3xl font-bold">{{ __('Anmelden') }}</h1>
+                <form method="POST" action="{{ route('login') }}" class="my-4">
+                    @csrf
 
-                                <div class="pt-0">
-                                    <form method="POST" action="{{ route('login') }}" class="my-4">
-                                        @csrf
-
-                                        @if(session('error'))
-                                            <div class="alert alert-danger">
-                                                {{ session('error') }}
-                                            </div>
-                                        @endif
-
-                                        <div class="form-group mb-3">
-                                            <label for="emailaddress" class="form-label">E-Mail-Adresse</label>
-                                            <input class="form-control" type="email" id="email" name="email" required=""
-                                                placeholder="E-Mail-Adresse eingeben">
-                                            @error('email')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="form-group mb-3">
-                                            <label for="password" class="form-label">Passwort</label>
-                                            <input class="form-control" type="password" required="" id="password"
-                                                name="password" placeholder="Passwort eingeben">
-                                            @error('password')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="form-group d-flex mb-3">
-                                            <a class='text-muted fs-14' href={{ route('password.request') }}>Passwort
-                                                vergessen?</a>
-                                        </div>
-
-                                        <div class="form-group mb-0 mt-5">
-                                            <button class="btn btn-primary" type="submit">
-                                                <i class="bi bi-send"></i> Anmelden</button>
-                                        </div>
-                                    </form>
-                                    <hr class="my-4" />
-
-                                    <div class="text-center text-muted mb-4">
-                                        <p class="mb-0">Haben Sie noch kein Konto?<a class='text-primary ms-2 fw-medium'
-                                                href="{{ route('register') }}">Registrieren</a></p>
-                                    </div>
-                                </div>
-                            </div>
+                    @if(session('error'))
+                        <div role="alert" class="alert alert-error">
+                            <span class="icon icon-sm icon-alert-triangle"></span>
+                            <span>{{ session('error') }}</span>
                         </div>
-                    </div>
-                </div>
+                    @endif
 
-                <div class="col-xl-6">
-                    <div class="account-page-bg p-md-5 p-4">
-                        <div class="text-center">
-                            <div class="auth-image">
-                                <img src="{{ asset('backend/assets/images/undraw_authentication_tbfc.svg') }}" alt="images"
-                                    class="mx-auto img-fluid">
-                            </div>
-                        </div>
+                    <div class="form-group mb-3">
+                        <label class="input validator">
+                            <span class="icon icon-sm icon-mail"></span>
+                            <input type="email" placeholder="E-Mail-Adresse eingeben" id="email" name="email" required />
+                        </label>
+                        @error('email')
+                            <div class="validator-hint hidden">{{ $message }}</div>
+                        @enderror
                     </div>
-                </div>
+
+                    <div class="form-group mb-3">
+                        <label class="input validator" for="password">
+                            <span class="icon icon-sm icon-key"></span>
+                            <input type="password" required name="password" id="password" placeholder="Passwort eingeben" />
+                        </label>
+                        @error('password')
+                            <div class="validator-hint hidden">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group d-flex mb-3">
+                        <a class="link link-primary" href={{ route('password.request') }}>{{ __('Passwort vergessen?') }}</a>
+                    </div>
+
+                    <div class="form-group mb-0 mt-5">
+                        <button class="btn btn-primary" type="submit">
+                            {{ __('Anmelden') }}
+                            <span class="icon icon-sm icon-arrow-right"></span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="divider"></div>
+
+                <p class="mt-4">{{ __('Haben Sie noch kein Konto?') }} <a class='link link-secondary'
+                        href="{{ route('register') }}">{{ __('Registrieren') }}</a></p>
             </div>
+
+            <img src="{{ asset('backend/assets/images/undraw_authentication_tbfc.svg') }}" alt="image"
+                class="mx-auto img-fluid max-w-[30rem]" id="theme-image">
         </div>
-    </div>
+    </main>
 @endsection
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const updateImage = () => {
+                const img = document.querySelector('#theme-image');
+                if (!img) return;
+
+                const isDark = (localStorage.getItem('theme') || 'valentine') !== 'valentine';
+                img.src = "{{ asset('backend/assets/images/undraw_authentication_tbfc') }}" + (isDark ? '-dark' : '') + ".svg";
+            };
+
+            updateImage();
+
+            // Listen for storage changes, theme clicks, and data-theme mutations
+            window.addEventListener('storage', e => e.key === 'theme' && updateImage());
+            document.addEventListener('click', e =>
+                (e.target.classList.contains('theme-controller') || e.target.closest('.theme-controller')) &&
+                setTimeout(updateImage, 100)
+            );
+            new MutationObserver(mutations =>
+                mutations.some(m => m.type === 'attributes' && m.attributeName === 'data-theme') && updateImage()
+            ).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        });
+    </script>
+@endpush

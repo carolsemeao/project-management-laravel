@@ -1,20 +1,10 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<header
+    class="navbar bg-base-100/90 text-base-content sticky top-0 z-30 h-16 w-full [transform:translate3d(0,0,0)] backdrop-blur transition-shadow duration-100 shadow-sm">
+    <div class="content max-w-[100rem] mx-auto w-full flex justify-between items-center">
+        <div class="logo">
+            [Logo goes here]
+        </div>
 
-    <head>
-        <meta charset="utf-8" />
-        <title>@yield('title')</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-        <!-- Styles / Scripts -->
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-        @endif
-    </head>
-
-    <body>
-        @yield('content')
-    </body>
-
-</html>
+        @include('components.theme-switcher')
+    </div>
+</header>

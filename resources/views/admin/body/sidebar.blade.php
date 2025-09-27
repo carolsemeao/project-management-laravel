@@ -85,7 +85,7 @@
         $profileData = App\Models\User::find($id);
     @endphp
 
-    <div class="sidebar-footer">
+    <div class="sidebar-footer flex justify-between">
         <div class="dropdown dropdown-top">
             <div tabindex="0" role="button" class="dropdown-trigger">
                 <div class="avatar">

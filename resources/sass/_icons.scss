@@ -95,6 +95,10 @@
 		@include mixins.icon('home');
 	}
 
+	&.icon-key:before {
+		@include mixins.icon('key');
+	}
+
 	&.icon-log-out:before {
 		@include mixins.icon('log-out');
 	}

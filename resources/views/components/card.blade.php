@@ -1,10 +1,12 @@
-<div class="card card--sm">
-    <div class="card-body">
-        <div class="card-header">
-            <h3 class="card-title">{{ $title }}</h3>
-            <span class="icon icon-sm icon-{{ $icon }}"></span>
+@props(['icon' => null])
+
+<div class="stat bg-fuchsia-50 dark:bg-neutral/30">
+    @if ($icon)
+        <div class="stat-figure text-secondary">
+            <span class="icon icon-lg icon-{{ $icon }}"></span>
         </div>
-        <p class="card-text card-text--lg">{{ $text }}</p>
-        <p class="card-subtitle">{{ $subtitle }}</p>
-    </div>
+    @endif
+    <div class="stat-title">{{ $title }}</div>
+    <div class="stat-value text-primary">{{ $text }}</div>
+    <div class="stat-desc">{{ $subtitle }}</div>
 </div>

@@ -22,6 +22,7 @@
     "dependencies": {
         "chart.js": "^4.5.0",
         "feather-icons": "^4.29.2",
-        "jquery": "^3.7.1"
+        "jquery": "^3.7.1",
+        "theme-change": "^2.5.0"
     }
 }

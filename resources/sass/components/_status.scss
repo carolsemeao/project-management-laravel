@@ -1,4 +1,4 @@
-.status {
+/* .status {
 	background-color: var(--_status-bg, transparent);
 	border: 1px solid var(--_status-border, transparent);
 
@@ -12,28 +12,11 @@
 		--_status-border: var(--bs-warning-border-subtle);
 	}
 }
-
+*/
 .status-list {
-	margin-bottom: 0.75rem;
 	display: flex;
 	align-items: center;
 	gap: 1rem;
 	font-size: 0.875rem;
 	font-weight: 500;
-}
-
-.status-circle {
-	@extend .status;
-	display: inline-block;
-	width: 0.75em;
-	height: 0.75em;
-	border-radius: 50%;
-
-	&--overdue {
-		@extend .status--overdue;
-	}
-
-	&--due-soon {
-		@extend .status--due-soon;
-	}
 }

@@ -8,8 +8,7 @@
 @section('page_title', __('Welcome back, :Name', ['name' => $profileData->name ?? 'User']))
 @section('page_subtitle', $dateMessage)
 @section('maincontent')
-
-    <div class="card-grid card-grid--sm">
+    <div class="stats stats-vertical border border-base-200/50 lg:stats-horizontal w-full mt-5">
         @include('components.card', [
             'title' => __('Total Projects'),
             'icon' => 'target',
@@ -36,16 +35,16 @@
         ])
     </div>
 
-    <div class="card-grid card-grid--lg">
-        <div class="card">
-                <div class="card-body">
+    <div class="card-grid card-grid--lg mt-5">
+        <div class="card card-border border-base-200/50 bg-fuchsia-50 dark:bg-neutral/30">
+            <div class="card-body">
                 <h2 class="card-title">{{ __('Project Status Distribution') }}</h2>
                 <div class="chart-container">
                     <canvas id="projectStatusChart" width="300" height="300"></canvas>
                 </div>
             </div>
         </div>
-        <div class="card">
+        <div class="card card-border border-base-200/50 bg-fuchsia-50 dark:bg-neutral/30">
             <div class="card-body">
                 <h2 class="card-title">{{ __('Issue Status Overview') }}</h2>
                 <div class="chart-container">
@@ -56,29 +55,31 @@
     </div>
 
     <div class="card-grid card-grid--lg">
-        <div class="card">
+        <div class="card card-border border-base-200/50 bg-fuchsia-50 dark:bg-neutral/30">
             <div class="card-body">
-                <div class="card-header-with-action">
+                <div class="flex justify-between items-center mb-4">
                     <div>
                         <h2 class="card-title">{{ __('Issues') }}</h2>
                         <p class="card-subtitle">{{ __('Open issues across all projects') }}</p>
                     </div>
-                    <a href="{{ route('admin.issues') }}" class="button button--link">
+                    <a href="{{ route('admin.issues') }}" class="btn btn-ghost">
                         {{ __('View All') }}
+                        <span class="icon icon-sm icon-arrow-right"></span>
                     </a>
                 </div>
                 @include('admin.issue.parts.issues-teaser')
             </div>
         </div>
-        <div class="card">
+        <div class="card card-border border-base-200/50 bg-fuchsia-50 dark:bg-neutral/30">
             <div class="card-body">
-                <div class="card-header-with-action">
+                <div class="flex justify-between items-center mb-4">
                     <div>
                         <h2 class="card-title">{{ __('Active Projects') }}</h2>
                         <p class="card-subtitle">{{ __('Current projects in progress') }}</p>
                     </div>
-                    <a href="{{ route('admin.issues') }}" class="btn btn-link text-decoration-none d-flex align-items-center text-dark small p-0">
+                    <a href="{{ route('admin.issues') }}" class="btn btn-ghost">
                         {{ __('View All') }}
+                        <span class="icon icon-sm icon-arrow-right"></span>
                     </a>
                 </div>
             </div>

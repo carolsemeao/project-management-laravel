@@ -1,6 +1,6 @@
 <label class="swap swap-rotate">
     <!-- this hidden checkbox controls the state -->
-    <input type="checkbox" class="theme-controller" value="coffee" />
+    <input type="checkbox" class="theme-controller" data-toggle-theme="night,valentine" />
 
     <!-- sun icon -->
     <svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

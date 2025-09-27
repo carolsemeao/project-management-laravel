@@ -4,24 +4,19 @@
     <div class="drawer-content flex flex-col items-center justify-center">
         @include('admin.body.header')
 
-        <main class="w-full layout-container">
-
-            <div class="main-content" id="mainContent">
-                <div class="content-container">
-                    <div class="content">
-                        <div class="content__header">
-                            <div class="page-title">
-                                <h1>@yield('page_title')</h1>
-                                <p>@yield('page_subtitle')</p>
-                            </div>
-                            @yield('header_actions')
-                        </div>
-                        @yield('maincontent')
+        <main class="main-content w-full" id="mainContent">
+            <div class="content">
+                <div class="content__header">
+                    <div class="page-title">
+                        <h1>@yield('page_title')</h1>
+                        <p>@yield('page_subtitle')</p>
                     </div>
-                    <div class="mt-auto">
-                        @include('admin.body.footer')
-                    </div>
+                    @yield('header_actions')
                 </div>
+                @yield('maincontent')
+            </div>
+            <div class="mt-auto">
+                @include('admin.body.footer')
             </div>
         </main>
     </div>
