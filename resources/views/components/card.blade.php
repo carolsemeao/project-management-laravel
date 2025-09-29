@@ -1,6 +1,6 @@
 @props(['icon' => null])
 
-<div class="stat bg-fuchsia-50 dark:bg-neutral/30">
+<div class="stat bg-base-200/20 dark:bg-neutral/30">
     @if ($icon)
         <div class="stat-figure text-secondary">
             <span class="icon icon-lg icon-{{ $icon }}"></span>

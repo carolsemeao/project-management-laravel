@@ -34,43 +34,22 @@ Route::get('/dashboard', function () {
     $status = Status::all();
     $projects = Project::all();
 
-    // Create charts using the controller
+    // Create charts
     $chartController = app(ChartController::class);
     $charts = $chartController->getDashboardCharts();
     $projectStatusChart = $charts['projectStatusChart'];
     $issueStatusBarChart = $charts['issueStatusBarChart'];
 
-    // Get user issues with custom priority sorting
-    $userIssues = $user->assignedIssues()
-        ->with(['priority'])
-        ->where('status_id', '!=', 6)
-        ->get()
-        ->sortBy(function ($issue) {
-            // Define priority order: immediate=1, urgent=2, high=3, everything else=4
-            $priorityOrder = [
-                'immediate' => 1,
-                'urgent' => 2, 
-                'high' => 3
-            ];
-            
-            $priorityName = $issue->priority ? $issue->priority->name : null;
-            $priorityWeight = $priorityOrder[$priorityName] ?? 4;
-            
-            // Combine priority weight with due date for secondary sorting
-            // Format: priority weight + due date (or far future if no due date)
-            $dueDate = $issue->issue_due_date ? $issue->issue_due_date->format('Y-m-d') : '9999-12-31';
-            
-            return $priorityWeight . '_' . $dueDate;
-        })
-        ->take(5);
+    // Get user issues
+    $userIssues = $user->getAssignedIssuesSorted(5);
 
-    // Get user projects
-    $userProjects = $user->projects()->get();
+    // Get recently updated active projects
+    $userProjects = $user->getRecentlyUpdatedActiveProjects(5);
 
     // Get dynamic issue counts
     $totalIssues = $user->assignedIssues()->count() + $user->createdIssues()->count();
     
-    // Get closed status ID (status with name 'closed')
+    // Get open issues
     $closedStatusId = $status->where('name', 'closed')->value('id');
     $openIssues = $user->assignedIssues()->where('status_id', '!=', $closedStatusId)->count() + $user->createdIssues()->where('status_id', '!=', $closedStatusId)->count();
 
@@ -78,7 +57,7 @@ Route::get('/dashboard', function () {
     $totalProjects = $user->projects()->count();
     $activeProjects = $user->projects()->active()->count();
     
-    // Get completed status ID (status with name 'completed')
+    // Get completed projects
     $completedStatusId = $projectStatus->where('name', 'completed')->value('id');
     $completedProjectsInMonth = $projects->where('status_id', $completedStatusId)
         ->where('created_at', '>=', now()->startOfMonth())
@@ -86,8 +65,11 @@ Route::get('/dashboard', function () {
     
     // Get total logged time for current user across all projects
     $totalLoggedTime = $user->getFormattedTotalLoggedTime();
+
+    // Get recent activities for the user
+    $recentActivities = $user->getRecentActivities(8);
     
-    return view('admin.index', compact('dateMessage', 'totalIssues', 'openIssues', 'totalLoggedTime', 'activeProjects', 'totalProjects', 'projectStatusChart', 'issueStatusBarChart', 'completedProjectsInMonth', 'userIssues', 'userProjects'));
+    return view('admin.index', compact('dateMessage', 'totalIssues', 'openIssues', 'totalLoggedTime', 'activeProjects', 'totalProjects', 'projectStatusChart', 'issueStatusBarChart', 'completedProjectsInMonth', 'userIssues', 'userProjects', 'recentActivities'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

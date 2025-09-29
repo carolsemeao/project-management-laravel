@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Issue;
 use App\Models\TimeEntry;
 use App\Models\Project;
+use App\Models\Activity;
 use Carbon\Carbon;
 
 class TimeTrackingController extends Controller
@@ -41,6 +42,22 @@ class TimeTrackingController extends Controller
                     $request->description,
                     $request->work_date ?: now()->toDateString()
                 );
+
+                // Log activity
+                $formattedTime = TimeEntry::formatMinutes($timeEntry->time_minutes);
+                Activity::log(
+                    Auth::id(),
+                    'time_logged',
+                    "Logged {$formattedTime} on Task #{$issue->id}: \"{$issue->issue_title}\"",
+                    $issue->id,
+                    $issue->project_id,
+                    [
+                        'time_minutes' => $timeEntry->time_minutes,
+                        'formatted_time' => $formattedTime,
+                        'work_date' => $timeEntry->work_date instanceof \Carbon\Carbon ? $timeEntry->work_date->toDateString() : $timeEntry->work_date
+                    ]
+                );
+
             } catch (\InvalidArgumentException $e) {
                 return response()->json([
                     'success' => false,
@@ -133,7 +150,7 @@ class TimeTrackingController extends Controller
                                        'id' => $entry->id,
                                        'formatted_time' => $entry->formatted_time,
                                        'description' => $entry->description,
-                                       'work_date' => $entry->work_date->format('d/m/Y'),
+                                       'work_date' => $entry->work_date instanceof \Carbon\Carbon ? $entry->work_date->format('d/m/Y') : $entry->work_date,
                                        'user_name' => $entry->user->name,
                                        'logged_at' => $entry->logged_at->format('d/m/Y H:i'),
                                    ];

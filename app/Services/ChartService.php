@@ -4,8 +4,6 @@ namespace App\Services;
 
 use App\Models\Issue;
 use App\Models\Project;
-use App\Models\Status;
-use App\Models\Priority;
 use Illuminate\Support\Facades\DB;
 
 class ChartService
@@ -14,25 +12,33 @@ class ChartService
      * Default color mapping for issue statuses
      */
     protected array $statusColors = [
-        'planned' => '#748DAE', 
-        'in_progress' => '#F5CBCB',
-        'waiting_for_planning' => '#9ECAD6',
-        'on_hold' => '#F4D4A7',        
-        'feedback' => '#FFEAEA',
-        'closed' => '#B8E6B8',
-        'resolved' => '#A8E6CF',  // Slightly brighter sage green - successful resolution
-        'rejected' => '#E8B4B8',
+        'planned' => 'var(--status-color)', // Primary color
+        'in_progress' => 'var(--status-color)', // Secondary color
+        'waiting_for_planning' => 'var(--status-color)', // Accent color
+        'on_hold' => 'var(--status-color)', // Error color        
+        'feedback' => 'var(--status-color)', // Warning color
+        'closed' => 'var(--status-color)', // Success color
+        'resolved' => 'var(--status-color)', // Info color
+        'rejected' => 'var(--status-color)', // Error color
     ];
 
     /**
      * Default color mapping for issue priorities
      */
-    protected array $priorityColors = [
+    /* protected array $priorityColors = [
         'low' => '#9ECAD6',
         'normal' => '#748DAE',
         'high' => '#F5CBCB',
         'urgent' => '#FFEAEA',
         'immediate' => '#E0D4F7',
+    ]; */
+
+    protected array $priorityColors = [
+        'low' => 'var(--priority-low)',
+        'normal' => 'var(--priority-normal)', 
+        'high' => 'var(--priority-high)',
+        'urgent' => 'var(--priority-urgent)',
+        'immediate' => 'var(--priority-immediate)',
     ];
 
     /**
@@ -149,19 +155,22 @@ class ChartService
      */
     public function createIssuesStatusBarChart(): array
     {
-        $statusData = Issue::join('status', 'issues.status_id', '=', 'status.id')
-            ->select('status.name', DB::raw('count(*) as total'))
+        // Get all statuses with their issue counts (including zero counts)
+        $allStatuses = DB::table('status')
+            ->leftJoin('issues', 'status.id', '=', 'issues.status_id')
+            ->select('status.name', DB::raw('count(issues.id) as total'))
             ->groupBy('status.id', 'status.name')
+            ->orderBy('status.name')
             ->get();
 
-        // Handle empty data
-        if ($statusData->isEmpty()) {
+        // Handle empty statuses
+        if ($allStatuses->isEmpty()) {
             return $this->createEmptyChartData('No status data available');
         }
 
-        $labels = $statusData->map(fn($item) => ucwords(str_replace('_', ' ', $item->name ?? 'Unknown')))->toArray();
-        $data = $statusData->pluck('total')->toArray();
-        $colors = $statusData->map(fn($item) => $this->statusColors[$item->name ?? 'unknown'] ?? '#6c757d')->toArray();
+        $labels = $allStatuses->map(fn($item) => ucwords(str_replace('_', ' ', $item->name ?? 'Unknown')))->toArray();
+        $data = $allStatuses->pluck('total')->toArray();
+        $colors = $allStatuses->map(fn($item) => $this->statusColors[$item->name ?? 'unknown'] ?? '#6c757d')->toArray();
 
         return [
             'type' => 'bar',
@@ -185,7 +194,12 @@ class ChartService
                 'maintainAspectRatio' => false,
                 'plugins' => [
                     'legend' => [
-                        'display' => false
+                        'display' => false,
+                        'labels' => [
+                            'font' => [
+                                'size' => 10
+                            ]
+                        ]
                     ]
                 ],
                 'scales' => [
@@ -216,11 +230,11 @@ class ChartService
         }
 
         $statusColorMapping = [
-            'planning' => '#748DAE',
-            'active' => '#F5CBCB', 
-            'on_hold' => '#F4D4A7',
-            'completed' => '#B8E6B8',
-            'cancelled' => '#9ECAD6'
+            'planning' => 'var(--priority-low)',
+            'active' => 'var(--priority-normal)', 
+            'on_hold' => 'var(--priority-high)',
+            'completed' => 'var(--priority-urgent)',
+            'cancelled' => 'var(--priority-immediate)',
         ];
 
         $labels = $projectStatusDistribution->map(fn($item) => ucwords(str_replace('_', ' ', $item->name ?? 'Unknown')))->toArray();
@@ -236,7 +250,7 @@ class ChartService
                         'data' => $data,
                         'backgroundColor' => $colors,
                         'borderWidth' => 1,
-                        'borderColor' => '#fff',
+                        'borderColor' => '#f8f3fd',
                     ]
                 ]
             ],
@@ -254,7 +268,6 @@ class ChartService
                 'animation' => [
                     'delay' => 500
                 ],
-                'hoverOffset' => 10
             ]
         ];
     }

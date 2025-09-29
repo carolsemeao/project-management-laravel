@@ -5,3 +5,22 @@
 }
 
 @custom-variant dark (&:where([data-theme=night], [data-theme=night] *));
+
+[data-theme='valentine'] {
+	--priority-low: #f8d7da;
+	--priority-normal: #f5c2c7;
+	--priority-high: #f1a7b3;
+	--priority-urgent: #e85d75;
+	--priority-immediate: #d63384;
+	--status-color: #f5c2c7;
+}
+
+[data-theme='night'] {
+	--priority-low: var(--color-secondary);
+	--priority-normal: var(--color-primary);
+	--priority-high: #d4a574;
+	--priority-urgent: #c57676;
+	--priority-immediate: #a67ba6;
+
+	--status-color: var(--color-primary);
+}

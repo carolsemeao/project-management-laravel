@@ -27,6 +27,10 @@
 		height: 48px;
 	}
 
+	&.icon-activity:before {
+		@include mixins.icon('activity');
+	}
+
 	&.icon-alert-circle:before {
 		@include mixins.icon('alert-circle');
 	}
@@ -69,6 +73,10 @@
 
 	&.icon-edit:before {
 		@include mixins.icon('edit');
+	}
+
+	&.icon-external-link:before {
+		@include mixins.icon('external-link');
 	}
 
 	&.icon-file-text:before {
@@ -117,6 +125,10 @@
 
 	&.icon-plus:before {
 		@include mixins.icon('plus');
+	}
+
+	&.icon-refresh-cw:before {
+		@include mixins.icon('refresh-cw');
 	}
 
 	&.icon-save:before {

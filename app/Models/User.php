@@ -270,4 +270,101 @@ class User extends Authenticatable
     {
         return $this->hasMany(Offer::class, 'created_by_user_id');
     }
+
+    /**
+     * Get assigned issues sorted by priority and assignment date
+     * High priority issues (immediate, urgent, high) come first,
+     * then regular issues sorted by most recently updated
+     */
+    public function getAssignedIssuesSorted($limit = null)
+    {
+        $allUserIssues = $this->assignedIssues()
+            ->with(['priority', 'status', 'project'])
+            ->where('status_id', '!=', 6) // Exclude closed issues
+            ->get();
+
+        return $this->applySortingLogic($allUserIssues, $limit);
+    }
+
+    /**
+     * Get created issues sorted by priority and creation date
+     * High priority issues (immediate, urgent, high) come first,
+     * then regular issues sorted by most recently created
+     */
+    public function getCreatedIssuesSorted($limit = null, $projectId = null)
+    {
+        $query = $this->createdIssues()
+            ->with(['priority', 'status', 'project'])
+            ->where('status_id', '!=', 6); // Exclude closed issues
+
+        // Optionally filter by project (for IssueController compatibility)
+        if ($projectId === null) {
+            $query->whereNull('project_id');
+        } elseif ($projectId !== 'all') {
+            $query->where('project_id', $projectId);
+        }
+
+        $allUserIssues = $query->get();
+
+        return $this->applySortingLogic($allUserIssues, $limit, 'created_at');
+    }
+
+    /**
+     * Apply priority-based sorting logic to a collection of issues
+     */
+    private function applySortingLogic($issues, $limit = null, $fallbackSortField = 'updated_at')
+    {
+        // Separate high priority and regular issues
+        $highPriorityIssues = $issues->filter(function ($issue) {
+            $priorityName = $issue->priority ? $issue->priority->name : null;
+            return in_array($priorityName, ['immediate', 'urgent', 'high']);
+        })->sortBy(function ($issue) {
+            // Sort high priority by priority level: immediate=1, urgent=2, high=3
+            $priorityOrder = ['immediate' => 1, 'urgent' => 2, 'high' => 3];
+            $priorityName = $issue->priority ? $issue->priority->name : null;
+            return $priorityOrder[$priorityName] ?? 4;
+        });
+
+        $regularIssues = $issues->filter(function ($issue) {
+            $priorityName = $issue->priority ? $issue->priority->name : null;
+            return !in_array($priorityName, ['immediate', 'urgent', 'high']);
+        })->sortByDesc($fallbackSortField); // Sort by specified field descending (newest first)
+
+        // Combine: high priority first, then regular issues
+        $sortedIssues = $highPriorityIssues->concat($regularIssues);
+
+        return $limit ? $sortedIssues->take($limit) : $sortedIssues;
+    }
+
+    /**
+     * Get recently updated active projects for this user
+     * Returns projects sorted by most recently updated first
+     */
+    public function getRecentlyUpdatedActiveProjects($limit = null)
+    {
+        return $this->projects()
+            ->active() // Exclude closed projects
+            ->with(['status', 'priority', 'company', 'customer'])
+            ->orderBy('updated_at', 'desc')
+            ->when($limit, function ($query) use ($limit) {
+                return $query->limit($limit);
+            })
+            ->get();
+    }
+
+    /**
+     * Get activities performed by this user
+     */
+    public function activities()
+    {
+        return $this->hasMany(Activity::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get recent activities for this user
+     */
+    public function getRecentActivities($limit = 10)
+    {
+        return Activity::getRecentForUser($this->id, $limit);
+    }
 }

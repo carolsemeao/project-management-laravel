@@ -1,34 +1,38 @@
 <div>
-    <div class="status-list mb-6">
-        <div>
-            <div aria-label="status" class="status status-xl bg-neutral dark:bg-secondary"></div>
-            <span class="ms-1">{{ __('Overdue') }}</span>
-        </div>
-        <div>
-            <div aria-label="status" class="status status-xl bg-base-200"></div>
-            <span class="ms-1">{{ __('Due soon') }}</span>
-        </div>
-    </div>
-    
     @foreach ($userIssues as $issue)
         <a href="{{ route('admin.issues.show', $issue->id) }}"
-            class="card card-sm mb-4 @if ($issue->isOverdue())bg-neutral text-neutral-content dark:bg-secondary dark:text-secondary-content @elseif($issue->isDueSoon())bg-base-200 text-base-content @endif">
+            class="card card-sm mb-4 group transition-all duration-200 border-1 border-dashed border-base-300/60 hover:border-base-content dark:border-base-content/10 bg-white/50 hover:bg-base-300/80 dark:hover:text-neutral-content dark:bg-base-200 dark:hover:bg-neutral dark:hover:bg-neutral dark:hover:text-neutral-content">
             <div class="card-body">
-                <span
-                    class="card-body__date @if ($issue->isOverdue())issue-card__body-date--overdue @elseif($issue->isDueSoon())issue-card__body-date--due-soon @endif">
-                    <span class="icon icon-xs icon-calendar me-1"></span>
-                    {{$issue->issue_due_date ? $issue->issue_due_date->format('d/m/Y') : __('No due date')}}
-                </span>
-                <h3 class="card-title">{{ $issue->issue_title }}</h3>
-                <p>{{ $issue->issue_description }}</p>
-                <div class="card-actions">
-                    <span class="badge badge-sm badge-dash @if ($issue->isOverdue())badge-primary @elseif($issue->isDueSoon())badge-error @endif">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="card-body__date">
+                            <span class="icon icon-xs icon-calendar me-1"></span>
+                            {{$issue->issue_due_date ? $issue->issue_due_date->format('d/m/Y') : __('No due date')}}
+                        </span>
+                        <h3 class="card-title my-1.5">{{ $issue->issue_title }}</h3>
+                        <p>{{ $issue->issue_description }}</p>
+                    </div>
+                    @if($issue->isOverdue())
+                        <span class="badge badge-sm badge-dash font-medium">
+                            <span class="icon icon-xs icon-alert-triangle"></span>
+                            {{ __('Overdue') }}
+                        </span>
+                    @elseif($issue->isDueSoon())
+                        <span class="badge badge-sm badge-dash font-medium">
+                            <span class="icon icon-xs icon-alert-circle"></span>
+                            {{ __('Due soon') }}
+                        </span>
+                    @endif
+                </div>
+
+                <div class="card-actions mt-1">
+                    <span class="badge badge-sm badge-dash">
                         {{ $issue->getFormattedStatus() }}
                     </span>
-                    <span class="badge badge-sm badge-dash @if ($issue->isOverdue())badge-primary @elseif($issue->isDueSoon())badge-error @endif"">
+                    <span class="badge badge-sm badge-dash">
                         {{ $issue->project->name }}
                     </span>
-                    <span class="badge badge-sm badge-dash @if ($issue->isOverdue())badge-primary @elseif($issue->isDueSoon())badge-error @endif"">
+                    <span class="badge badge-sm badge-dash">
                         {{ Str::ucfirst(str_replace('_', ' ', $issue->priority->name)) }} Priority
                     </span>
                 </div>

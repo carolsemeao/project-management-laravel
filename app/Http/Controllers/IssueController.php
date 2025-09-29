@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Issue;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Status;
 use App\Models\Priority;
+use App\Models\Activity;
 
 class IssueController extends Controller
 {
@@ -20,23 +22,14 @@ class IssueController extends Controller
         // Get the closed status ID
         $closedStatus = Status::where('name', 'closed')->first();
         
-        // Get issues that are either:
-        // 1. Created by the current user AND have no project assigned, OR
-        // 2. Assigned to the current user (regardless of project)
-        // AND exclude closed issues
-        $issues = Issue::where(function($query) use ($user) {
-                    $query->where(function($subQuery) use ($user) {
-                        $subQuery->where('created_by_user_id', $user->id)
-                                ->whereNull('project_id');
-                        })
-                        ->orWhere('assigned_to_user_id', $user->id);
-                    })
-                    ->when($closedStatus, function($query) use ($closedStatus) {
-                        $query->where('status_id', '!=', $closedStatus->id);
-                    })
-                    ->with(['assignedUser', 'createdByUser', 'project', 'status', 'priority'])
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+        // Get assigned issues with priority-based sorting
+        $assignedIssues = $user->getAssignedIssuesSorted();
+        
+        // Get created issues with priority-based sorting (no project assigned)
+        $createdIssues = $user->getCreatedIssuesSorted(null, null);
+        
+        // Combine assigned and created issues
+        $issues = $assignedIssues->concat($createdIssues)->unique('id');
                       
         return view('admin.issue.admin_issues', compact('issues', 'projects'));
     }
@@ -188,6 +181,10 @@ class IssueController extends Controller
             ]);
         }
 
+        // Track changes for activity logging
+        $oldStatus = $issue->status;
+        $oldPriority = $issue->priority;
+
         // Convert hours to minutes
         $estimatedTimeMinutes = null;
         if ($request->filled('estimated_time_hours')) {
@@ -204,6 +201,42 @@ class IssueController extends Controller
             'issue_due_date' => $request->issue_due_date,
             'estimated_time_minutes' => $estimatedTimeMinutes,
         ]);
+
+        // Log activity for status changes
+        if ($oldStatus->id != $request->status_id) {
+            $newStatus = Status::find($request->status_id);
+            $oldStatusName = Str::ucfirst(str_replace('_', ' ', $oldStatus->name));
+            $newStatusName = Str::ucfirst(str_replace('_', ' ', $newStatus->name));
+            Activity::log(
+                Auth::id(),
+                'status_changed',
+                "Changed status of Task #{$issue->id}: \"{$issue->issue_title}\" from \"{$oldStatusName}\" to \"{$newStatusName}\"",
+                $issue->id,
+                $issue->project_id,
+                [
+                    'old_status' => $oldStatus->name,
+                    'new_status' => $newStatus->name,
+                ]
+            );
+        }
+
+        // Log activity for priority changes
+        if ($oldPriority->id != $request->priority_id) {
+            $newPriority = Priority::find($request->priority_id);
+            $oldPriorityName = Str::ucfirst(str_replace('_', ' ', $oldPriority->name));
+            $newPriorityName = Str::ucfirst(str_replace('_', ' ', $newPriority->name));
+            Activity::log(
+                Auth::id(),
+                'priority_changed',
+                "Changed priority of Task #{$issue->id}: \"{$issue->issue_title}\" from \"{$oldPriorityName}\" to \"{$newPriorityName}\"",
+                $issue->id,
+                $issue->project_id,
+                [
+                    'old_priority' => $oldPriority->name,
+                    'new_priority' => $newPriority->name,
+                ]
+            );
+        }
 
         return redirect()->back()->with([
             'message' => 'Issue updated successfully!',
@@ -289,6 +322,19 @@ class IssueController extends Controller
         ]);
 
         $issue->save();
+
+        // Log activity
+        Activity::log(
+            Auth::id(),
+            'issue_created',
+            "Created Task #{$issue->id}: \"{$issue->issue_title}\"",
+            $issue->id,
+            $issue->project_id,
+            [
+                'priority' => $issue->priority->name ?? null,
+                'status' => $issue->status->name ?? null,
+            ]
+        );
 
         return redirect()->route('admin.issues')->with([
             'message' => 'Issue created successfully!',

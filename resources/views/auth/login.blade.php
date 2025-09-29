@@ -1,62 +1,60 @@
 @extends('auth.auth_master')
-@section('title', 'Login')
+@section('title', __('Login'))
 @section('content')
-    <main class="main-content max-w-[100rem] w-full mx-auto py-15 grow flex items-center" id="mainContent">
-        <div class="content grid grid-cols-1 md:grid-cols-2 gap-x-5 items-center w-full">
-            <div>
-                <h1 class="text-3xl font-bold">{{ __('Anmelden') }}</h1>
-                <form method="POST" action="{{ route('login') }}" class="my-4">
-                    @csrf
+    <div>
+        <h1 class="text-3xl font-bold">{{ __('Login') }}</h1>
+        <form method="POST" action="{{ route('login') }}" class="my-4">
+            @csrf
 
-                    @if(session('error'))
-                        <div role="alert" class="alert alert-error">
-                            <span class="icon icon-sm icon-alert-triangle"></span>
-                            <span>{{ session('error') }}</span>
-                        </div>
-                    @endif
+            @if(session('error'))
+                <div role="alert" class="alert alert-error">
+                    <span class="icon icon-sm icon-alert-triangle"></span>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
 
-                    <div class="form-group mb-3">
-                        <label class="input validator">
-                            <span class="icon icon-sm icon-mail"></span>
-                            <input type="email" placeholder="E-Mail-Adresse eingeben" id="email" name="email" required />
-                        </label>
-                        @error('email')
-                            <div class="validator-hint hidden">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="input validator" for="password">
-                            <span class="icon icon-sm icon-key"></span>
-                            <input type="password" required name="password" id="password" placeholder="Passwort eingeben" />
-                        </label>
-                        @error('password')
-                            <div class="validator-hint hidden">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group d-flex mb-3">
-                        <a class="link link-primary" href={{ route('password.request') }}>{{ __('Passwort vergessen?') }}</a>
-                    </div>
-
-                    <div class="form-group mb-0 mt-5">
-                        <button class="btn btn-primary" type="submit">
-                            {{ __('Anmelden') }}
-                            <span class="icon icon-sm icon-arrow-right"></span>
-                        </button>
-                    </div>
-                </form>
-
-                <div class="divider"></div>
-
-                <p class="mt-4">{{ __('Haben Sie noch kein Konto?') }} <a class='link link-secondary'
-                        href="{{ route('register') }}">{{ __('Registrieren') }}</a></p>
+            <div class="form-group mb-3">
+                <label class="input validator">
+                    <span class="icon icon-sm icon-mail"></span>
+                    <input type="email" placeholder="{{ __('Enter your email address') }}" id="email" name="email" autofocus
+                        required />
+                </label>
+                @error('email')
+                    <div class="validator-hint hidden">{{ $message }}</div>
+                @enderror
             </div>
 
-            <img src="{{ asset('backend/assets/images/undraw_authentication_tbfc.svg') }}" alt="image"
-                class="mx-auto img-fluid max-w-[30rem]" id="theme-image">
-        </div>
-    </main>
+            <div class="form-group mb-3">
+                <label class="input validator" for="password">
+                    <span class="icon icon-sm icon-key"></span>
+                    <input type="password" required name="password" id="password"
+                        placeholder="{{ __('Enter your password') }}" />
+                </label>
+                @error('password')
+                    <div class="validator-hint hidden">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="form-group d-flex mb-3">
+                <a class="link text-sm link-hover" href={{ route('password.request') }}>{{ __('Forgot your password?') }}</a>
+            </div>
+
+            <div class="form-group mb-0 mt-5">
+                <button class="btn btn-neutral" type="submit">
+                    {{ __('Login') }}
+                    <span class="icon icon-sm icon-arrow-right"></span>
+                </button>
+            </div>
+        </form>
+
+        <div class="divider"></div>
+
+        <p class="mt-4 text-sm">{{ __('Don\'t have an account yet?') }} <a class='link link-primary'
+                href="{{ route('register') }}">{{ __('Sign up') }}</a></p>
+    </div>
+
+    <img src="{{ asset('backend/assets/images/undraw_authentication_tbfc.svg') }}" alt="image"
+        class="mx-auto img-fluid max-w-[30rem]" id="theme-image">
 @endsection
 @push('scripts')
     <script>
