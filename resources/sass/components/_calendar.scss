@@ -1,0 +1,38 @@
+[popover] {
+	&[id$='-popover'] {
+		transition: opacity 0.15s ease, transform 0.15s ease;
+
+		&:popover-open {
+			opacity: 1;
+			transform: scale(1);
+		}
+
+		&:not(:popover-open) {
+			opacity: 0;
+			transform: scale(0.95);
+		}
+	}
+}
+
+// Keyframe animations for smooth popover transitions
+@keyframes popover-fade-in {
+	from {
+		opacity: 0;
+		transform: scale(0.95) translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+@keyframes popover-fade-out {
+	from {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.95) translateY(-5px);
+	}
+}

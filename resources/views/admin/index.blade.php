@@ -35,8 +35,8 @@
         ])
     </div>
 
-    <div class="card-grid card-grid--lg my-5">
-        <div class="card bg-base-200/20 dark:bg-neutral/30 border-1 border-base-300/60 dark:border-base-content/10 border-dashed">
+    <div class="card-grid card-grid--lg my-6">
+        <div class="card bg-base-200/20 dark:bg-neutral/30">
             <div class="card-body">
                 <h2 class="card-title">{{ __('Project Status Distribution') }}</h2>
                 <div class="chart-container">
@@ -44,7 +44,7 @@
                 </div>
             </div>
         </div>
-        <div class="card bg-base-200/20 dark:bg-neutral/30 border-1 border-base-300/60 dark:border-base-content/10 border-dashed">
+        <div class="card bg-base-200/20 dark:bg-neutral/30">
             <div class="card-body">
                 <h2 class="card-title">{{ __('Issue Status Overview') }}</h2>
                 <div class="chart-container">
@@ -54,8 +54,8 @@
         </div>
     </div>
 
-    <div class="card-grid card-grid--lg">
-        <div class="card bg-base-200/20 dark:bg-neutral/30 border-1 border-base-300/60 dark:border-base-content/10 border-dashed">
+    <div class="card-grid card-grid--lg mt-6">
+        <div class="card bg-base-200/20 dark:bg-neutral/30">
             <div class="card-body">
                 <div class="flex justify-between items-center mb-4">
                     <div>
@@ -70,7 +70,7 @@
                 @include('admin.issue.parts.issues-teaser')
             </div>
         </div>
-        <div class="card bg-base-200/20 dark:bg-neutral/30 border-1 border-base-300/60 dark:border-base-content/10 border-dashed">
+        <div class="card bg-base-200/20 dark:bg-neutral/30">
             <div class="card-body">
                 <div class="flex justify-between items-center mb-4">
                     <div>
@@ -85,7 +85,9 @@
                 @include('admin.project.parts.projects-teaser')
             </div>
         </div>
-        <div class="card bg-base-200/20 dark:bg-neutral/30 border-1 border-base-300/60 dark:border-base-content/10 border-dashed col-span-2">
+    </div>
+    <div class="card-container mt-6">
+        <div class="card bg-base-200/20 dark:bg-neutral/30">
             <div class="card-body">
                 <div class="flex justify-between items-center mb-4">
                     <div>

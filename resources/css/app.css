@@ -24,3 +24,23 @@
 
 	--status-color: var(--color-primary);
 }
+
+@utility card {
+	@apply border-1 border-dashed border-base-300/60 dark:border-base-content/10;
+}
+
+@utility cards-item {
+	@apply card card-sm mb-4 hover:border-base-content dark:hover:border-base-content/10 transition-all duration-200 bg-white/50 hover:bg-base-300/80 dark:hover:text-neutral-content dark:bg-base-200 dark:hover:bg-neutral dark:hover:bg-neutral dark:hover:text-neutral-content;
+}
+
+:is(h1, h2, h3, h4) {
+	@apply font-bold;
+}
+
+h1 {
+	@apply text-3xl;
+}
+
+h2 {
+	@apply text-xl;
+}

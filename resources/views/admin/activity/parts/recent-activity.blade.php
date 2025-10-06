@@ -1,47 +1,33 @@
-@php
-    $colorClasses = "w-8 h-8 rounded-full flex items-center justify-center";
-    $iconClasses = "icon icon-sm icon-";
-@endphp
 @if($recentActivities && $recentActivities->count() > 0)
-    <div>
+    <div class="activity-list">
         @foreach($recentActivities as $activity)
-            <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-base-200/80 transition-colors duration-200 relative">
-                <div class="flex-shrink-0">
-                    @switch($activity->type)
-                        @case('time_logged')
-                            <div class="bg-info/40 {{ $colorClasses }}">
-                                <span class="{{ $iconClasses }}clock text-info-content"></span>
-                            </div>
-                            @break
-                        @case('issue_created')
-                            <div class="bg-success/40 {{ $colorClasses }}">
-                                <span class="{{ $iconClasses }}plus text-success-content"></span>
-                            </div>
-                            @break
-                        @case('status_changed')
-                        @case('priority_changed')
-                            <div class="bg-warning/40 {{ $colorClasses }}">
-                                <span class="{{ $iconClasses }}refresh-cw text-warning-content"></span>
-                            </div>
-                            @break
-                        @default
-                            <div class="bg-base-300 {{ $colorClasses }}">
-                                <span class="{{ $iconClasses }}activity text-base-content/70"></span>
-                            </div>
-                    @endswitch
-                </div>
+            <article class="activity-list__item">
+                @switch($activity->type)
+                    @case('time_logged')
+                        <div class="activity-list__item-icon activity-list__item-icon--time bg-info/40"></div>
+                        @break
+                    @case('issue_created')
+                        <div class="activity-list__item-icon activity-list__item-icon--created bg-success/40"></div>
+                        @break
+                    @case('status_changed')
+                    @case('priority_changed')
+                        <div class="activity-list__item-icon activity-list__item-icon--status bg-warning/40"></div>
+                        @break
+                    @default
+                        <div class="activity-list__item-icon activity-list__item-icon--default bg-base-300"></div>
+                @endswitch
 
-                <div class="flex-1 min-w-0">
-                    <div class="text-sm">
+                <div class="activity-list__item-content">
+                    <div class="activity-list__item-content-title">
                         {{ $activity->description }}
                     </div>
-                    <div class="flex items-center space-x-2 mt-1">
-                        <span class="text-xs text-base-content/70">
+                    <div class="activity-list__item-content-subtitle">
+                        <span>
                             {{ $activity->time_ago }}
                         </span>
                         @if($activity->project)
-                            <span class="text-xs text-base-content/50">•</span>
-                            <span class="text-xs text-base-content/70">
+                            <span>•</span>
+                            <span>
                                 {{ $activity->project->name }}
                             </span>
                         @endif
@@ -50,15 +36,15 @@
 
                 @if($activity->issue)
                     <a href="{{ route('admin.issues.show', $activity->issue->id) }}" 
-                        class="text-primary self-center hover:text-primary-focus transition-colors shrink-0 before:absolute before:inset-0">
+                        class="activity-list__item-link">
                         <span class="icon icon-md icon-arrow-right"></span>
                     </a>
                 @endif
-            </div>
+            </article>
         @endforeach
     </div>
 @else
-    <div class="text-center py-8 text-base-content/60">
+    <div class="activity-list--empty">
         <span class="icon icon-lg icon-activity mb-2 block"></span>
         <p class="text-sm">{{ __('No recent activity yet') }}</p>
         <p class="text-xs mt-1">{{ __('Start logging time or creating issues to see your activity here') }}</p>

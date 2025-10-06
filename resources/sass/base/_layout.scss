@@ -12,9 +12,14 @@
 
 .content {
 	&__header {
-		padding: 0.75rem;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+	}
+
+	&__header-actions {
+		display: flex;
+		align-items: center;
+		gap: calc(var(--spacing) * 2);
 	}
 }

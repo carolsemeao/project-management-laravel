@@ -18,6 +18,6 @@
             </x-button-primary>
         </div>
 
-        @include('admin.issue.parts.issues', ['issues' => $project->issues, 'hideProjectColumn' => true])
+        @include('admin.issue.parts.issues', ['issues' => $project->issues, 'showProjectColumn' => false, 'showAssignee' => true])
     </div>
 </div>

@@ -6,10 +6,10 @@
 
         <main class="main-content w-full grow" id="mainContent">
             <div class="content px-4 py-12">
-                <div class="content__header">
-                    <div class="page-title mb-6">
-                        <h1 class="text-3xl font-bold">@yield('page_title')</h1>
-                        <p class="text-sm opacity-50">@yield('page_subtitle')</p>
+                <div class="content__header mb-6">
+                    <div class="content__header-title">
+                        <h1>@yield('page_title')</h1>
+                        <p class="text-sm opacity-60">@yield('page_subtitle')</p>
                     </div>
                     @yield('header_actions')
                 </div>

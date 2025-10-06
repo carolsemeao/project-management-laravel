@@ -1,8 +1,9 @@
-@props(['priority'])
+@props(['priority', 'classes' => '', 'iconsize' => 'sm', 'darkClass' => ''])
 
-<span class="badge @if ($priority === 'urgent' || $priority === 'immediate')badge--icon @endif">
-    @if ($priority === 'urgent' || $priority === 'immediate')
-        <span class="icon icon-sm icon-alert-triangle me-1"></span>
+<span
+    class="badge text-nowrap @if($priority === 'urgent' || $priority === 'immediate' || $priority === 'high')badge-error dark:badge-error @endif{{ !empty($darkClass) && $priority === 'urgent' || $priority === 'immediate' || $priority === 'high' ? " $darkClass" : 'dark:badge-neutral' }} {{ $classes }}">
+    @if ($priority === 'urgent' || $priority === 'immediate' || $priority === 'high')
+        <span class="icon icon-{{ $iconsize }} icon-alert-triangle me-1"></span>
     @endif
     {{ Str::ucfirst(str_replace('_', ' ', $priority)) }}
 </span>

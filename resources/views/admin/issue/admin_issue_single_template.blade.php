@@ -1,30 +1,27 @@
 @include('admin.head')
-<div class="container-fluid p-0 layout-container">
-    <!-- Mobile overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="row g-0 h-100">
-        <div class="col-auto sidebar bg-dark" id="sidebar">
-            @include('admin.body.sidebar')
-        </div>
+<div class="drawer lg:drawer-open">
+    <input id="drawer" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content flex flex-col justify-start}}">
+        @include('admin.body.header')
 
-        <div class="col main-content d-flex flex-column" id="mainContent">
-            @include('admin.body.header')
-
-            <div class="p-4 flex-grow-1">
-                <div class="content-page">
-                    <div class="content">
-                        @include('admin.issue.parts.header')
-                        @yield('maincontent')
-                    </div>
+        <main class="main-content w-full grow" id="mainContent">
+            <div class="content px-4 py-12">
+                <div class="content__header mb-6">
+                    @include('admin.issue.parts.header')
                 </div>
+                @yield('maincontent')
             </div>
-
-            <div class="mt-auto">
-                @include('admin.body.footer')
-            </div>
-        </div>
+        </main>
+        @include('admin.body.footer')
+    </div>
+    <div class="drawer-side z-40">
+        <label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+        @include('admin.body.sidebar')
     </div>
 </div>
 
+
 @include('components.toast')
+
+@stack('scripts')
 @include('admin.foot')

@@ -1,16 +1,16 @@
 <aside class="sidebar bg-base-100 w-80">
-    <div class="sidebar-content p-3 md:p-0 flex-1">
-        <div class="sidebar-header hidden md:block mb-5">
+    <div class="sidebar-content p-3 lg:p-0 flex-1">
+        <div class="sidebar-header hidden lg:block mb-5">
             [Logo goes here]
         </div>
-        <div class="join block md:hidden mb-5">
+        <div class="join block lg:hidden mb-5">
             <input type="text" placeholder="{{ __('Search projects, issues..') }}" name="search" id="search"
-                class="input join-item w-60 md:w-80" />
+                class="input join-item w-60 lg:w-80" />
             <button class="btn join-item">
                 <span class="icon icon-sm icon-search"></span>
             </button>
         </div>
-        <nav class="sidebar-nav p-0 md:p-3">
+        <nav class="sidebar-nav p-0 lg:p-3">
             <ul class="menu">
                 <li>
                     <a href="{{ route('dashboard') }}" title="Dashboard"

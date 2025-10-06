@@ -1,96 +1,63 @@
-<div class="card">
+<div class="card mt-6">
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="card-title mb-0">{{ __('Project Information') }}</h5>
-            <a href="{{ route('admin.projects.show', $issue->project->id) }}"
-                class="text-decoration-none d-flex align-items-center">
-                {{ __('More Details') }}
-                <span class="icon icon-sm icon-arrow-right me-2"></span>
-            </a>
+        <div class="flex justify-between items-center mb-3 flex-wrap">
+            <h2 class="card-title mb-0">{{ __('Project Information') }}</h2>
+            @if($issue->project)
+                <a href="{{ route('admin.projects.show', $issue->project->id) }}" class="btn btn-ghost">
+                    {{ __('More Details') }}
+                    <span class="icon icon-sm icon-arrow-right me-2"></span>
+                </a>
+            @endif
         </div>
 
         @if($issue->project)
-            <div class="mb-3">
-                <strong class="text-muted small">{{ __('Project Name') }}</strong>
-                <p class="mb-0 mt-1 d-flex align-items-center">
-                    <span class="me-2 rounded-circle d-inline-block"
-                        style="width: 10px; height: 10px; background-color: {{ $issue->project->color }};"></span>
-                    <span>{{ $issue->project->name }}</span>
-                </p>
-            </div>
+            <h3>{{ __('Project Name') }}</h3>
+            <p class="mb-3 flex items-center">
+                <span class="me-2 rounded-full inline-block w-2.5 h-2.5"
+                    style="background-color: {{ $issue->project->color }};"></span>
+                {{ $issue->project->name }}
+            </p>
 
-            <div class="mb-3">
-                <strong class="text-muted small">{{ __('Status') }}</strong>
-                <p class="mb-0 mt-1">
-                    <x-badge :label="$issue->project->getFormattedStatusName()"
-                        textColor="text-{{ $issue->project->status->name === 'active' ? 'success' : ($issue->project->status->name === 'planning' ? 'warning' : 'secondary') }}" />
-                </p>
-            </div>
+            <h3>{{ __('Status') }}</h3>
+            <x-badge :label="$issue->project->getFormattedStatusName()" classes="mb-3" />
 
-            <div class="mb-3">
-                <strong class="text-muted small">{{ __('Priority') }}</strong>
-                <p class="mb-0 mt-1">
-                    <x-badge :label="$issue->project->getFormattedPriorityName()"
-                        textColor="text-{{ $issue->project->priority->name === 'urgent' ? 'danger' : ($issue->project->priority->name === 'high' ? 'warning' : 'secondary') }}" />
-                </p>
-            </div>
+            <h3>{{ __('Priority') }}</h3>
+            <x-priority_badge :priority="$issue->project->priority->name" classes="badge-sm mb-3" />
 
             @if($issue->project->description)
-                <div class="mb-3">
-                    <strong class="text-muted small">{{ __('Description') }}</strong>
-                    <p class="mb-0 mt-1 small text-muted">{{ $issue->project->description }}</p>
-                </div>
+                <h3>{{ __('Description') }}</h3>
+                <p class="mb-3 opacity-70">{{ $issue->project->description }}</p>
             @endif
 
+            <h3>{{ __('Progress') }}</h3>
             <div class="mb-3">
-                <strong class="text-muted small">{{ __('Progress') }}</strong>
-                <div class="mt-1">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <small class="text-muted">{{ $issue->project->getProgressPercentage() }}% complete</small>
-                        <small class="text-muted">{{ $issue->project->issues()->count() }} issues</small>
-                    </div>
-                    <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-dark" role="progressbar"
-                            style="width: {{ $issue->project->getProgressPercentage() }}%"></div>
-                    </div>
-                </div>
+                <span class="text-xs mb-1 opacity-70">
+                    {{ __(':timePercentage % complete / :issuesCount issues', ['timePercentage' => $issue->project->getProgressPercentage(), 'issuesCount' => $issue->project->issues()->count()]) }}
+                </span>
+                <progress class="progress" value="{{ $issue->project->getProgressPercentage() }}" max="100"></progress>
             </div>
 
             @if($issue->project->budget)
-                <div class="mb-3">
-                    <strong class="text-muted small">{{ __('Budget') }}</strong>
-                    <p class="mb-0 mt-1">
-                        <span class="icon icon-xs icon-dollar-sign me-1"></span>
-                        {{ number_format($issue->project->budget, 2) }}
-                    </p>
-                </div>
-            @endif
-
-            <div class="mb-3">
-                <strong class="text-muted small">{{ __('Project Due Date') }}</strong>
-                <p class="mb-0 mt-1">
-                    <span class="icon icon-xs icon-calendar me-1"></span>
-                    {{ $issue->project->due_date ? $issue->project->due_date->format('d/m/Y') : __('Not set') }}
-                    @if($issue->project->isOverdue())
-                        <x-badge :label="__('Overdue')" textColor="text-danger" classes="ms-1 small" />
-                    @elseif($issue->project->isDueSoon())
-                        <x-badge :label="__('Due Soon')" textColor="text-warning" classes="ms-1 small" />
-                    @endif
+                <h3>{{ __('Budget') }}</h3>
+                <p class="mb-3">
+                    <span class="icon icon-xs icon-dollar-sign me-1"></span>
+                    {{ number_format($issue->project->budget, 2) }}
                 </p>
-            </div>
-
-            @if($issue->project->teams->count() > 0)
-                <div class="mb-0">
-                    <strong class="text-muted small">{{ __('Project Teams') }}</strong>
-                    <div class="mt-1">
-                        @foreach($issue->project->teams as $team)
-                            <x-badge :label="$team->name" classes="me-1 mb-1" />
-                        @endforeach
-                    </div>
-                </div>
             @endif
+
+            <h3>{{ __('Project Due Date') }}</h3>
+            <p class="mb-0">
+                <span class="icon icon-sm icon-calendar me-1"></span>
+                {{ $issue->project->due_date ? $issue->project->due_date->format('d.m.Y') : __('Not set') }}
+                @if($issue->project->isDueSoon())
+                    <x-badge :label="__('Due Soon')" classes="ms-1 badge-warning badge-dash" darkClass="dark:badge-warning" />
+                @endif
+                @if($issue->project->isOverdue())
+                    <x-badge :label="__('Overdue')" classes="ms-1 badge-error badge-dash" darkClass="dark:badge-error" />
+                @endif
+            </p>
         @else
-            <div class="text-center text-muted py-3">
+            <div class="text-center text-muted py-5 opacity-70">
                 <span class="icon icon-huge icon-folder me-2"></span>
                 <p class="mb-0">{{ __('No project assigned to this issue') }}</p>
             </div>

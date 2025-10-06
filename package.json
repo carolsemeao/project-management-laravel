@@ -20,6 +20,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "cally": "^0.8.0",
         "chart.js": "^4.5.0",
         "feather-icons": "^4.29.2",
         "jquery": "^3.7.1",

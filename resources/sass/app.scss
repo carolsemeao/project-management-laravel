@@ -7,12 +7,9 @@
 
 @use 'icons';
 
-@use 'components/issue-card';
-@use 'components/status';
-@use 'components/badge';
-@use 'components/card';
 @use 'components/chart';
 @use 'components/button';
-
-@use 'sidebar';
-@use 'form';
+@use 'components/activity-list';
+@use 'components/sidebar';
+@use 'components/table';
+@use 'components/calendar';

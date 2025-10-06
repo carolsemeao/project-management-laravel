@@ -1,0 +1,5 @@
+.table {
+	:where(tr, td) {
+		vertical-align: top;
+	}
+}

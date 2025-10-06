@@ -1,7 +1,6 @@
-<div>
+<div class="cards">
     @foreach ($userIssues as $issue)
-        <a href="{{ route('admin.issues.show', $issue->id) }}"
-            class="card card-sm mb-4 group transition-all duration-200 border-1 border-dashed border-base-300/60 hover:border-base-content dark:border-base-content/10 bg-white/50 hover:bg-base-300/80 dark:hover:text-neutral-content dark:bg-base-200 dark:hover:bg-neutral dark:hover:bg-neutral dark:hover:text-neutral-content">
+        <a href="{{ route('admin.issues.show', $issue->id) }}" class="cards-item group">
             <div class="card-body">
                 <div class="flex justify-between items-start">
                     <div>
@@ -26,14 +25,21 @@
                 </div>
 
                 <div class="card-actions mt-1">
-                    <span class="badge badge-sm badge-dash">
-                        {{ $issue->getFormattedStatus() }}
-                    </span>
-                    <span class="badge badge-sm badge-dash">
-                        {{ $issue->project->name }}
-                    </span>
-                    <span class="badge badge-sm badge-dash">
-                        {{ Str::ucfirst(str_replace('_', ' ', $issue->priority->name)) }} Priority
+                    @if($issue->status)
+                        <span class="badge badge-sm badge-dash">
+                            {{ $issue->getFormattedStatus() }}
+                        </span>
+                    @endif
+                    @if($issue->project)
+                        <span class="badge badge-sm badge-dash">
+                            {{ $issue->project->name }}
+                        </span>
+                    @endif
+                    @if($issue->priority)
+                        <span class="badge badge-sm badge-dash">
+                            {{ Str::ucfirst(str_replace('_', ' ', $issue->priority->name)) }} Priority
+                        </span>
+                    @endif
                     </span>
                 </div>
             </div>

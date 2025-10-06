@@ -5,28 +5,21 @@
 @section('back_to_text', __('Back to Issues'))
 @section('header_actions')
     <div class="join">
-        <button class="btn join-item">Button</button>
-        <button class="btn join-item">Button</button>
-        <button class="btn join-item">Button</button>
-    </div>
-    <div class="btn-group">
-        <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center"
-            furtherActions="onclick=document.getElementById('logTimeModal').showModal() type=button">
+        <button class="btn btn-soft join-item" type="button" data-modal-target="confirm-log-time">
             <span class="icon icon-sm icon-plus me-2"></span>
             {{ __('Log Time') }}
-        </x-button-primary>
-        <x-button-primary btnType="outline-dark" classes="d-flex align-items-center justify-content-center" isLink=true
-            href="{{ route('admin.issues.edit', $issue->id) }}">
+        </button>
+        <a href="{{ route('admin.issues.edit', $issue->id) }}" class="btn btn-soft join-item">
             <span class="icon icon-sm icon-edit me-2"></span>
             {{ __('Edit Issue') }}
-        </x-button-primary>
+        </a>
     </div>
 @endsection
 
 @section('maincontent')
-    <div class="row g-4">
+    <div class="md:grid md:grid-cols-12 gap-4">
         <!-- Left Column - Main Content -->
-        <div class="col-lg-8">
+        <div class="md:col-span-8">
             <!-- Issue Details Card -->
             @include('admin.issue.parts.details')
 
@@ -44,7 +37,7 @@
         </div>
 
         <!-- Right Column - Sidebar -->
-        <div class="col-lg-4">
+        <div class="md:col-span-4">
             <!-- Quick Actions Card -->
             @include('admin.issue.parts.quick-actions')
 

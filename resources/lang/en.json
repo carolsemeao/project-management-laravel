@@ -1,0 +1,18 @@
+{
+    "ID": "ID",
+    "Issue": "Issue",
+    "Project": "Project",
+    "Status": "Status",
+    "Priority": "Priority",
+    "Assignee": "Assignee",
+    "Due Date": "Due Date",
+    "Time logged": "Time logged",
+    "Edit": "Edit",
+    "All Projects": "All Projects",
+    "New Issue": "New Issue",
+    "open issues": "open issues",
+    "No project assigned": "No project assigned",
+    "Unassigned": "Unassigned",
+    "Not set": "Not set",
+    "Edit issue": "Edit issue"
+}

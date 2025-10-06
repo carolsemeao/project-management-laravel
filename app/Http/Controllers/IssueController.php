@@ -14,24 +14,47 @@ use App\Models\Activity;
 
 class IssueController extends Controller
 {
-    public function ShowIssues()
+    public function ShowIssues(Request $request)
     {
         $user = Auth::user();
         $projects = $user->projects()->get();
+        $projectId = $request->get('project_id');
 
         // Get the closed status ID
         $closedStatus = Status::where('name', 'closed')->first();
         
-        // Get assigned issues with priority-based sorting
-        $assignedIssues = $user->getAssignedIssuesSorted();
-        
-        // Get created issues with priority-based sorting (no project assigned)
-        $createdIssues = $user->getCreatedIssuesSorted(null, null);
-        
-        // Combine assigned and created issues
-        $issues = $assignedIssues->concat($createdIssues)->unique('id');
+        $issuesQuery = Issue::query()
+            ->with(['assignedUser', 'createdByUser', 'project', 'status', 'priority'])
+            ->where(function ($query) use ($user) {
+                $query->where('created_by_user_id', $user->id)
+                    ->orWhere('assigned_to_user_id', $user->id)
+                    ->orWhereHas('project', function ($projectQuery) use ($user) {
+                        $projectQuery->whereHas('users', function ($userQuery) use ($user) {
+                            $userQuery->where('users.id', $user->id);
+                        });
+                    });
+            })
+            ->where('status_id', '!=', $closedStatus->id ?? 0);
+
+        if ($projectId) {
+            $issuesQuery->where('project_id', $projectId);
+        }
+
+        $issuesQuery->join('priorities', 'issues.priority_id', '=', 'priorities.id')
+            ->orderByRaw("CASE priorities.name 
+                WHEN 'immediate' THEN 5
+                WHEN 'urgent' THEN 4
+                WHEN 'high' THEN 3
+                WHEN 'normal' THEN 2
+                WHEN 'low' THEN 1
+                ELSE 0 END DESC")
+            ->orderBy('issues.created_at', 'desc')
+            ->select('issues.*');
+
+        // Paginate with 3 items per page
+        $issues = $issuesQuery->paginate(15)->appends($request->query());
                       
-        return view('admin.issue.admin_issues', compact('issues', 'projects'));
+        return view('admin.issue.admin_issues', compact('issues', 'projects', 'projectId'));
     }
 
     public function ShowSingleIssue($id)

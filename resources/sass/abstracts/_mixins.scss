@@ -1,8 +1,24 @@
-@mixin icon($name) {
+@mixin icon($name, $size: 100%) {
 	content: '';
 	display: block;
-	width: 100%;
-	height: 100%;
+
+	@if $size == '16' {
+		width: 16px;
+		height: 16px;
+	} @else if $size == '12' {
+		width: 12px;
+		height: 12px;
+	} @else if $size == '28' {
+		width: 28px;
+		height: 28px;
+	} @else if $size == '48' {
+		width: 48px;
+		height: 48px;
+	} @else {
+		width: $size;
+		height: $size;
+	}
+
 	mask: {
 		image: url('/public/frontend/assets/icons/#{$name}.svg');
 		repeat: no-repeat;
@@ -14,6 +30,6 @@
 
 @mixin make-grid($width: 12em, $row-gap: 1.5rem) {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax($width, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(Min($width, 100%), 1fr));
 	gap: $row-gap 1.5rem;
 }
