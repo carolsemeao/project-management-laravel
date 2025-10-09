@@ -15,9 +15,11 @@ class DatabaseSeeder extends Seeder
     {
         // Run seeders in the correct order to handle dependencies
         $this->call([
+            StatusSeeder::class,        // Creates issue statuses first
+            PrioritySeeder::class,      // Creates issue priorities first
             ProjectStatusSeeder::class,  // Creates project statuses first
             ProjectPrioritySeeder::class, // Creates project priorities first
-            TeamRoleSeeder::class,      // Creates teams and roles first
+            RoleSeeder::class,          // Creates roles first
             ProjectSeeder::class,       // Creates projects and assigns teams
             IssueSeeder::class,         // Creates issues and assigns to projects
             TimeTrackingSeeder::class,  // Adds time tracking data to issues

@@ -6,9 +6,11 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Project;
-use App\Models\Team;
+use App\Models\Company;
+use App\Models\Customer;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\ProjectUser;
 use App\Models\Issue;
 use Carbon\Carbon;
 
@@ -20,18 +22,70 @@ class ProjectSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        $frontendTeam = Team::where('name', 'Frontend Team')->first();
-        $backendTeam = Team::where('name', 'Backend Team')->first();
-        $designTeam = Team::where('name', 'Design Team')->first();
         $projectManagerRole = Role::where('name', 'Project Manager')->first();
-        $developerRole = Role::where('name', 'Developer')->first();
 
-        if (!$user || !$frontendTeam || !$backendTeam || !$designTeam) {
-            $this->command->error('Required teams or users not found. Please run TeamRoleSeeder first.');
+        if (!$user) {
+            $this->command->error('No users found. Please run other seeders first.');
             return;
         }
 
-        // Create Website Redesign Project
+        // Create sample companies
+        $acmeCorp = Company::firstOrCreate(
+            ['name' => 'Acme Corporation'],
+            [
+                'email' => 'contact@acmecorp.com',
+                'phone' => '+1-555-0123',
+                'website' => 'https://acmecorp.com',
+                'address' => '123 Business St',
+                'city' => 'New York',
+                'state' => 'NY',
+                'zip' => '10001',
+                'country' => 'USA',
+                'status' => true,
+            ]
+        );
+
+        $techStart = Company::firstOrCreate(
+            ['name' => 'TechStart Inc'],
+            [
+                'email' => 'hello@techstart.com',
+                'phone' => '+1-555-0456',
+                'website' => 'https://techstart.com',
+                'address' => '456 Innovation Ave',
+                'city' => 'San Francisco',
+                'state' => 'CA',
+                'zip' => '94105',
+                'country' => 'USA',
+                'status' => true,
+            ]
+        );
+
+        // Create contacts for companies
+        $johnDoe = Customer::firstOrCreate(
+            ['email' => 'john.doe@acmecorp.com'],
+            [
+                'name' => 'John Doe',
+                'phone' => '+1-555-0124',
+                'position' => 'CTO',
+                'is_primary_contact' => true,
+                'company_id' => $acmeCorp->id,
+            ]
+        );
+
+        $janeSmith = Customer::firstOrCreate(
+            ['email' => 'jane.smith@techstart.com'],
+            [
+                'name' => 'Jane Smith',
+                'phone' => '+1-555-0457',
+                'position' => 'CEO',
+                'is_primary_contact' => true,
+                'company_id' => $techStart->id,
+            ]
+        );
+
+        $this->command->info('Created sample companies and contacts');
+
+        // Create projects for companies
         $websiteProject = Project::create([
             'name' => 'Website Redesign',
             'description' => 'Complete overhaul of company website with modern design and improved UX',
@@ -41,10 +95,11 @@ class ProjectSeeder extends Seeder
             'priority_id' => 3, // high
             'color' => '#007bff',
             'budget' => 50000.00,
+            'company_id' => $acmeCorp->id,
+            'customer_id' => $johnDoe->id, // John Doe as contact
             'created_by_user_id' => $user->id,
         ]);
 
-        // Create Mobile App Development Project
         $mobileProject = Project::create([
             'name' => 'Mobile App Development',
             'description' => 'Native iOS and Android app for customer engagement',
@@ -54,10 +109,11 @@ class ProjectSeeder extends Seeder
             'priority_id' => 2, // medium
             'color' => '#28a745',
             'budget' => 75000.00,
+            'company_id' => $techStart->id,
+            'customer_id' => $janeSmith->id, // Jane Smith as contact
             'created_by_user_id' => $user->id,
         ]);
 
-        // Create Dashboard Analytics Project
         $dashboardProject = Project::create([
             'name' => 'Dashboard Analytics',
             'description' => 'Internal analytics dashboard for business intelligence',
@@ -67,33 +123,35 @@ class ProjectSeeder extends Seeder
             'priority_id' => 4, // urgent
             'color' => '#dc3545',
             'budget' => 30000.00,
+            'company_id' => $acmeCorp->id,
+            // No specific customer contact for this project
             'created_by_user_id' => $user->id,
         ]);
 
-        $this->command->info('Created 3 projects: Website Redesign, Mobile App, Dashboard Analytics');
+        $this->command->info('Created 3 projects for sample companies');
 
-        // Assign teams to projects
-        
-        // Website Redesign: Frontend + Design teams
-        $websiteProject->assignTeam($frontendTeam->id);
-        $websiteProject->assignTeam($designTeam->id);
-        
-        // Mobile App: All teams
-        $mobileProject->assignTeam($frontendTeam->id);
-        $mobileProject->assignTeam($backendTeam->id);
-        $mobileProject->assignTeam($designTeam->id);
-        
-        // Dashboard: Backend + Frontend teams
-        $dashboardProject->assignTeam($backendTeam->id);
-        $dashboardProject->assignTeam($frontendTeam->id);
-
-        $this->command->info('Assigned teams to projects');
-
-        // Assign user directly to projects with roles
+        // Assign user to projects with roles
         if ($projectManagerRole) {
-            $websiteProject->assignUser($user->id, $projectManagerRole->id);
-            $mobileProject->assignUser($user->id, $projectManagerRole->id);
-            $dashboardProject->assignUser($user->id, $projectManagerRole->id);
+            ProjectUser::create([
+                'project_id' => $websiteProject->id,
+                'user_id' => $user->id,
+                'role_id' => $projectManagerRole->id,
+                'assigned_at' => now(),
+            ]);
+
+            ProjectUser::create([
+                'project_id' => $mobileProject->id,
+                'user_id' => $user->id,
+                'role_id' => $projectManagerRole->id,
+                'assigned_at' => now(),
+            ]);
+
+            ProjectUser::create([
+                'project_id' => $dashboardProject->id,
+                'user_id' => $user->id,
+                'role_id' => $projectManagerRole->id,
+                'assigned_at' => now(),
+            ]);
         }
 
         $this->command->info('Assigned user to projects as Project Manager');
@@ -119,20 +177,13 @@ class ProjectSeeder extends Seeder
             $this->command->info('Assigned existing issues to projects');
         }
 
-        // Add foreign key constraint now that we have valid data
-        try {
-            DB::statement('ALTER TABLE issues ADD CONSTRAINT issues_project_id_foreign FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE');
-            DB::statement('CREATE INDEX issues_project_id_issue_status_index ON issues (project_id, issue_status)');
-            $this->command->info('Added foreign key constraint for issues.project_id');
-        } catch (\Exception $e) {
-            $this->command->warn('Foreign key constraint may already exist: ' . $e->getMessage());
-        }
-
         // Display summary
         $this->command->info('');
         $this->command->info('Project Summary:');
         foreach (Project::all() as $project) {
-            $this->command->info("- {$project->name}: {$project->issues()->count()} issues, {$project->teams()->count()} teams");
+            $companyName = $project->company ? $project->company->name : 'No Company';
+            $contactName = $project->customer ? $project->customer->name : 'No Contact';
+            $this->command->info("- {$project->name}: {$project->issues()->count()} issues, Company: {$companyName}, Contact: {$contactName}");
         }
     }
 }

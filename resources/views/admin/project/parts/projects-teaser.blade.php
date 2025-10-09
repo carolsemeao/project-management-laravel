@@ -1,3 +1,4 @@
+@if($userProjects->count() > 0)
 <div>
     @foreach ($userProjects as $project)
         <a href="{{ route('admin.projects.show', $project->id) }}"
@@ -24,3 +25,10 @@
         </a>
     @endforeach
 </div>
+@else
+    <div class="empty">
+        <span class="icon icon-lg icon-folder mb-2 block"></span>
+        <p class="text-sm">{{ __('No projects found') }}</p>
+        <p class="text-xs mt-1">{{ __('Start creating projects to see them here') }}</p>
+    </div>
+@endif

@@ -21,7 +21,7 @@ class Issue extends Model
         'issue_assigned_to',        // TODO: Remove this column
         'assigned_to_user_id',
         'issue_created_by',         // TODO: Remove this column
-        'created_by_user_id',       // New foreign key column
+        'created_by_user_id',       
     ];
 
     /** @use HasFactory<\Database\Factories\IssueFactory> */

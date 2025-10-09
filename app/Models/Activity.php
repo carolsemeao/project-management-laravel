@@ -75,6 +75,26 @@ class Activity extends Model
                   ->get();
     }
 
+    public static function getGroupedActivitiesForUser($userId, $limit = 10)
+    {
+        return self::where('user_id', $userId)
+            ->with(['issue', 'project'])
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get()
+            ->groupBy(function($activity) {
+                return $activity->created_at->format('Y-m-d');
+            })
+            ->map(function($activities, $date) {
+                return [
+                    'date' => $date,
+                    'formatted_date' => \Carbon\Carbon::parse($date)->format('d.m.Y'),
+                    'activities' => $activities
+                ];
+            })
+            ->values();
+    }
+
     /**
      * Get human-readable time ago
      */

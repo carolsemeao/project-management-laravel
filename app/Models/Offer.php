@@ -13,6 +13,7 @@ class Offer extends Model
         'currency',
         'status',
         'valid_until',
+        'company_id',
         'customer_id',
         'project_id',
         'created_by_user_id',
@@ -33,6 +34,11 @@ class Offer extends Model
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function customer()

@@ -151,17 +151,32 @@ class ChartService
     }
 
     /**
-     * Create issues by status bar chart data
+     * Create issues by status bar chart data for a specific user
      */
-    public function createIssuesStatusBarChart(): array
+    public function createIssuesStatusBarChart($userId = null): array
     {
-        // Get all statuses with their issue counts (including zero counts)
-        $allStatuses = DB::table('status')
-            ->leftJoin('issues', 'status.id', '=', 'issues.status_id')
-            ->select('status.name', DB::raw('count(issues.id) as total'))
-            ->groupBy('status.id', 'status.name')
-            ->orderBy('status.name')
-            ->get();
+        // Get all statuses first
+        $allStatusesFromDb = DB::table('issue_status')->orderBy('name')->get();
+
+        // For each status, count issues with user filter
+        $allStatuses = $allStatusesFromDb->map(function ($status) use ($userId) {
+            $query = DB::table('issues')->where('status_id', $status->id);
+
+            // Filter by user if provided
+            if ($userId) {
+                $query->where(function ($q) use ($userId) {
+                    $q->where('assigned_to_user_id', $userId)
+                      ->orWhere('created_by_user_id', $userId);
+                });
+            }
+
+            $count = $query->count();
+
+            return (object) [
+                'name' => $status->name,
+                'total' => $count
+            ];
+        });
 
         // Handle empty statuses
         if ($allStatuses->isEmpty()) {
@@ -204,8 +219,13 @@ class ChartService
                 ],
                 'scales' => [
                     'y' => [
-                        'beginAtZero' => true
-                    ]
+                        
+                        'beginAtZero' => true,
+                        'grid' => [
+                            'lineWidth' => 0,
+                            
+                        ]
+                    ],
                 ],
                 'animation' => [
                     'delay' => 500
@@ -215,12 +235,21 @@ class ChartService
     }
 
     /**
-     * Create project status distribution pie chart data
+     * Create project status distribution pie chart data for a specific user
      */
-    public function createProjectStatusChart(): array
+    public function createProjectStatusChart($userId = null): array
     {
-        $projectStatusDistribution = Project::join('project_statuses', 'projects.status_id', '=', 'project_statuses.id')
-            ->select('project_statuses.name', DB::raw('count(*) as total'))
+        $query = Project::join('project_statuses', 'projects.status_id', '=', 'project_statuses.id')
+            ->select('project_statuses.name', DB::raw('count(*) as total'));
+
+        // Filter by user if provided - only show projects the user is assigned to
+        if ($userId) {
+            $query->join('project_user', 'projects.id', '=', 'project_user.project_id')
+                  ->where('project_user.user_id', $userId)
+                  ->whereNull('project_user.removed_at');
+        }
+
+        $projectStatusDistribution = $query
             ->groupBy('project_statuses.id', 'project_statuses.name')
             ->get();
 

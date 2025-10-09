@@ -11,6 +11,27 @@ class Project extends Model
 {
     use HasFactory;
 
+    /**
+     * Boot the model
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Automatically assign creator as Project Manager when project is created
+        static::created(function ($project) {
+            $projectManagerRole = Role::where('name', 'Project Manager')->first();
+            if ($projectManagerRole && $project->created_by_user_id) {
+                ProjectUser::create([
+                    'project_id' => $project->id,
+                    'user_id' => $project->created_by_user_id,
+                    'role_id' => $projectManagerRole->id,
+                    'assigned_at' => now(),
+                ]);
+            }
+        });
+    }
+
     protected $fillable = [
         'name',
         'description',
@@ -83,16 +104,6 @@ class Project extends Model
                    ->where('status_id', '!=', $closedStatusId);
     }
 
-    /**
-     * Get all teams assigned to this project
-     */
-    public function teams()
-    {
-        return $this->belongsToMany(Team::class, 'project_team')
-                    ->withPivot(['status', 'assigned_at', 'removed_at'])
-                    ->withTimestamps()
-                    ->wherePivot('status', 'active');
-    }
 
     /**
      * Get all users assigned to this project
@@ -100,9 +111,9 @@ class Project extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'project_user')
-                    ->withPivot(['role_id', 'status', 'assigned_at', 'removed_at'])
+                    ->withPivot(['role_id', 'assigned_at', 'removed_at'])
                     ->withTimestamps()
-                    ->wherePivot('status', 'active');
+                    ->wherePivotNull('removed_at');
     }
 
     /**
@@ -218,31 +229,6 @@ class Project extends Model
         }
     }
 
-    /**
-     * Assign a team to this project
-     */
-    public function assignTeam(int $teamId)
-    {
-        $this->teams()->attach($teamId, [
-            'status' => 'active',
-            'assigned_at' => now(),
-        ]);
-    }
-
-    /**
-     * Get all users (direct + through teams)
-     */
-    public function getAllUsers()
-    {
-        $directUsers = $this->users;
-        $teamUsers = collect();
-        
-        foreach ($this->teams as $team) {
-            $teamUsers = $teamUsers->merge($team->users);
-        }
-        
-        return $directUsers->merge($teamUsers)->unique('id');
-    }
 
     /**
      * Scope: Active projects

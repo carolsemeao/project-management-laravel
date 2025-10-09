@@ -159,6 +159,10 @@
 		@include mixins.icon('user');
 	}
 
+	&.icon-user-check:before {
+		@include mixins.icon('user-check');
+	}
+
 	&.icon-users:before {
 		@include mixins.icon('users');
 	}

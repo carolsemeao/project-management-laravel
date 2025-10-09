@@ -89,9 +89,9 @@
         <div class="dropdown dropdown-top">
             <div tabindex="0" role="button" class="dropdown-trigger">
                 <div class="avatar">
-                    <div class="w-8 rounded-full">
+                    <div class="w-8 rounded-full border-2 border-base-content/10 dark:border-base-content/20">
                         <img src="{{ (!empty($profileData->photo)) ? url('upload/user_images/' . $profileData->photo) : url('upload/no_image.jpg') }}"
-                            alt="User">
+                            alt="User" class="w-8 rounded-full">
                     </div>
                 </div>
                 <small class="font-medium mb-0 overflow-hidden text-ellipsis">{{ $profileData->name ?? 'User' }}</small>
@@ -106,7 +106,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="{{ route('admin.settings') }}">
                         <span class="icon icon-sm icon-settings"></span>
                         {{ __('Settings') }}
                     </a>

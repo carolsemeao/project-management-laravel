@@ -18,20 +18,6 @@ window.Alpine = Alpine;
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', function () {
-	// Profile image upload handler - only add if element exists
-	const profileImageInput = document.querySelector('#profile_image');
-	const showProfileImage = document.querySelector('#show_profile_image');
-
-	if (profileImageInput && showProfileImage) {
-		profileImageInput.addEventListener('change', function (event) {
-			const reader = new FileReader();
-			reader.onload = function (event) {
-				showProfileImage.src = event.target.result;
-			};
-			reader.readAsDataURL(event.target.files[0]);
-		});
-	}
-
 	// Toast notifications - replaced Bootstrap with custom implementation
 	const toastElements = document.querySelectorAll('.toast');
 	if (toastElements.length > 0) {
@@ -111,7 +97,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Initialize all calendar pickers on the page
 	const allCalendarPickers = document.querySelectorAll('calendar-date.cally');
-	allCalendarPickers.forEach(initializeCalendarPicker);
+	allCalendarPickers.forEach((calendarElement) => {
+		initializeCalendarPicker(calendarElement);
+
+		// Set initial value if available
+		const initialDate = calendarElement.getAttribute('data-initial-date');
+		if (initialDate && initialDate !== 'null' && initialDate !== '') {
+			calendarElement.value = initialDate;
+		}
+	});
 
 	// Estimated time conversion (hours to minutes)
 	const estimatedHoursInput = document.querySelector(

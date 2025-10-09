@@ -14,11 +14,11 @@
             <div class="modal-body">
                 {{ $slot }}
             </div>
-            <div class="mt-4 flex justify-end items-center gap-3">
-                <button class="btn btn-soft" type="button" data-modal-close="{{ $modalId }}">
+            <div class="mt-4 w-full join justify-end">
+                <button class="btn btn-soft join-item" type="button" data-modal-close="{{ $modalId }}">
                     {{ $cancelButtonText }}
                 </button>
-                <button class="btn btn-neutral" type="submit">
+                <button class="btn btn-neutral join-item" type="submit">
                     {{ $confirmButtonText }}
                 </button>
             </div>

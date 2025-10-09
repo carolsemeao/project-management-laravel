@@ -87,8 +87,9 @@ Route::post('/verify', [AdminController::class, 'VerificationVerify'])->name('cu
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [AdminController::class, 'AdminProfile'])->name('admin.profile');
-    Route::post('/profile/store', [AdminController::class, 'ProfileStore'])->name('profile.store');
-    Route::post('/profile/password/update', [AdminController::class, 'PasswordUpdate'])->name('admin.password.update');
+    Route::get('/settings', [AdminController::class, 'AdminSettings'])->name('admin.settings');
+    Route::post('/settings/store', [AdminController::class, 'EditProfile'])->name('admin.edit.profile');
+    Route::post('/settings/password/update', [AdminController::class, 'PasswordUpdate'])->name('admin.password.update');
 
     // Issues routes
     Route::get('/dashboard/issues', [IssueController::class, 'ShowIssues'])->name('admin.issues');

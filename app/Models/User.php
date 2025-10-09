@@ -13,6 +13,22 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * Cache for status IDs to avoid repeated database queries
+     */
+    private static $statusCache = [];
+
+    /**
+     * Get the ID of the closed status
+     */
+    private static function getClosedStatusId()
+    {
+        if (!isset(self::$statusCache['closed'])) {
+            self::$statusCache['closed'] = Status::where('name', 'closed')->value('id');
+        }
+        return self::$statusCache['closed'];
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -63,63 +79,31 @@ class User extends Authenticatable
      */
     public function openIssuesCount()
     {
-        return $this->assignedIssues()->where('issue_status', '!=', 'closed')->count();
+        return $this->assignedIssues()->where('status_id', '!=', self::getClosedStatusId())->count();
     }
 
     /**
-     * Get all teams this user belongs to
+     * Get count of closed issues assigned to this user
      */
-    public function teams()
+    public function closedIssuesCount()
     {
-        return $this->belongsToMany(Team::class, 'team_user')
-                    ->withPivot(['role_id', 'status', 'joined_at', 'left_at'])
-                    ->withTimestamps()
-                    ->wherePivot('status', 'active');
+        return $this->assignedIssues()->where('status_id', '=', self::getClosedStatusId())->count();
     }
 
     /**
-     * Get all team memberships (including inactive)
+     * Get count of open issues created by this user
      */
-    public function teamMemberships()
+    public function openCreatedIssuesCount()
     {
-        return $this->hasMany(TeamUser::class);
+        return $this->createdIssues()->where('status_id', '!=', self::getClosedStatusId())->count();
     }
 
     /**
-     * Get active team memberships
+     * Get count of closed issues created by this user
      */
-    public function activeTeamMemberships()
+    public function closedCreatedIssuesCount()
     {
-        return $this->hasMany(TeamUser::class)->where('status', 'active');
-    }
-
-    /**
-     * Get user's role in a specific team
-     */
-    public function getRoleInTeam($teamId)
-    {
-        $membership = $this->teamMemberships()
-                          ->where('team_id', $teamId)
-                          ->where('status', 'active')
-                          ->with('role')
-                          ->first();
-        
-        return $membership ? $membership->role : null;
-    }
-
-    /**
-     * Check if user has permission in any team
-     */
-    public function hasPermission($permission)
-    {
-        return $this->activeTeamMemberships()
-                   ->with('role')
-                   ->get()
-                   ->pluck('role')
-                   ->filter()
-                   ->some(function ($role) use ($permission) {
-                       return $role->hasPermission($permission);
-                   });
+        return $this->createdIssues()->where('status_id', '=', self::getClosedStatusId())->count();
     }
 
     /**
@@ -145,17 +129,30 @@ class User extends Authenticatable
     public function projects()
     {
         return $this->belongsToMany(Project::class, 'project_user')
-                    ->withPivot(['role_id', 'status', 'assigned_at', 'removed_at'])
+                    ->withPivot(['role_id', 'assigned_at', 'removed_at'])
                     ->withTimestamps()
-                    ->wherePivot('status', 'active');
+                    ->wherePivotNull('removed_at');
     }
 
     /**
-     * Get all project assignments (including inactive)
+     * Get project assignments grouped by project with roles
      */
-    public function projectAssignments()
+    public function getGroupedProjectAssignments()
     {
-        return $this->hasMany(ProjectUser::class);
+        return $this->hasMany(ProjectUser::class)
+            ->with(['project', 'role'])
+            ->get()
+            ->groupBy('project_id')
+            ->map(function ($assignments, $projectId) {
+                $project = $assignments->first()->project;
+                $roles = $assignments->pluck('role')->filter()->unique('id');
+
+                return (object) [
+                    'project' => $project,
+                    'roles' => $roles,
+                    'assignments' => $assignments
+                ];
+            });
     }
 
     /**
@@ -365,6 +362,7 @@ class User extends Authenticatable
      */
     public function getRecentActivities($limit = 10)
     {
-        return Activity::getRecentForUser($this->id, $limit);
+        //return Activity::getRecentForUser($this->id, $limit);
+        return Activity::getGroupedActivitiesForUser($this->id, $limit);
     }
 }

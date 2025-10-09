@@ -1,4 +1,17 @@
 @use '../abstracts/mixins';
+@use './variables';
+
+@view-transition {
+	navigation: auto;
+}
+
+body {
+	font-size: variables.$font-size-base;
+	font-family: variables.$font-family-base;
+	line-height: variables.$line-height-base;
+	max-width: 1920px;
+	margin-inline: auto;
+}
 
 .card-grid {
 	&--lg {

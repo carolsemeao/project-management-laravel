@@ -15,7 +15,6 @@ class ProjectUser extends Model
         'project_id',
         'user_id',
         'role_id',
-        'status',
         'assigned_at',
         'removed_at',
     ];
@@ -54,6 +53,6 @@ class ProjectUser extends Model
      */
     public function isActive()
     {
-        return $this->status === 'active';
+        return is_null($this->removed_at);
     }
 }

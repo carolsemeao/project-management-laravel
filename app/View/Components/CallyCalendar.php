@@ -14,6 +14,7 @@ class CallyCalendar extends Component
     public function __construct(
         public string $popoverTarget,
         public string $popoverAnchor,
+        public ?string $initialValue = null,
     ) {}
 
     /**

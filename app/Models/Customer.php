@@ -21,7 +21,7 @@ class Customer extends Model
     ];
 
     protected $casts = [
-        'status' => 'string',
+        'status' => 'boolean',
     ];
 
     public function company()

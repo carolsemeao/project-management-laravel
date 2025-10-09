@@ -58,10 +58,19 @@ class AdminController extends Controller
     {
         $id = Auth::user()->id;
         $profileData = User::find($id);
-        return view('admin.admin_profile', compact('profileData'));
+        $recentActivities = $profileData->getRecentActivities(8);
+
+        return view('admin.admin_profile', compact('profileData', 'recentActivities'));
     }
 
-    public function ProfileStore(Request $request)
+    public function AdminSettings()
+    {
+        $id = Auth::user()->id;
+        $profileData = User::find($id);
+        return view('admin.admin_settings', compact('profileData'));
+    }
+
+    public function EditProfile(Request $request)
     {
         $id = Auth::user()->id;
         $data = User::find($id);
@@ -85,7 +94,7 @@ class AdminController extends Controller
 
         $data->save();
         $notification = [
-            'message' => 'Profile Updated Successfully',
+            'message' => __('Profile Updated Successfully'),
             'alert-type' => 'success'
         ];
         return redirect()->back()->with($notification);
@@ -111,7 +120,7 @@ class AdminController extends Controller
 
         if (!Hash::check($request->old_password,$user->password)) {
             $notification = [
-                'message' => 'Old Password does not match!',
+                'message' => __('Old Password does not match!'),
                 'alert-type' => 'danger'
             ];
             return back()->with($notification);
@@ -124,7 +133,7 @@ class AdminController extends Controller
         Auth::logout(); 
         
         $notification = [
-            'message' => 'Password updated successfully',
+            'message' => __('Password updated successfully'),
             'alert-type' => 'success'
         ];
         return redirect()->back()->with($notification);

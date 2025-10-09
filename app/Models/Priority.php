@@ -9,9 +9,10 @@ class Priority extends Model
 {
     use HasFactory;
 
+    protected $table = 'issue_priorities';
+
     protected $fillable = [
         'name',
-        'color',
     ];
 
     /**

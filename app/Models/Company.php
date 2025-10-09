@@ -21,7 +21,7 @@ class Company extends Model
     ];
 
     protected $casts = [
-        'status' => 'string',
+        'status' => 'boolean',
     ];
 
     /**

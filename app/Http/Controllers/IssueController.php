@@ -26,13 +26,12 @@ class IssueController extends Controller
         $issuesQuery = Issue::query()
             ->with(['assignedUser', 'createdByUser', 'project', 'status', 'priority'])
             ->where(function ($query) use ($user) {
-                $query->where('created_by_user_id', $user->id)
-                    ->orWhere('assigned_to_user_id', $user->id)
-                    ->orWhereHas('project', function ($projectQuery) use ($user) {
-                        $projectQuery->whereHas('users', function ($userQuery) use ($user) {
-                            $userQuery->where('users.id', $user->id);
-                        });
-                    });
+                $query->where(function ($subQuery) use ($user) {
+                        // Issues I created that are unassigned
+                        $subQuery->where('created_by_user_id', $user->id)
+                                ->whereNull('assigned_to_user_id');
+                    })
+                    ->orWhere('assigned_to_user_id', $user->id); // Issues assigned to me
             })
             ->where('status_id', '!=', $closedStatus->id ?? 0);
 
@@ -40,8 +39,8 @@ class IssueController extends Controller
             $issuesQuery->where('project_id', $projectId);
         }
 
-        $issuesQuery->join('priorities', 'issues.priority_id', '=', 'priorities.id')
-            ->orderByRaw("CASE priorities.name 
+        $issuesQuery->join('issue_priorities', 'issues.priority_id', '=', 'issue_priorities.id')
+            ->orderByRaw("CASE issue_priorities.name 
                 WHEN 'immediate' THEN 5
                 WHEN 'urgent' THEN 4
                 WHEN 'high' THEN 3
@@ -111,12 +110,12 @@ class IssueController extends Controller
     private function userCanModifyIssue($issue, $user)
     {
         // User can modify if:
-        // 1. They have 'can_assign_issues' permission (Project Managers)
+        // 1. They are the Project Manager
         // 2. They created the issue
         // 3. Issue is assigned to them directly
         // 4. They are assigned to the project (can edit any issue in their project)
-        
-        if ($user->hasPermission('can_assign_issues')) {
+
+        if ($issue->project->project_manager_id === $user->id) {
             return true;
         }
         
@@ -153,12 +152,12 @@ class IssueController extends Controller
             $projects = Project::all();
         }
         
-        // Get users assigned to the project this issue belongs to
+        // Get users assigned to the project this issue belongs to (unique users only)
         $users = collect();
         if ($issue->project_id) {
             $project = Project::find($issue->project_id);
             if ($project) {
-                $users = $project->users;
+                $users = $project->users->unique('id');
             }
         }
         
@@ -181,8 +180,8 @@ class IssueController extends Controller
         $request->validate([
             'issue_title' => 'required|string|max:255',
             'issue_description' => 'nullable|string',
-            'status_id' => 'required|integer|exists:status,id',
-            'priority_id' => 'required|integer|exists:priorities,id',
+            'status_id' => 'required|integer|exists:issue_status,id',
+            'priority_id' => 'required|integer|exists:issue_priorities,id',
             'project_id' => 'nullable|integer|exists:projects,id',
             'assigned_to_user_id' => 'nullable|integer|exists:users,id',
             'issue_due_date' => 'nullable|date',
@@ -207,6 +206,7 @@ class IssueController extends Controller
         // Track changes for activity logging
         $oldStatus = $issue->status;
         $oldPriority = $issue->priority;
+        $oldAssignedToUser = $issue->assignedUser;
 
         // Convert hours to minutes
         $estimatedTimeMinutes = null;
@@ -257,6 +257,22 @@ class IssueController extends Controller
                 [
                     'old_priority' => $oldPriority->name,
                     'new_priority' => $newPriority->name,
+                ]
+            );
+        }
+
+        // Log activity for new user assignment
+        if ($oldAssignedToUser->id != $request->assigned_to_user_id) {
+            $newAssignedToUser = User::find($request->assigned_to_user_id);
+            Activity::log(
+                Auth::id(),
+                'user_assigned',
+                "Assigned Task #{$issue->id}: \"{$issue->issue_title}\" to {$newAssignedToUser->name}",
+                $issue->id,
+                $issue->project_id,
+                [
+                    'old_assigned_to_user' => $oldAssignedToUser->name,
+                    'new_assigned_to_user' => $newAssignedToUser->name,
                 ]
             );
         }
@@ -312,8 +328,8 @@ class IssueController extends Controller
         $request->validate([
             'issue_title' => 'required|string|max:255',
             'issue_description' => 'nullable|string',
-            'status_id' => 'required|integer|exists:status,id',
-            'priority_id' => 'required|integer|exists:priorities,id',
+            'status_id' => 'required|integer|exists:issue_status,id',
+            'priority_id' => 'required|integer|exists:issue_priorities,id',
             'project_id' => 'nullable|integer|exists:projects,id',
             'assigned_to_user_id' => 'nullable|integer|exists:users,id',
             'issue_due_date' => 'nullable|date',

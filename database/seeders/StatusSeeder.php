@@ -25,11 +25,10 @@ class StatusSeeder extends Seeder
         ];
 
         foreach ($statuses as $status) {
-            DB::table('status')->insert([
-                'name' => $status['name'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::table('issue_status')->updateOrInsert(
+                ['name' => $status['name']],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
         }
 
         $this->command->info('Status table seeded successfully!');

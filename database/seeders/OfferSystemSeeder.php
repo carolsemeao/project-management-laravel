@@ -28,86 +28,14 @@ class OfferSystemSeeder extends Seeder
             return;
         }
 
-        // Create sample companies
-        $companies = [
-            [
-                'name' => 'TechCorp Solutions',
-                'email' => 'contact@techcorp.com',
-                'phone' => '+1-555-0123',
-                'address' => '123 Tech Street',
-                'city' => 'San Francisco',
-                'state' => 'CA',
-                'zip' => '94102',
-                'country' => 'USA',
-                'website' => 'https://techcorp.com',
-                'status' => 'active',
-            ],
-            [
-                'name' => 'Digital Dynamics',
-                'email' => 'hello@digitaldynamics.com',
-                'phone' => '+1-555-0456',
-                'address' => '456 Innovation Ave',
-                'city' => 'Austin',
-                'state' => 'TX',
-                'zip' => '73301',
-                'country' => 'USA',
-                'website' => 'https://digitaldynamics.com',
-                'status' => 'active',
-            ],
-            [
-                'name' => 'Creative Studios Ltd',
-                'email' => 'info@creativestudios.co.uk',
-                'phone' => '+44-20-7123-4567',
-                'address' => '789 Design Lane',
-                'city' => 'London',
-                'country' => 'UK',
-                'status' => 'active',
-            ],
-        ];
+        // Get existing companies and customers for creating offers
+        $companies = Company::all();
+        $customers = Customer::all();
 
-        foreach ($companies as $companyData) {
-            Company::create($companyData);
+        if ($companies->isEmpty()) {
+            $this->command->warn('No companies found. Skipping offer creation.');
+            return;
         }
-
-        $this->command->info('Created 3 sample companies');
-
-        // Create sample customers
-        $customers = [
-            [
-                'name' => 'John Smith',
-                'email' => 'john.smith@techcorp.com',
-                'phone' => '+1-555-0111',
-                'company_id' => 1,
-                'status' => 'active',
-            ],
-            [
-                'name' => 'Sarah Johnson',
-                'email' => 'sarah.johnson@digitaldynamics.com',
-                'phone' => '+1-555-0222',
-                'company_id' => 2,
-                'status' => 'active',
-            ],
-            [
-                'name' => 'Michael Brown',
-                'email' => 'michael.brown@creativestudios.co.uk',
-                'phone' => '+44-20-7123-4568',
-                'company_id' => 3,
-                'status' => 'active',
-            ],
-            [
-                'name' => 'Emily Davis',
-                'email' => 'emily.davis@freelancer.com',
-                'phone' => '+1-555-0333',
-                'company_id' => null, // Independent freelancer
-                'status' => 'active',
-            ],
-        ];
-
-        foreach ($customers as $customerData) {
-            Customer::create($customerData);
-        }
-
-        $this->command->info('Created 4 sample customers');
 
         // Get existing projects
         $projects = Project::all();
@@ -115,54 +43,51 @@ class OfferSystemSeeder extends Seeder
             $this->command->warn('No projects found. Offers will be created without project association.');
         }
 
-        // Create sample offers
-        $offers = [
-            [
-                'name' => 'Website Redesign Proposal',
-                'description' => 'Complete redesign of corporate website with modern UI/UX, responsive design, and improved performance.',
-                'customer_id' => 1,
-                'project_id' => $projects->isNotEmpty() ? $projects->first()->id : null,
-                'created_by_user_id' => $user->id,
-                'status' => 'sent',
-                'valid_until' => Carbon::now()->addDays(30),
-                'notes' => 'Client interested in modern design with focus on mobile experience.',
-                'sent_at' => Carbon::now()->subDays(5),
-            ],
-            [
-                'name' => 'Mobile App Development',
-                'description' => 'Native iOS and Android app development with backend API integration.',
-                'customer_id' => 2,
-                'project_id' => $projects->count() > 1 ? $projects->skip(1)->first()->id : null,
-                'created_by_user_id' => $user->id,
-                'status' => 'draft',
-                'valid_until' => Carbon::now()->addDays(45),
-                'notes' => 'Requires detailed technical specifications before final pricing.',
-            ],
-            [
-                'name' => 'Brand Identity Package',
-                'description' => 'Complete brand identity design including logo, business cards, letterhead, and brand guidelines.',
-                'customer_id' => 3,
-                'project_id' => null,
-                'created_by_user_id' => $user->id,
-                'status' => 'accepted',
-                'valid_until' => Carbon::now()->addDays(15),
-                'notes' => 'Rush job - client needs delivery in 2 weeks.',
-                'sent_at' => Carbon::now()->subDays(10),
-                'accepted_at' => Carbon::now()->subDays(3),
-            ],
-            [
-                'name' => 'E-commerce Platform Setup',
-                'description' => 'Setup and customization of e-commerce platform with payment integration and inventory management.',
-                'customer_id' => 4,
-                'project_id' => null,
-                'created_by_user_id' => $user->id,
-                'status' => 'rejected',
-                'valid_until' => Carbon::now()->subDays(5),
-                'notes' => 'Client decided to go with a different solution.',
-                'sent_at' => Carbon::now()->subDays(15),
-                'rejected_at' => Carbon::now()->subDays(5),
-            ],
-        ];
+        // Create sample offers using existing companies
+        $offers = [];
+        if ($companies->count() >= 2) {
+            $offers = [
+                [
+                    'name' => 'Website Redesign Proposal',
+                    'description' => 'Complete redesign of corporate website with modern UI/UX, responsive design, and improved performance.',
+                    'company_id' => $companies->first()->id,
+                    'customer_id' => $customers->where('company_id', $companies->first()->id)->first()?->id,
+                    'project_id' => $projects->where('company_id', $companies->first()->id)->first()?->id,
+                    'created_by_user_id' => $user->id,
+                    'status' => 'sent',
+                    'valid_until' => Carbon::now()->addDays(30),
+                    'notes' => 'Client interested in modern design with focus on mobile experience.',
+                    'sent_at' => Carbon::now()->subDays(5),
+                ],
+                [
+                    'name' => 'Mobile App Development',
+                    'description' => 'Native iOS and Android app development with backend API integration.',
+                    'company_id' => $companies->skip(1)->first()->id,
+                    'customer_id' => $customers->where('company_id', $companies->skip(1)->first()->id)->first()?->id,
+                    'project_id' => $projects->where('company_id', $companies->skip(1)->first()->id)->first()?->id,
+                    'created_by_user_id' => $user->id,
+                    'status' => 'draft',
+                    'valid_until' => Carbon::now()->addDays(45),
+                    'notes' => 'Requires detailed technical specifications before final pricing.',
+                ],
+            ];
+        }
+
+        // Add offers without specific customers if we have companies but fewer customers
+        if ($companies->count() >= 2 && $offers === []) {
+            $offers = [
+                [
+                    'name' => 'Consulting Services',
+                    'description' => 'General consulting and advisory services.',
+                    'customer_id' => null,
+                    'project_id' => $projects->isNotEmpty() ? $projects->first()->id : null,
+                    'created_by_user_id' => $user->id,
+                    'status' => 'draft',
+                    'valid_until' => Carbon::now()->addDays(30),
+                    'notes' => 'Initial consulting engagement.',
+                ],
+            ];
+        }
 
         foreach ($offers as $offerData) {
             $offer = Offer::create($offerData);

@@ -21,9 +21,11 @@ class ChartController extends Controller
      */
     public function getDashboardCharts()
     {
+        $userId = Auth::id();
+
         return [
-            'projectStatusChart' => $this->chartService->createProjectStatusChart(),
-            'issueStatusBarChart' => $this->chartService->createIssuesStatusBarChart(),
+            'projectStatusChart' => $this->chartService->createProjectStatusChart($userId),
+            'issueStatusBarChart' => $this->chartService->createIssuesStatusBarChart($userId),
         ];
     }
 
@@ -52,16 +54,17 @@ class ChartController extends Controller
     {
         $type = $request->input('type', 'status');
         $projectId = $request->input('project_id');
+        $userId = Auth::id();
 
         switch ($type) {
             case 'project_status':
                 // Dashboard: Project status distribution (pie chart)
-                $chart = $this->chartService->createProjectStatusChart();
+                $chart = $this->chartService->createProjectStatusChart($userId);
                 break;
 
             case 'issue_status_bar':
                 // Dashboard: Issue status overview (bar chart)
-                $chart = $this->chartService->createIssuesStatusBarChart();
+                $chart = $this->chartService->createIssuesStatusBarChart($userId);
                 break;
 
             case 'project_issue_status':

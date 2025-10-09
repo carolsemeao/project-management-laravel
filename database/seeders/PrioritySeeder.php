@@ -14,20 +14,18 @@ class PrioritySeeder extends Seeder
     public function run(): void
     {
         $priorities = [
-            ['name' => 'low', 'color' => '#0d6efd'],
-            ['name' => 'normal', 'color' => '#0d6efd'],
-            ['name' => 'high', 'color' => '#0d6efd'],
-            ['name' => 'urgent', 'color' => '#0d6efd'],
-            ['name' => 'immediate', 'color' => '#0d6efd'],
+            ['name' => 'low'],
+            ['name' => 'normal'],
+            ['name' => 'high'],
+            ['name' => 'urgent'],
+            ['name' => 'immediate'],
         ];
 
         foreach ($priorities as $priority) {
-            DB::table('priorities')->insert([
-                'name' => $priority['name'],
-                'color' => $priority['color'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::table('issue_priorities')->updateOrInsert(
+                ['name' => $priority['name']],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
         }
 
         $this->command->info('Priorities table seeded successfully!');

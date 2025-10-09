@@ -1,0 +1,5 @@
+.empty {
+	text-align: center;
+	padding-block: calc(var(--spacing) * 8);
+	color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+}

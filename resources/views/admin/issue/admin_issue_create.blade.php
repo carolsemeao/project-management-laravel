@@ -89,7 +89,7 @@
                 <p class="text-sm opacity-60 mb-4">{{ __('Who\'s working on this and when it\'s due') }}</p>
 
                 <div class="card-body__form">
-                    <div class="md:grid md:grid-cols-2 md:gap-4 mb-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                         <fieldset class="fieldset">
                             <legend class="fieldset-legend">{{ __('Assignee') }}</legend>
                             <select class="select w-full" id="assigned_to_user_id" name="assigned_to_user_id">
@@ -114,23 +114,7 @@
                     </div>
                     <fieldset class="fieldset">
                         <legend class="fieldset-legend">{{ __('Due Date') }}</legend>
-                        <!-- Hidden input to store the actual date value for form submission -->
-                        <input type="hidden" id="issue_due_date" name="issue_due_date" value="{{ old('issue_due_date') }}">
-                        
-                        <!-- Display button that shows selected date and opens calendar -->
-                        <button popovertarget="issue_due_date-popover" type="button" class="input input-border w-full text-left" id="issue_due_date_display" style="anchor-name:--issue_due_date">
-                            <span class="icon icon-sm icon-calendar me-1"></span>
-                            <span id="selected_date_text">{{ old('issue_due_date') ? \Carbon\Carbon::parse(old('issue_due_date'))->format('d.m.Y') : 'dd.mm.yyyy' }}</span>
-                        </button>
-                        
-                        <!-- Calendar popover -->
-                        <div popover id="issue_due_date-popover" class="dropdown bg-base-100 rounded-box shadow-lg p-4" style="position-anchor:--issue_due_date">
-                            <calendar-date class="cally" id="calendar_picker">
-                                <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
-                                <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
-                                <calendar-month></calendar-month>
-                            </calendar-date>
-                        </div>
+                        <x-cally-calendar :popoverTarget="'issue_due_date'" :popoverAnchor="'issue_due_date'" />
                     </fieldset>
                 </div>
             </div>

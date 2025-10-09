@@ -192,9 +192,9 @@ class IssueSeeder extends Seeder
         $this->command->info('');
         $this->command->info('Issues by Status:');
         $statusCounts = DB::table('issues')
-        ->join('status', 'issues.status_id', '=', 'status.id')
-        ->select('status.name as status_name', DB::raw('COUNT(*) as count'))
-        ->groupBy('status.id', 'status.name')
+        ->join('issue_status', 'issues.status_id', '=', 'issue_status.id')
+        ->select('issue_status.name as status_name', DB::raw('COUNT(*) as count'))
+        ->groupBy('issue_status.id', 'issue_status.name')
         ->pluck('count', 'status_name');
         
         foreach ($statusCounts as $status => $count) {

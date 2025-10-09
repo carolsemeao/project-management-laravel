@@ -3,66 +3,61 @@
 @section('page_title', 'Projects')
 @section('page_subtitle', 'Manage your projects and track progress')
 @section('header_actions')
-    <x-button-primary btnType="dark" classes="d-flex align-items-center justify-content-center" isLink=true
-        href="{{ route('admin.projects.create') }}">
+    <a class="btn btn-neutral" href="{{ route('admin.projects.create') }}">
         <span class="icon icon-sm icon-plus me-2"></span>
         {{ __('New Project') }}
-    </x-button-primary>
+    </a>
 @endsection
 @section('maincontent')
-    <div class="row row-eq-height">
-        @if($projects->count() > 0)
+    @if($projects->count() > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($projects as $project)
-                <div class="col-4">
-                    <a href="{{ route('admin.projects.show', $project->id) }}" class="card text-decoration-none h-100">
-                        <div class="card-body d-flex flex-column">
-                            <p class="mb-0 mt-1 d-flex align-items-center">
-                                <span class="me-2 rounded-circle d-inline-block"
-                                    style="width: 10px; height: 10px; background-color: {{ $project->color }};"></span>
-                                <span>{{ $project->name }}</span>
-                            </p>
-                            <p class="text-muted small">{{ Str::limit($project->description, 60, '...', true) }}</p>
-
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <x-badge :label="$project->getFormattedStatusName()" classes="fw-bold" />
-                                <x-badge classes="fw-bold"
-                                    label="{{__(':completedIssues / :totalIssues Issues', ['completedIssues' => $project->getIssuesByStatus(6), 'totalIssues' => $project->issues()->count()])}}" />
-                            </div>
-
-                            <div class="mt-auto mb-3">
-                                <strong class="text-muted small">{{ __('Progress') }}</strong>
-                                <div class="mt-1">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <small class="text-muted">{{ $project->getProgressPercentage() }}% complete</small>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar bg-dark" role="progressbar"
-                                            style="width: {{ $project->getProgressPercentage() }}%"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-center justify-content-between">
-                                <p class="mb-0 mt-1 d-flex align-items-center text-muted small">
-                                    <span class="icon icon-sm icon-users me-1"></span>
-                                    {{ $project->getOpenIssuesCount() }} open
-                                </p>
-                                <p class="mb-0 mt-1 d-flex align-items-center text-muted small">
-                                    <span class="icon icon-sm icon-calendar me-1"></span>
-                                    {{ $project->due_date ? $project->due_date->format('d/m/Y') : __('Not set') }}
-                                    @if($project->isOverdue())
-                                        <x-badge :label="__('Overdue')" textColor="text-danger" classes="ms-1 small" />
-                                    @elseif($project->isDueSoon())
-                                        <x-badge :label="__('Due Soon')" textColor="text-warning" classes="ms-1 small" />
-                                    @endif
-                                </p>
-                            </div>
+                <a href="{{ route('admin.projects.show', $project->id) }}" class="card text-decoration-none h-full">
+                    <div class="card-body">
+                        <div class="flex items-center gap-2 mb-2">
+                            <x-badge :label="$project->getFormattedStatusName()" classes="fw-bold" />
+                            @if($project->isOverdue())
+                                <x-badge :label="__('Overdue')" classes="badge-error" darkClass="dark:badge-error" />
+                            @elseif($project->isDueSoon())
+                                <x-badge :label="__('Due Soon')" classes="badge-warning" darkClass="dark:badge-warning" />
+                            @endif
                         </div>
-                    </a>
-                </div>
+
+                        <h2 class="flex items-center gap-2">
+                            <span class="status status-lg" style="background-color: {{ $project->color }}"></span>
+                            <span>{{ $project->name }}</span>
+                        </h2>
+                        <p class="text-muted small">
+                            {{ Str::limit($project->description, 60, '...', true) }}
+                        </p>
+
+                        <h3 class="mt-3">{{ __('Progress') }}</h3>
+                        <div class="mb-4">
+                            <span class="text-xs mb-1 opacity-70">
+                                {{ __(':timePercentage % complete', ['timePercentage' => $project->getProgressPercentage()]) }}
+                            </span>
+                            <progress class="progress" value="{{ $project->getProgressPercentage() }}" max="100"></progress>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <p class="flex items-center opacity-70">
+                                <span class="icon icon-sm icon-users me-1"></span>
+                                {{__(':completedIssues / :totalIssues Issues', ['completedIssues' => $project->getIssuesByStatus(6), 'totalIssues' => $project->issues()->count()])}}
+                            </p>
+                            <p class="flex items-center opacity-70 grow-0">
+                                <span class="icon icon-sm icon-calendar me-1"></span>
+                                {{ $project->due_date ? $project->due_date->format('d.m.Y') : __('Not set') }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
             @endforeach
-        @else
-            <p class="small text-muted">{{ __('No projects found') }}</p>
-        @endif
-    </div>
+        </div>
+    @else
+        <div class="empty">
+            <span class="icon icon-lg icon-folder mb-2 block"></span>
+            <p class="text-sm">{{ __('No projects found') }}</p>
+            <p class="text-xs mt-1">{{ __('Start creating projects to see them here') }}</p>
+        </div>
+    @endif
 @endsection

@@ -27,13 +27,13 @@
             @include('admin.issue.parts.time-tracking')
 
             <!-- Close Issue Modal -->
-            @include('admin.issue.parts.close-issue-modal')
+            @include('admin.issue.modals.close-issue-modal')
 
             <!-- Log Time Modal -->
-            @include('admin.issue.parts.log-time-modal')
+            @include('admin.issue.modals.log-time-modal')
 
             <!-- Delete Issue Modal -->
-            @include('admin.issue.parts.delete-issue-modal')
+            @include('admin.issue.modals.delete-issue-modal')
         </div>
 
         <!-- Right Column - Sidebar -->
