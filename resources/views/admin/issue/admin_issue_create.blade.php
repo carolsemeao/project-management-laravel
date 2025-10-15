@@ -1,7 +1,11 @@
-@extends('admin.issue.admin_issue_single_template')
+@extends('admin.admin_single_template')
 @section('title', 'Create Issue')
-@section('page_title', 'Create Issue')
-@section('page_subtitle', 'Add a new issue to track work and progress.')
+@section('page_title')
+    <div class="content__header-title">
+        <h1>{{ __('Create Issue') }}</h1>
+        <p class="text-sm opacity-60">{{ __('Add a new issue to track work and progress.') }}</p>
+    </div>
+@endsection
 @section('back_to_route', route('admin.issues'))
 @section('back_to_text', __('Back to Issues'))
 
@@ -34,7 +38,7 @@
                         <select class="select w-full" id="project_id" name="project_id">
                             <option value="" disabled selected>{{ __('-- Select Project --') }}</option>
                             @foreach ($projects as $project)
-                                <option value="{{ $project->id }}" {{ old('project_id') == $project->id ? 'selected' : '' }}>
+                                <option value="{{ $project->id }}" {{ old('project_id') == $project->id || $projectId == $project->id ? 'selected' : '' }}>
                                     {{ $project->name }}
                                 </option>
                             @endforeach

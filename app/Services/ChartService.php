@@ -12,14 +12,14 @@ class ChartService
      * Default color mapping for issue statuses
      */
     protected array $statusColors = [
-        'planned' => 'var(--status-color)', // Primary color
-        'in_progress' => 'var(--status-color)', // Secondary color
-        'waiting_for_planning' => 'var(--status-color)', // Accent color
-        'on_hold' => 'var(--status-color)', // Error color        
-        'feedback' => 'var(--status-color)', // Warning color
-        'closed' => 'var(--status-color)', // Success color
-        'resolved' => 'var(--status-color)', // Info color
-        'rejected' => 'var(--status-color)', // Error color
+        'planned' => 'var(--status-planned-color)', // Primary color
+        'in_progress' => 'var(--status-in_progress-color)', // Secondary color
+        'waiting_for_planning' => 'var(--status-waiting_for_planning-color)', // Accent color
+        'on_hold' => 'var(--status-on_hold-color)', // Error color        
+        'feedback' => 'var(--status-feedback-color)', // Warning color
+        'closed' => 'var(--status-closed-color)', // Success color
+        'resolved' => 'var(--status-resolved-color)', // Info color
+        'rejected' => 'var(--status-rejected-color)', // Error color
     ];
 
     /**
@@ -47,9 +47,9 @@ class ChartService
     public function createProjectIssuePriorityChart(Project $project): array
     {
         $projectPriorityDistribution = $project->issues()
-            ->join('priorities', 'issues.priority_id', '=', 'priorities.id')
-            ->select('priorities.name', 'priorities.color', DB::raw('count(*) as total'))
-            ->groupBy('priorities.id', 'priorities.name', 'priorities.color')
+            ->join('issue_priorities', 'issues.priority_id', '=', 'issue_priorities.id')
+            ->select('issue_priorities.name', DB::raw('count(*) as total'))
+            ->groupBy('issue_priorities.id', 'issue_priorities.name')
             ->get();
 
         // Handle empty data
@@ -88,7 +88,10 @@ class ChartService
                 ],
                 'scales' => [
                     'y' => [
-                        'beginAtZero' => true
+                        'beginAtZero' => true,
+                        'ticks' => [
+                            'stepSize' => 1,
+                        ]
                     ]
                 ],
                 'animation' => [
@@ -104,9 +107,9 @@ class ChartService
     public function createProjectIssueStatusChart(Project $project): array
     {
         $projectIssueDistribution = $project->issues()
-            ->join('status', 'issues.status_id', '=', 'status.id')
-            ->select('status.name', DB::raw('count(*) as total'))
-            ->groupBy('status.id', 'status.name')
+            ->join('issue_status', 'issues.status_id', '=', 'issue_status.id')
+            ->select('issue_status.name', DB::raw('count(*) as total'))
+            ->groupBy('issue_status.id', 'issue_status.name')
             ->get();
 
         // Handle empty data
@@ -224,6 +227,9 @@ class ChartService
                         'grid' => [
                             'lineWidth' => 0,
                             
+                        ],
+                        'ticks' => [
+                            'stepSize' => 1,
                         ]
                     ],
                 ],

@@ -15,10 +15,7 @@
                             </a>
                             @yield('header_actions')
                         </div>
-                        <div class="content__header-title">
-                            <h1>@yield('page_title')</h1>
-                            <p class="text-sm opacity-60">@yield('page_subtitle')</p>
-                        </div>
+                        @yield('page_title')
                     </div>
                 </div>
                 @yield('maincontent')

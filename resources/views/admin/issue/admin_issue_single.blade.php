@@ -1,6 +1,10 @@
-@extends('admin.issue.admin_issue_single_template')
-@section('title', 'Issue Details')
-@section('page_title', $issue->issue_title)
+@extends('admin.admin_single_template')
+@section('title', "Task #" . $issue->id . ": " . $issue->issue_title)
+@section('page_title')
+    <div class="content__header-title">
+        <h1>Issue #{{ $issue->id }} - {{ $issue->issue_title }}</h1>
+    </div>
+@endsection
 @section('back_to_route', route('admin.issues'))
 @section('back_to_text', __('Back to Issues'))
 @section('header_actions')
@@ -11,7 +15,7 @@
         </button>
         <a href="{{ route('admin.issues.edit', $issue->id) }}" class="btn btn-soft join-item">
             <span class="icon icon-sm icon-edit me-2"></span>
-            {{ __('Edit Issue') }}
+            {{ __('Edit') }}
         </a>
     </div>
 @endsection

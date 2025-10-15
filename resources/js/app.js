@@ -129,3 +129,33 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 	}
 });
+
+function resolveChartColors(chartData) {
+	const computedStyle = getComputedStyle(document.documentElement);
+	const resolvedData = JSON.parse(JSON.stringify(chartData)); // Deep clone needed
+
+	const resolveColors = (colors) =>
+		colors.map((color) => {
+			if (color.startsWith('var(')) {
+				const varName = color.slice(4, -1);
+				return computedStyle.getPropertyValue(varName).trim() || '#6c757d';
+			}
+			return color;
+		});
+
+	// Handle different chart types
+	resolvedData.data.datasets.forEach((dataset) => {
+		if (dataset.backgroundColor) {
+			dataset.backgroundColor = Array.isArray(dataset.backgroundColor)
+				? resolveColors(dataset.backgroundColor)
+				: resolveColors([dataset.backgroundColor]);
+		}
+		if (dataset.borderColor) {
+			dataset.borderColor = Array.isArray(dataset.borderColor)
+				? resolveColors(dataset.borderColor)
+				: resolveColors([dataset.borderColor]);
+		}
+	});
+
+	return resolvedData;
+}

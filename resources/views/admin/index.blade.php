@@ -105,7 +105,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const resolveChartColors = chartData => {
             const computedStyle = getComputedStyle(document.documentElement);
-            const resolvedData = JSON.parse(JSON.stringify(chartData)); // Deep clone needed
+            const resolvedData = JSON.parse(JSON.stringify(chartData));
             
             const resolveColors = colors => colors.map(color => {
                 if (color.startsWith('var(')) {

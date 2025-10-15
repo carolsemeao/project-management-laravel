@@ -1,0 +1,18 @@
+.tabs-lift > .tab {
+	border-style: dashed;
+	--tab-border-color: color-mix(
+		in oklab,
+		var(--color-base-300) 60%,
+		transparent
+	);
+}
+
+[data-theme='night'] {
+	.tabs-lift > .tab {
+		--tab-border-color: color-mix(
+			in oklab,
+			var(--color-base-content) 10%,
+			transparent
+		);
+	}
+}

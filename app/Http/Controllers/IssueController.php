@@ -50,7 +50,7 @@ class IssueController extends Controller
             ->orderBy('issues.created_at', 'desc')
             ->select('issues.*');
 
-        // Paginate with 3 items per page
+        // Paginate with 15 items per page
         $issues = $issuesQuery->paginate(15)->appends($request->query());
                       
         return view('admin.issue.admin_issues', compact('issues', 'projects', 'projectId'));
@@ -385,6 +385,7 @@ class IssueController extends Controller
     {
         $user = Auth::user();
         $userProjects = $user->projects()->pluck('projects.id');
+        $projectId = request()->get('project_id');
         
         // Get users assigned to the project this issue belongs to
         $projects = Project::all();
@@ -395,6 +396,6 @@ class IssueController extends Controller
         $priorities = Priority::all();
         $users = User::all();
 
-        return view('admin.issue.admin_issue_create', compact('projects', 'statuses', 'priorities', 'users'));
+        return view('admin.issue.admin_issue_create', compact('projects', 'statuses', 'priorities', 'users', 'projectId'));
     }
 }

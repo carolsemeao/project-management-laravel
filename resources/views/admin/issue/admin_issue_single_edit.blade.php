@@ -1,6 +1,12 @@
-@extends('admin.issue.admin_issue_single_template')
-@section('title', 'Edit Issue #' . $issue->id)
-@section('page_title', 'Edit Issue #' . $issue->id)
+@extends('admin.admin_single_template')
+@section('title', 'Edit Task #' . $issue->id . ": " . $issue->issue_title)
+@section('page_title')
+    <div class="content__header-title">
+        <h1>
+            {{ __('Edit Issue #:issueId - :issueTitle', ['issueId' => $issue->id, 'issueTitle' => $issue->issue_title]) }}
+        </h1>
+    </div>
+@endsection
 @section('page_subtitle', 'Update issue details and track progress')
 @section('back_to_route', route('admin.issues.show', $issue->id))
 @section('back_to_text', __('Back'))

@@ -1,4 +1,5 @@
-<div class="card-grid card-grid--sm">
+<div
+    class="stats stats-vertical border-1 border-base-300/60 dark:border-base-content/10 border-dashed lg:stats-horizontal w-full">
     @include('components.card', [
         'title' => __('Total Issues'),
         'icon' => 'target',

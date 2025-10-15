@@ -43,7 +43,6 @@ class Project extends Model
         'budget',
         'company_id',
         'customer_id',
-        'created_by_user_id',
     ];
 
     protected $casts = [
@@ -95,6 +94,24 @@ class Project extends Model
     }
 
     /**
+     * Get all issues in this project with priority sorting (for display purposes)
+     */
+    public function issuesSorted()
+    {
+        return $this->hasMany(Issue::class, 'project_id')
+            ->join('issue_priorities', 'issues.priority_id', '=', 'issue_priorities.id')
+            ->orderByRaw("CASE issue_priorities.name
+                WHEN 'immediate' THEN 5
+                WHEN 'urgent' THEN 4
+                WHEN 'high' THEN 3
+                WHEN 'normal' THEN 2
+                WHEN 'low' THEN 1
+                ELSE 0 END DESC")
+            ->orderBy('issues.created_at', 'desc')
+            ->select('issues.*');
+}
+
+    /**
      * Get open issues in this project
      */
     public function openIssues()
@@ -113,7 +130,8 @@ class Project extends Model
         return $this->belongsToMany(User::class, 'project_user')
                     ->withPivot(['role_id', 'assigned_at', 'removed_at'])
                     ->withTimestamps()
-                    ->wherePivotNull('removed_at');
+                    ->wherePivotNull('removed_at')
+                    ->distinct('users.id');
     }
 
     /**

@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ProjectStatus;
 use App\Models\ProjectPriority;
 use App\Models\Company;
 use App\Models\Customer;
-use App\Models\Status;
+use App\Models\Offer;
 
 class ProjectsController extends Controller
 {
@@ -31,9 +30,11 @@ class ProjectsController extends Controller
         $issuesInProgress = $project->getIssuesByStatus(3);
         $totalLoggedTime = $project->getTotalLoggedTimeMinutes();
         $timeProgress = $project->getCombinedTimeProgress();
+        $offers = Offer::where('project_id', $id)->get();
+        $recentOffer = Offer::where('project_id', $id)->orderBy('created_at', 'desc')->limit(1)->get();
         
         // Check if user is assigned to this project (directly or through teams)
-        if (!$user->isAssignedToProject($project->id)) {
+        if (!$user->isAssignedToProject($id)) {
             abort(403, 'You do not have permission to view this project.');
         }
         
@@ -41,7 +42,7 @@ class ProjectsController extends Controller
         $chartController = app(ChartController::class);
         
         try {
-            $projectCharts = $chartController->getProjectCharts($project->id);
+            $projectCharts = $chartController->getProjectCharts($id);
             $projectIssueStatusChart = $projectCharts['issueStatusChart'];
             $projectIssuePriorityChart = $projectCharts['issuePriorityChart'];            
         } catch (\Exception $e) {
@@ -50,7 +51,7 @@ class ProjectsController extends Controller
             $projectIssuePriorityChart = null;
         }
         
-        return view('admin.project.admin_project_single', compact('project', 'projectIssueStatusChart', 'projectIssuePriorityChart', 'totalIssues', 'openIssues', 'issuesInProgress', 'totalLoggedTime', 'timeProgress'));
+        return view('admin.project.admin_project_single', compact('project', 'projectIssueStatusChart', 'projectIssuePriorityChart', 'totalIssues', 'openIssues', 'issuesInProgress', 'totalLoggedTime', 'timeProgress', 'offers', 'recentOffer'));
     }
 
     public function DeleteProject($id)
