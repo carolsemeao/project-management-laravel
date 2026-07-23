@@ -65,7 +65,15 @@
                 <div class="divider my-1"></div>
 
                 <li>
-                    <a href="#" title="Customers">
+                    <a href="{{ route('admin.companies') }}" title="Customers" class="{{ in_array(Route::currentRouteName(), [
+    'admin.companies',
+    'admin.customer',
+    'admin.company.create',
+    'admin.company.edit',
+    'admin.company',
+    'admin.customer.show',
+    'admin.customer.edit'
+]) ? 'menu-active' : '' }}">
                         <span class="icon icon-users sidebar-icon"></span>
                         {{ __('Customers') }}
                     </a>

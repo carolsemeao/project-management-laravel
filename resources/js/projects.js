@@ -16,6 +16,11 @@ function updateContactPersonSelect() {
 	const customerNotes = document.getElementById('customer_notes_text');
 
 	if (!customerEmail || !customerPhone || !customerNotes) {
+		console.log('Missing elements:', {
+			customerEmail: !!customerEmail,
+			customerPhone: !!customerPhone,
+			customerNotes: !!customerNotes
+		});
 		return;
 	}
 
@@ -84,29 +89,33 @@ function updateContactPersonSelect() {
 			`option[value="${contactPersonSelect.value}"]`
 		);
 		const currentValue = contactPersonSelect.value;
+		
+		console.log('updateCustomerInfo called:', {
+			currentValue,
+			selectedOption: !!selectedOption,
+			optionData: selectedOption ? {
+				email: selectedOption.dataset.email,
+				phone: selectedOption.dataset.phone,
+				notes: selectedOption.dataset.notes
+			} : null
+		});
 
-		// Only manipulate selected attributes if user is actively changing the selection
-		// Don't interfere with server-side rendered selected attributes on page load
-		if (
-			document.readyState === 'complete' ||
-			document.readyState === 'interactive'
-		) {
-			// Remove selected attribute from all options first
-			contactPersonSelect.querySelectorAll('option').forEach((option) => {
-				option.removeAttribute('selected');
-			});
+		// Update selected attributes
+		// Remove selected attribute from all options first
+		contactPersonSelect.querySelectorAll('option').forEach((option) => {
+			option.removeAttribute('selected');
+		});
 
-			if (currentValue === '' || !selectedOption) {
-				// No customer selected - set selected attribute on default option
-				const defaultOption =
-					contactPersonSelect.querySelector('option[value=""]');
-				if (defaultOption) {
-					defaultOption.setAttribute('selected', 'selected');
-				}
-			} else {
-				// Customer selected - set selected attribute on the chosen option
-				selectedOption.setAttribute('selected', 'selected');
+		if (currentValue === '' || !selectedOption) {
+			// No customer selected - set selected attribute on default option
+			const defaultOption =
+				contactPersonSelect.querySelector('option[value=""]');
+			if (defaultOption) {
+				defaultOption.setAttribute('selected', 'selected');
 			}
+		} else {
+			// Customer selected - set selected attribute on the chosen option
+			selectedOption.setAttribute('selected', 'selected');
 		}
 
 		// Always update the display text
@@ -129,32 +138,62 @@ function updateContactPersonSelect() {
 	const initialCompanyId = companySelect.value;
 	const initialCustomerId = contactPersonSelect.value;
 
+	// Set initial selected attributes for company select
+	if (initialCompanyId) {
+		const selectedCompanyOption = companySelect.querySelector(`option[value="${initialCompanyId}"]`);
+		if (selectedCompanyOption) {
+			// Remove selected from all options first
+			companySelect.querySelectorAll('option').forEach(option => option.removeAttribute('selected'));
+			// Set selected on the correct option
+			selectedCompanyOption.setAttribute('selected', 'selected');
+		}
+	} else {
+		// No company selected - ensure default option has selected attribute
+		const defaultCompanyOption = companySelect.querySelector('option[value=""]');
+		if (defaultCompanyOption) {
+			// Remove selected from all options first
+			companySelect.querySelectorAll('option').forEach(option => option.removeAttribute('selected'));
+			// Set selected on default option
+			defaultCompanyOption.setAttribute('selected', 'selected');
+		}
+	}
+
 	// Filter options but don't reset if there's an initial selection
 	filterContactPersonOptions(initialCompanyId, false);
 
-	// If there's an initial customer selection, update the display without changing selection
-	if (initialCustomerId) {
-		const selectedOption = contactPersonSelect.querySelector(
-			`option[value="${initialCustomerId}"]`
-		);
-		if (selectedOption) {
-			// Update customer info display
-			customerEmail.textContent =
-				selectedOption.dataset.email || 'Not assigned';
-			customerPhone.textContent =
-				selectedOption.dataset.phone || 'Not assigned';
-			customerNotes.textContent = selectedOption.dataset.notes || 'No notes';
+	// Initialize customer info display and selected attributes
+	updateCustomerInfo();
+
+	// Function to update company selected attribute
+	function updateCompanySelectedAttribute() {
+		const currentValue = companySelect.value;
+		
+		// Remove selected attribute from all options first
+		companySelect.querySelectorAll('option').forEach((option) => {
+			option.removeAttribute('selected');
+		});
+
+		if (currentValue === '' || !currentValue) {
+			// No company selected - set selected attribute on default option
+			const defaultOption = companySelect.querySelector('option[value=""]');
+			if (defaultOption) {
+				defaultOption.setAttribute('selected', 'selected');
+			}
+		} else {
+			// Company selected - set selected attribute on the chosen option
+			const selectedOption = companySelect.querySelector(`option[value="${currentValue}"]`);
+			if (selectedOption) {
+				selectedOption.setAttribute('selected', 'selected');
+			}
 		}
-	} else {
-		// No initial selection - show default text
-		customerEmail.textContent = 'Not assigned';
-		customerPhone.textContent = 'Not assigned';
-		customerNotes.textContent = 'No notes';
 	}
 
 	// Company select change event
 	companySelect.addEventListener('change', function () {
 		const selectedCompanyId = this.value;
+
+		// Update selected attribute for company select
+		updateCompanySelectedAttribute();
 
 		if (!selectedCompanyId || selectedCompanyId === '') {
 			// Company reset to default - reset everything
@@ -167,6 +206,7 @@ function updateContactPersonSelect() {
 
 	// Contact person select change event
 	contactPersonSelect.addEventListener('change', function () {
+		console.log('Customer select changed to:', this.value);
 		updateCustomerInfo();
 	});
 }

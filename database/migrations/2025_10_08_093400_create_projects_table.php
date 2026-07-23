@@ -19,7 +19,6 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->foreignId('status_id')->constrained('project_statuses')->onDelete('restrict');
             $table->foreignId('priority_id')->constrained('project_priorities')->onDelete('restrict');
-            $table->string('color', 7)->default('#007bff'); // Hex color for UI
             $table->decimal('budget', 10, 2)->nullable();
             $table->foreignId('company_id')->constrained()->onDelete('restrict');
             $table->foreignId('customer_id')->nullable()->constrained()->onDelete('set null'); // Specific contact person

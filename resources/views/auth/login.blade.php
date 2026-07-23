@@ -2,37 +2,33 @@
 @section('title', __('Login'))
 @section('content')
     <div>
+        @if($errors->any())
+            <div class="alert alert-error alert-soft mb-8 items-start" role="alert">
+                <i class="icon icon-sm icon-alert-triangle mt-[0.1em]"></i>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <h1 class="text-3xl font-bold">{{ __('Login') }}</h1>
         <form method="POST" action="{{ route('login') }}" class="my-4">
             @csrf
-
-            @if(session('error'))
-                <div role="alert" class="alert alert-error">
-                    <span class="icon icon-sm icon-alert-triangle"></span>
-                    <span>{{ session('error') }}</span>
-                </div>
-            @endif
-
             <div class="form-group mb-3">
-                <label class="input validator">
+                <label class="input @error('email')input-error @enderror" for="email">
                     <span class="icon icon-sm icon-mail"></span>
-                    <input type="email" placeholder="{{ __('Enter your email address') }}" id="email" name="email" autofocus
-                        required />
+                    <input type="email" placeholder="{{ __('Enter your email address') }}" id="email" name="email"
+                        value="{{ old('email') }}" autofocus />
                 </label>
-                @error('email')
-                    <div class="validator-hint hidden">{{ $message }}</div>
-                @enderror
             </div>
 
             <div class="form-group mb-3">
-                <label class="input validator" for="password">
+                <label class="input @error('password')input-error @enderror" for="password">
                     <span class="icon icon-sm icon-key"></span>
-                    <input type="password" required name="password" id="password"
-                        placeholder="{{ __('Enter your password') }}" />
+                    <input type="password" name="password" id="password" placeholder="{{ __('Enter your password') }}" />
                 </label>
-                @error('password')
-                    <div class="validator-hint hidden">{{ $message }}</div>
-                @enderror
             </div>
 
             <div class="form-group d-flex mb-3">

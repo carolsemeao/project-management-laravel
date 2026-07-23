@@ -60,30 +60,13 @@ class ProjectSeeder extends Seeder
             ]
         );
 
-        // Create contacts for companies
-        $johnDoe = Customer::firstOrCreate(
-            ['email' => 'john.doe@acmecorp.com'],
-            [
-                'name' => 'John Doe',
-                'phone' => '+1-555-0124',
-                'position' => 'CTO',
-                'is_primary_contact' => true,
-                'company_id' => $acmeCorp->id,
-            ]
-        );
-
-        $janeSmith = Customer::firstOrCreate(
-            ['email' => 'jane.smith@techstart.com'],
-            [
-                'name' => 'Jane Smith',
-                'phone' => '+1-555-0457',
-                'position' => 'CEO',
-                'is_primary_contact' => true,
-                'company_id' => $techStart->id,
-            ]
-        );
 
         $this->command->info('Created sample companies and contacts');
+
+        // Get existing customers to assign to projects
+        $customers = Customer::all();
+        $acmeCustomer = $customers->where('company_id', $acmeCorp->id)->first();
+        $techStartCustomer = $customers->where('company_id', $techStart->id)->first();
 
         // Create projects for companies
         $websiteProject = Project::create([
@@ -93,10 +76,9 @@ class ProjectSeeder extends Seeder
             'due_date' => Carbon::now()->addDays(60),
             'status_id' => 2, // active
             'priority_id' => 3, // high
-            'color' => '#007bff',
             'budget' => 50000.00,
             'company_id' => $acmeCorp->id,
-            'customer_id' => $johnDoe->id, // John Doe as contact
+            'customer_id' => $acmeCustomer ? $acmeCustomer->id : null,
             'created_by_user_id' => $user->id,
         ]);
 
@@ -107,10 +89,9 @@ class ProjectSeeder extends Seeder
             'due_date' => Carbon::now()->addDays(120),
             'status_id' => 1, // planning
             'priority_id' => 2, // medium
-            'color' => '#28a745',
             'budget' => 75000.00,
             'company_id' => $techStart->id,
-            'customer_id' => $janeSmith->id, // Jane Smith as contact
+            'customer_id' => $techStartCustomer ? $techStartCustomer->id : null,
             'created_by_user_id' => $user->id,
         ]);
 
@@ -121,7 +102,6 @@ class ProjectSeeder extends Seeder
             'due_date' => Carbon::now()->addDays(45),
             'status_id' => 2, // active
             'priority_id' => 4, // urgent
-            'color' => '#dc3545',
             'budget' => 30000.00,
             'company_id' => $acmeCorp->id,
             // No specific customer contact for this project
@@ -132,26 +112,38 @@ class ProjectSeeder extends Seeder
 
         // Assign user to projects with roles
         if ($projectManagerRole) {
-            ProjectUser::create([
-                'project_id' => $websiteProject->id,
-                'user_id' => $user->id,
-                'role_id' => $projectManagerRole->id,
-                'assigned_at' => now(),
-            ]);
+            ProjectUser::firstOrCreate(
+                [
+                    'project_id' => $websiteProject->id,
+                    'user_id' => $user->id,
+                    'role_id' => $projectManagerRole->id,
+                ],
+                [
+                    'assigned_at' => now(),
+                ]
+            );
 
-            ProjectUser::create([
-                'project_id' => $mobileProject->id,
-                'user_id' => $user->id,
-                'role_id' => $projectManagerRole->id,
-                'assigned_at' => now(),
-            ]);
+            ProjectUser::firstOrCreate(
+                [
+                    'project_id' => $mobileProject->id,
+                    'user_id' => $user->id,
+                    'role_id' => $projectManagerRole->id,
+                ],
+                [
+                    'assigned_at' => now(),
+                ]
+            );
 
-            ProjectUser::create([
-                'project_id' => $dashboardProject->id,
-                'user_id' => $user->id,
-                'role_id' => $projectManagerRole->id,
-                'assigned_at' => now(),
-            ]);
+            ProjectUser::firstOrCreate(
+                [
+                    'project_id' => $dashboardProject->id,
+                    'user_id' => $user->id,
+                    'role_id' => $projectManagerRole->id,
+                ],
+                [
+                    'assigned_at' => now(),
+                ]
+            );
         }
 
         $this->command->info('Assigned user to projects as Project Manager');

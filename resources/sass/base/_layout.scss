@@ -36,3 +36,10 @@ body {
 		gap: calc(var(--spacing) * 2);
 	}
 }
+
+.offer-card {
+	&__body {
+		flex-direction: row !important;
+		gap: 1em !important;
+	}
+}

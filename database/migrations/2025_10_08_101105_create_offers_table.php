@@ -16,11 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2)->nullable();
-            $table->string('currency', 3)->default('USD');
             $table->enum('status', ['draft', 'sent', 'accepted', 'rejected', 'expired'])->default('draft');
             $table->date('valid_until');
             $table->foreignId('company_id')->constrained()->onDelete('restrict');
-            $table->foreignId('customer_id')->nullable()->constrained()->onDelete('set null'); // Specific contact person
             $table->foreignId('project_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('created_by_user_id')->constrained('users')->onDelete('cascade');
             $table->text('notes')->nullable();

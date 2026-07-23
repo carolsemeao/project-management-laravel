@@ -1,5 +1,5 @@
-<div class="md:grid md:grid-cols-12 gap-4">
-    <div class="md:col-span-8">
+<div class="md:grid md:grid-cols-2 gap-6">
+    <div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-4 mb-5">
             <div>
                 <h3>{{ __('Status') }}</h3>
@@ -11,14 +11,14 @@
                 <h3>{{ __('Created') }}</h3>
                 <p class="mb-0 mt-1">
                     <span class="icon icon-xs icon-calendar me-1"></span>
-                    {{ $project->created_at ? $project->created_at->format('d/m/Y') : __('Not set') }}
+                    {{ $project->created_at ? $project->created_at->format('d.m.Y') : __('Not set') }}
                 </p>
             </div>
             <div>
                 <h3>{{ __('Due Date') }}</h3>
                 <p class="mb-0 mt-1">
                     <span class="icon icon-xs icon-calendar me-1"></span>
-                    {{ $project->due_date ? $project->due_date->format('d/m/Y') : __('Not set') }}
+                    {{ $project->due_date ? $project->due_date->format('d.m.Y') : __('Not set') }}
                     @if($project->isOverdue())
                         <x-badge :label="__('Overdue')" textColor="text-danger" classes="ms-1 small" />
                     @elseif($project->isDueSoon())
@@ -61,28 +61,36 @@
             <progress class="progress" value="{{ $timeProgress['percentage'] }}" max="100"></progress>
             <span class="opacity-70 text-xs">
                 {{ __(':issueLogged logged / :totalEstimated estimated', ['issueLogged' => $timeProgress['issue_logged'], 'totalEstimated' => $timeProgress['total_estimated']]) }}
-                <span class="text-accent-content dark:text-primary">
+                <span class="text-neutral italic dark:text-primary">
                     {{ __('(:issueEstimated from issues + :offerHours from offers)', ['issueEstimated' => $timeProgress['issue_estimated'], 'offerHours' => $timeProgress['offer_hours']]) }}
                 </span>
             </span>
         </div>
-        <div class="divider my-7"></div>
         @if($recentOffer->count() > 0)
+            <div class="divider my-7"></div>
             <h3>{{ __('Recent Offer') }}</h3>
             @foreach($recentOffer as $offer)
-                <div class="card mt-3 bg-base-200/50">
-                    <div class="card-body justify-between items-center flex-row">
+                <div class="card offer-card mt-3 bg-base-200/50">
+                    <div class="card-body offer-card__body justify-between items-center flex-row">
                         <div>
                             <h4>{{ $offer->name }}</h4>
-                            <p class="text-xs opacity-70">{{ $offer->customer->company->name }} •
+                            <p class="text-xs opacity-70">{{ $offer->company->name }} •
                                 {{ Str::ucfirst($offer->status) }}
                             </p>
                         </div>
-                        <div class="text-end">
+                        <div class="text-end ml-auto">
                             <p>
-                                <span class="font-semibold">{{ $offer->getFormattedTotal() }}</span> /
+                                <span class="font-semibold">{{ $offer->getFormattedTotal() }}</span><br />
                                 <span class="text-xs opacity-70">{{ $offer->getTotalHours() }}</span>
                             </p>
+                        </div>
+                        <div class="text-end">
+                            <a href="{{ route('admin.offer.admin_offers_show', $offer) }}">
+                                <span class="icon icon-sm icon-eye me-1"></span>
+                            </a>
+                            <a href="#" target="_blank">
+                                <span class="icon icon-sm icon-printer me-1"></span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -90,7 +98,7 @@
         @endif
     </div>
 
-    <div class="md:col-span-4">
+    <div class="mt-20 md:my-0">
         <h3>{{ __('Quick actions') }}</h3>
         <div class="flex flex-col gap-2 mt-3">
             <a class="btn btn-outline w-full" href="{{ route('admin.projects.edit', $project->id) }}">
@@ -107,7 +115,7 @@
             </button>
         </div>
     </div>
-    @include('admin.project.modals.project-complete')
-    @include('admin.project.modals.project-on-hold')
-    @include('admin.project.modals.delete-project')
 </div>
+@include('admin.project.modals.project-complete')
+@include('admin.project.modals.project-on-hold')
+@include('admin.project.modals.delete-project')

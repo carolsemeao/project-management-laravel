@@ -39,7 +39,6 @@ class Project extends Model
         'start_date',
         'status_id',
         'priority_id',
-        'color',
         'budget',
         'company_id',
         'customer_id',
@@ -497,5 +496,26 @@ class Project extends Model
     public function getStatus()
     {
         return $this->status ? $this->status->display_name : 'Unknown';
+    }
+
+    public function getBudgetPercentage()
+    {
+        $budget = $this->budget;
+        
+        // Return 0 if no budget is set
+        if (!$budget || $budget <= 0) {
+            return 0;
+        }
+        
+        // Get the sum of all accepted offers for this project
+        $acceptedOffersTotal = Offer::where('status', 'accepted')
+            ->where('project_id', $this->id)
+            ->sum('price');
+        
+        // Calculate percentage
+        $calculatedBudgetPercentage = ($acceptedOffersTotal / $budget) * 100;
+        
+        // Round to 2 decimal places and ensure it doesn't exceed 100%
+        return round(min($calculatedBudgetPercentage, 100), 2);
     }
 }

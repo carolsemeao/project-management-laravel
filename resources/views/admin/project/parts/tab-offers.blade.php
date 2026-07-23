@@ -1,11 +1,11 @@
-<div class="flex justify-end items-center mb-6">
-    <a href="{{ route('admin.offer.admin_offers_create', ['project_id' => $project->id]) }}" class="btn">
-        <span class="icon icon-sm icon-plus me-2"></span>
-        {{ __('New Offer') }}
-    </a>
-</div>
-
 @if($offers->count() > 0)
+    <div class="flex justify-end items-center mb-6">
+        <a href="{{ route('admin.offer.admin_offers_create', ['project_id' => $project->id]) }}" class="btn">
+            <span class="icon icon-sm icon-plus me-2"></span>
+            {{ __('New Offer') }}
+        </a>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         @foreach($offers as $offer)
             <div class="card h-full">
@@ -22,7 +22,7 @@
                     <div class="flex flex-col gap-2 my-3">
                         <p class="opacity-70 text-xs">
                             <span class="icon icon-xs icon-user me-2"></span>
-                            {{ $offer->customer->name }}
+                            {{ $offer->company->name }}
                         </p>
                         @if($offer->valid_until)
                             <p class="opacity-70 text-xs">

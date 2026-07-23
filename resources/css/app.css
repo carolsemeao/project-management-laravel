@@ -1,13 +1,15 @@
 @import 'tailwindcss';
 
 @plugin "daisyui" {
-	themes: valentine --default, night --prefersdark;
+	themes:
+		valentine --default,
+		night --prefersdark;
 }
 
 @custom-variant dark (&:where([data-theme=night], [data-theme=night] *));
 
 @utility card {
-	@apply border-1 border-dashed border-base-300/60 dark:border-base-content/10;
+	@apply border-1 border-dashed bg-base-200/20 dark:bg-neutral/30 border-base-300/60 dark:border-base-content/10;
 }
 
 @utility cards-item {

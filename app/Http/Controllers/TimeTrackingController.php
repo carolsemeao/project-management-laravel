@@ -150,9 +150,9 @@ class TimeTrackingController extends Controller
                                        'id' => $entry->id,
                                        'formatted_time' => $entry->formatted_time,
                                        'description' => $entry->description,
-                                       'work_date' => $entry->work_date instanceof \Carbon\Carbon ? $entry->work_date->format('d/m/Y') : $entry->work_date,
+                                       'work_date' => $entry->work_date instanceof \Carbon\Carbon ? $entry->work_date->format('d.m.Y') : $entry->work_date,
                                        'user_name' => $entry->user->name,
-                                       'logged_at' => $entry->logged_at->format('d/m/Y H:i'),
+                                       'logged_at' => $entry->logged_at->format('d.m.Y H:i'),
                                    ];
                                });
 

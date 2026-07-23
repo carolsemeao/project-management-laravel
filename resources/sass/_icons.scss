@@ -59,6 +59,10 @@
 		@include mixins.icon('calendar');
 	}
 
+	&.icon-check:before {
+		@include mixins.icon('check');
+	}
+
 	&.icon-chevron-down:before {
 		@include mixins.icon('chevron-down');
 	}
@@ -73,6 +77,10 @@
 
 	&.icon-edit:before {
 		@include mixins.icon('edit');
+	}
+
+	&.icon-eye:before {
+		@include mixins.icon('eye');
 	}
 
 	&.icon-external-link:before {
@@ -93,6 +101,10 @@
 
 	&.icon-github:before {
 		@include mixins.icon('github');
+	}
+
+	&.icon-globe:before {
+		@include mixins.icon('globe');
 	}
 
 	&.icon-heart:before {
@@ -119,12 +131,20 @@
 		@include mixins.icon('menu');
 	}
 
+	&.icon-moon:before {
+		@include mixins.icon('moon');
+	}
+
 	&.icon-phone:before {
 		@include mixins.icon('phone');
 	}
 
 	&.icon-plus:before {
 		@include mixins.icon('plus');
+	}
+
+	&.icon-printer:before {
+		@include mixins.icon('printer');
 	}
 
 	&.icon-refresh-cw:before {
@@ -141,6 +161,10 @@
 
 	&.icon-settings:before {
 		@include mixins.icon('settings');
+	}
+
+	&.icon-sun:before {
+		@include mixins.icon('sun');
 	}
 
 	&.icon-target:before {

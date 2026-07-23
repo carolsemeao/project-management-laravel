@@ -193,7 +193,7 @@
                         @if($issue->issue_due_date)
                             <span class="flex items-center">
                                 <span class="icon icon-xs icon-calendar me-1"></span>
-                                <span class="text-xs">{{ $issue->issue_due_date->format('d/m/Y') }}</span>
+                                <span class="text-xs">{{ $issue->issue_due_date->format('d.m.Y') }}</span>
                             </span>
                         @else
                             <span class="flex items-center">
@@ -226,7 +226,7 @@
                     </div>
                     <p class="flex justify-between mb-2">
                         <span class="text-xs font-semibold">{{ __('Created') }}</span>
-                        <span class="text-xs">{{ $issue->created_at->format('d/m/Y H:i') }}</span>
+                        <span class="text-xs">{{ $issue->created_at->format('d.m.Y H:i') }}</span>
                     </p>
                     <p class="flex justify-between mb-2">
                         <span class="text-xs font-semibold">{{ __('Created by') }}</span>
@@ -234,7 +234,7 @@
                     </p>
                     <p class="flex justify-between">
                         <span class="text-xs font-semibold">{{ __('Last updated') }}</span>
-                        <span class="text-xs">{{ $issue->updated_at->format('d/m/Y H:i') }}</span>
+                        <span class="text-xs">{{ $issue->updated_at->format('d.m.Y H:i') }}</span>
                     </p>
                 </div>
             </div>

@@ -7,7 +7,7 @@
                         <div>
                             <span class="card-body__date">
                                 <span class="icon icon-xs icon-calendar me-1"></span>
-                                {{$issue->issue_due_date ? $issue->issue_due_date->format('d/m/Y') : __('No due date')}}
+                                {{$issue->issue_due_date ? $issue->issue_due_date->format('d.m.Y') : __('No due date')}}
                             </span>
                             <h3 class="card-title my-1.5">{{ $issue->issue_title }}</h3>
                             <p>{{ $issue->issue_description }}</p>

@@ -30,6 +30,7 @@ class ProjectsController extends Controller
         $issuesInProgress = $project->getIssuesByStatus(3);
         $totalLoggedTime = $project->getTotalLoggedTimeMinutes();
         $timeProgress = $project->getCombinedTimeProgress();
+        $budget = $project->getBudgetPercentage($id);
         $offers = Offer::where('project_id', $id)->get();
         $recentOffer = Offer::where('project_id', $id)->orderBy('created_at', 'desc')->limit(1)->get();
         
@@ -51,7 +52,7 @@ class ProjectsController extends Controller
             $projectIssuePriorityChart = null;
         }
         
-        return view('admin.project.admin_project_single', compact('project', 'projectIssueStatusChart', 'projectIssuePriorityChart', 'totalIssues', 'openIssues', 'issuesInProgress', 'totalLoggedTime', 'timeProgress', 'offers', 'recentOffer'));
+        return view('admin.project.admin_project_single', compact('project', 'projectIssueStatusChart', 'projectIssuePriorityChart', 'totalIssues', 'openIssues', 'issuesInProgress', 'totalLoggedTime', 'timeProgress', 'offers', 'recentOffer', 'budget'));
     }
 
     public function DeleteProject($id)

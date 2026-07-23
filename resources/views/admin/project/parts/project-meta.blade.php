@@ -22,9 +22,9 @@
     ])
 
     @include('components.card', [
-        'title' => __('Project Value'),
-        'icon' => 'trending-up',
-        'text' => App\Http\Controllers\OfferController::calculateTotal($project->id), // TODO: umsetzung
-        'subtitle' => __(':acceptedOffers accepted offers', ['acceptedOffers' => App\Http\Controllers\OfferController::getOffersForProject($project->id)->where('status', 'accepted')->count()])
+        'title' => __('Budget'),
+        'icon' => 'dollar-sign',
+        'text' => __('CHF :projectBudget', ['projectBudget' => $project->budget]),
+        'subtitle' => __(':budgetPercentage% of budget from offers', ['budgetPercentage' => $budget])
     ])
 </div>

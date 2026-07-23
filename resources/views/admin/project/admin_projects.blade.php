@@ -15,7 +15,9 @@
                 <a href="{{ route('admin.projects.show', $project->id) }}" class="card text-decoration-none h-full">
                     <div class="card-body">
                         <div class="flex items-center gap-2 mb-2">
-                            <x-badge :label="$project->getFormattedStatusName()" classes="fw-bold" />
+                            <x-badge :label="$project->getFormattedStatusName()" classes="fw-bold">
+                                <x-project-status :type="$project->status->name" />
+                            </x-badge>
                             @if($project->isOverdue())
                                 <x-badge :label="__('Overdue')" classes="badge-error" darkClass="dark:badge-error" />
                             @elseif($project->isDueSoon())
@@ -23,15 +25,12 @@
                             @endif
                         </div>
 
-                        <h2 class="flex items-center gap-2">
-                            <span class="status status-lg" style="background-color: {{ $project->color }}"></span>
-                            <span>{{ $project->name }}</span>
-                        </h2>
-                        <p class="text-muted small">
-                            {{ Str::limit($project->description, 60, '...', true) }}
+                        <h2 class="flex items-center gap-2">{{ $project->name }}</h2>
+                        <p class="text-xs opacity-70">
+                            {{ Str::limit($project->description, 100, '...', true) }}
                         </p>
 
-                        <h3 class="mt-3">{{ __('Progress') }}</h3>
+                        <h3 class="mt-5">{{ __('Progress') }}</h3>
                         <div class="mb-4">
                             <span class="text-xs mb-1 opacity-70">
                                 {{ __(':timePercentage % complete', ['timePercentage' => $project->getProgressPercentage()]) }}
@@ -42,7 +41,7 @@
                         <div class="flex items-center justify-between">
                             <p class="flex items-center opacity-70">
                                 <span class="icon icon-sm icon-users me-1"></span>
-                                {{__(':completedIssues / :totalIssues Issues', ['completedIssues' => $project->getIssuesByStatus(6), 'totalIssues' => $project->issues()->count()])}}
+                                {{__(':completedIssues / :totalIssues Issues completed', ['completedIssues' => $project->getIssuesByStatus(6), 'totalIssues' => $project->issues()->count()])}}
                             </p>
                             <p class="flex items-center opacity-70 grow-0">
                                 <span class="icon icon-sm icon-calendar me-1"></span>

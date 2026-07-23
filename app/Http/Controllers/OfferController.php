@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Offer;
 use App\Models\Project;
@@ -15,7 +16,7 @@ class OfferController extends Controller
      */
     public function index()
     {
-        $offers = Offer::with(['customer', 'project', 'createdBy'])
+        $offers = Offer::with(['company', 'project', 'createdBy'])
                       ->orderBy('created_at', 'desc')
                       ->paginate(15);
 
@@ -27,15 +28,15 @@ class OfferController extends Controller
      */
     public function create(Request $request)
     {
-        $customers = Customer::where('status', 'active')->orderBy('name')->get();
+        $companies = Company::where('status', true)->orderBy('name')->get();
         $projects = Project::where('status', 'active')->orderBy('name')->get();
-        
         $selectedProject = null;
+
         if ($request->has('project_id')) {
             $selectedProject = Project::find($request->project_id);
         }
 
-        return view('admin.offer.admin_offers_create', compact('customers', 'projects', 'selectedProject'));
+        return view('admin.offer.admin_offers_create', compact('companies', 'projects', 'selectedProject'));
     }
 
     /**
@@ -46,24 +47,22 @@ class OfferController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'customer_id' => 'required|exists:customers,id',
+            'company_id' => 'required|exists:company,id',
             'project_id' => 'nullable|exists:projects,id',
             'valid_until' => 'nullable|date|after:today',
-            'currency' => 'nullable|string|in:CHF,EUR,USD,GBP',
             'notes' => 'nullable|string',
         ]);
 
         $offer = Offer::create([
             'name' => $request->name,
             'description' => $request->description,
-            'customer_id' => $request->customer_id,
+            'company_id' => $request->company_id,
             'project_id' => $request->project_id,
             'valid_until' => $request->valid_until,
             'notes' => $request->notes,
             'created_by_user_id' => Auth::id(),
             'status' => 'draft',
             'price' => 0.00, // Will be calculated from items
-            'currency' => $request->currency ?? 'CHF', // Default to CHF
         ]);
 
         return redirect()->route('admin.offer.admin_offers_show', $offer)
@@ -75,8 +74,7 @@ class OfferController extends Controller
      */
     public function show(Offer $offer)
     {
-        $offer->load(['customer', 'project', 'createdBy', 'items']);
-        
+        $offer->load(['company', 'project', 'createdBy', 'items']);
         return view('admin.offer.admin_offers_show', compact('offer'));
     }
 
@@ -85,10 +83,10 @@ class OfferController extends Controller
      */
     public function edit(Offer $offer)
     {
-        $customers = Customer::where('status', 'active')->orderBy('name')->get();
+        $companies = Company::where('status', true)->orderBy('name')->get();
         $projects = Project::where('status', 'active')->orderBy('name')->get();
 
-        return view('admin.offers.edit', compact('offer', 'customers', 'projects'));
+        return view('admin.offers.edit', compact('offer', 'companies', 'projects'));
     }
 
     /**
@@ -99,16 +97,15 @@ class OfferController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'customer_id' => 'required|exists:customers,id',
-            'project_id' => 'nullable|exists:projects,id',
+            'company_id' => 'required|exists:company,id',
+            'project_id' => 'required|exists:projects,id',
             'valid_until' => 'nullable|date|after:today',
-            'currency' => 'nullable|string|in:CHF,EUR,USD,GBP',
             'notes' => 'nullable|string',
         ]);
 
         $offer->update($request->only([
-            'name', 'description', 'customer_id', 'project_id', 
-            'valid_until', 'currency', 'notes'
+            'name', 'description', 'company_id', 'project_id', 
+            'valid_until', 'notes'
         ]));
 
         return redirect()->route('admin.offer.admin_offers_show', $offer)
@@ -121,7 +118,6 @@ class OfferController extends Controller
     public function destroy(Offer $offer)
     {
         $offer->delete();
-
         return redirect()->route('admin.offers.index')
                         ->with('success', 'Offer deleted successfully!');
     }
@@ -132,7 +128,7 @@ class OfferController extends Controller
     public static function getOffersForProject($project_id)
     {
         $offers = Offer::where('project_id', $project_id)
-                      ->with(['customer', 'items'])
+                      ->with(['company', 'items'])
                       ->orderBy('created_at', 'desc')
                       ->get();
 
@@ -145,7 +141,6 @@ class OfferController extends Controller
     public function markAsSent(Offer $offer)
     {
         $offer->markAsSent();
-
         return redirect()->back()->with('success', 'Offer marked as sent!');
     }
 
@@ -155,7 +150,6 @@ class OfferController extends Controller
     public function markAsAccepted(Offer $offer)
     {
         $offer->markAsAccepted();
-
         return redirect()->back()->with('success', 'Offer marked as accepted!');
     }
 
@@ -165,7 +159,6 @@ class OfferController extends Controller
     public function markAsRejected(Offer $offer)
     {
         $offer->markAsRejected();
-
         return redirect()->back()->with('success', 'Offer marked as rejected!');
     }
 
@@ -173,26 +166,11 @@ class OfferController extends Controller
     {
         $offers = Offer::where('project_id', $project_id)->get();
         $total = 0;
-        $primaryCurrency = 'CHF'; // Default currency
         
         foreach ($offers as $offer) {
             $total += $offer->calculateTotal();
-            // Use the currency of the first offer as primary currency
-            if ($offer->currency) {
-                $primaryCurrency = $offer->currency;
-            }
         }
         
-        // Format with currency symbol
-        $currencySymbols = [
-            'CHF' => 'CHF',
-            'EUR' => '€',
-            'USD' => '$',
-            'GBP' => '£',
-        ];
-
-        $symbol = $currencySymbols[$primaryCurrency] ?? $primaryCurrency;
-        
-        return $symbol . ' ' . number_format($total, 2);
+        return number_format($total, 2);
     }
 }

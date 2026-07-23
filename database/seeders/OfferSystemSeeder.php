@@ -28,66 +28,67 @@ class OfferSystemSeeder extends Seeder
             return;
         }
 
-        // Get existing companies and customers for creating offers
+        // Get existing companies and projects
         $companies = Company::all();
-        $customers = Customer::all();
+        $projects = Project::all();
 
         if ($companies->isEmpty()) {
             $this->command->warn('No companies found. Skipping offer creation.');
             return;
         }
 
-        // Get existing projects
-        $projects = Project::all();
         if ($projects->isEmpty()) {
             $this->command->warn('No projects found. Offers will be created without project association.');
         }
 
-        // Create sample offers using existing companies
+        // Create sample offers using existing companies and projects
         $offers = [];
-        if ($companies->count() >= 2) {
-            $offers = [
-                [
-                    'name' => 'Website Redesign Proposal',
-                    'description' => 'Complete redesign of corporate website with modern UI/UX, responsive design, and improved performance.',
-                    'company_id' => $companies->first()->id,
-                    'customer_id' => $customers->where('company_id', $companies->first()->id)->first()?->id,
-                    'project_id' => $projects->where('company_id', $companies->first()->id)->first()?->id,
-                    'created_by_user_id' => $user->id,
-                    'status' => 'sent',
-                    'valid_until' => Carbon::now()->addDays(30),
-                    'notes' => 'Client interested in modern design with focus on mobile experience.',
-                    'sent_at' => Carbon::now()->subDays(5),
-                ],
-                [
-                    'name' => 'Mobile App Development',
-                    'description' => 'Native iOS and Android app development with backend API integration.',
-                    'company_id' => $companies->skip(1)->first()->id,
-                    'customer_id' => $customers->where('company_id', $companies->skip(1)->first()->id)->first()?->id,
-                    'project_id' => $projects->where('company_id', $companies->skip(1)->first()->id)->first()?->id,
-                    'created_by_user_id' => $user->id,
-                    'status' => 'draft',
-                    'valid_until' => Carbon::now()->addDays(45),
-                    'notes' => 'Requires detailed technical specifications before final pricing.',
-                ],
+        
+        // Try to match offers with existing projects by name similarity
+        $websiteProject = $projects->where('name', 'Website Redesign')->first();
+        $mobileProject = $projects->where('name', 'Mobile App Development')->first();
+        
+        if ($websiteProject) {
+            $offers[] = [
+                'name' => 'Website Redesign Proposal',
+                'description' => 'Complete redesign of corporate website with modern UI/UX, responsive design, and improved performance.',
+                'company_id' => $websiteProject->company_id,
+                'project_id' => $websiteProject->id,
+                'created_by_user_id' => $user->id,
+                'status' => 'sent',
+                'valid_until' => Carbon::now()->addDays(30),
+                'notes' => 'Client interested in modern design with focus on mobile experience.',
+                'sent_at' => Carbon::now()->subDays(5),
+            ];
+        }
+        
+        if ($mobileProject) {
+            $offers[] = [
+                'name' => 'Mobile App Development',
+                'description' => 'Native iOS and Android app development with backend API integration.',
+                'company_id' => $mobileProject->company_id,
+                'project_id' => $mobileProject->id,
+                'created_by_user_id' => $user->id,
+                'status' => 'draft',
+                'valid_until' => Carbon::now()->addDays(45),
+                'notes' => 'Requires detailed technical specifications before final pricing.',
+            ];
+        }
+        
+        // If no matching projects found, create offers with any available company
+        if (empty($offers) && $companies->count() >= 1) {
+            $offers[] = [
+                'name' => 'General Consulting Services',
+                'description' => 'Professional consulting and advisory services.',
+                'company_id' => $companies->first()->id,
+                'project_id' => $projects->isNotEmpty() ? $projects->first()->id : null,
+                'created_by_user_id' => $user->id,
+                'status' => 'draft',
+                'valid_until' => Carbon::now()->addDays(30),
+                'notes' => 'Initial consulting engagement.',
             ];
         }
 
-        // Add offers without specific customers if we have companies but fewer customers
-        if ($companies->count() >= 2 && $offers === []) {
-            $offers = [
-                [
-                    'name' => 'Consulting Services',
-                    'description' => 'General consulting and advisory services.',
-                    'customer_id' => null,
-                    'project_id' => $projects->isNotEmpty() ? $projects->first()->id : null,
-                    'created_by_user_id' => $user->id,
-                    'status' => 'draft',
-                    'valid_until' => Carbon::now()->addDays(30),
-                    'notes' => 'Initial consulting engagement.',
-                ],
-            ];
-        }
 
         foreach ($offers as $offerData) {
             $offer = Offer::create($offerData);
@@ -96,7 +97,7 @@ class OfferSystemSeeder extends Seeder
             $this->createOfferItems($offer);
         }
 
-        $this->command->info('Created 4 sample offers with line items');
+        $this->command->info('Created ' . count($offers) . ' sample offers with line items');
         $this->command->info('Offer system sample data created successfully!');
     }
 

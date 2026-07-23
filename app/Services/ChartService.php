@@ -25,14 +25,6 @@ class ChartService
     /**
      * Default color mapping for issue priorities
      */
-    /* protected array $priorityColors = [
-        'low' => '#9ECAD6',
-        'normal' => '#748DAE',
-        'high' => '#F5CBCB',
-        'urgent' => '#FFEAEA',
-        'immediate' => '#E0D4F7',
-    ]; */
-
     protected array $priorityColors = [
         'low' => 'var(--priority-low)',
         'normal' => 'var(--priority-normal)', 
@@ -59,7 +51,7 @@ class ChartService
 
         $labels = $projectPriorityDistribution->map(fn($item) => ucfirst($item->name ?? 'Unknown'))->toArray();
         $data = $projectPriorityDistribution->pluck('total')->toArray();
-        $colors = $projectPriorityDistribution->map(fn($item) => $item->color ?? '#6c757d')->toArray();
+        $colors = $projectPriorityDistribution->map(fn($item) => $this->priorityColors[$item->name ?? 'unknown'] ?? '#6c757d')->toArray();
 
         return [
             'type' => 'bar',

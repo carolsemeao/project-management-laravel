@@ -10,11 +10,9 @@ class Offer extends Model
         'name',
         'description',
         'price',
-        'currency',
         'status',
         'valid_until',
         'company_id',
-        'customer_id',
         'project_id',
         'created_by_user_id',
         'notes',
@@ -124,41 +122,11 @@ class Offer extends Model
      */
     public function getFormattedTotal()
     {
-        return $this->formatCurrency($this->calculateTotal());
-    }
-
-    /**
-     * Format amount with currency symbol
-     */
-    public function formatCurrency($amount)
-    {
-        $currencySymbols = [
-            'CHF' => 'CHF',
-            'EUR' => '€',
-            'USD' => '$',
-            'GBP' => '£',
-        ];
-
-        $symbol = $currencySymbols[$this->currency] ?? $this->currency;
-        
-        return $symbol . ' ' . number_format($amount, 2);
-    }
-
-    /**
-     * Get available currencies
-     */
-    public static function getAvailableCurrencies()
-    {
-        return [
-            'CHF' => 'Swiss Franc (CHF)',
-            'EUR' => 'Euro (€)',
-            'USD' => 'US Dollar ($)',
-            'GBP' => 'British Pound (£)',
-        ];
+        return 'CHF ' . $this->calculateTotal();
     }
 
     public function getTotalHours()
     {
-        return $this->items()->sum('hours') . 'h';
+        return round($this->items()->sum('hours'), 2)  . 'h';
     }
 }

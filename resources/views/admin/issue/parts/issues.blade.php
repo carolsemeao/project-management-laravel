@@ -78,7 +78,7 @@
                         <div class="flex items-baseline text-nowrap">
                             <span class="icon icon-xs icon-calendar me-1"></span>
                             @if($issue->issue_due_date)
-                                {{ $issue->issue_due_date->format('d/m/Y') }}
+                                {{ $issue->issue_due_date->format('d.m.Y') }}
                             @else
                                 <span class="opacity-60">
                                     {{ __('Not set') }}

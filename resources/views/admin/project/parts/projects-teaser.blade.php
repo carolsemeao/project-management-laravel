@@ -16,7 +16,7 @@
                 <div class="mt-1 flex justify-between items-center">
                     <p
                         class="transition-all duration-200 group-hover:text-base-content text-neutral/70 dark:text-neutral-content/70 dark:group-hover:text-neutral-content/90">
-                        {{ __('Last Updated') }}: {{ $project->updated_at->format('d/m/Y') }}</p>
+                        {{ __('Last Updated') }}: {{ $project->updated_at->format('d.m.Y') }}</p>
                     <p
                         class="transition-all duration-200 group-hover:text-base-content text-neutral/70 dark:text-neutral-content/70 dark:group-hover:text-neutral-content/90 text-end">
                         {{ $project->getOpenIssuesCount() }} {{ __('open issue(s)') }}</p>

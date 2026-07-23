@@ -141,7 +141,7 @@ class IssueController extends Controller
         
         // Check if user can modify this issue
         if (!$this->userCanModifyIssue($issue, Auth::user())) {
-            abort(403, 'You do not have permission to edit this issue');
+            abort(403, __('You do not have permission to edit this issue'));
         }
         
         // Get data for dropdowns
@@ -278,7 +278,7 @@ class IssueController extends Controller
         }
 
         return redirect()->back()->with([
-            'message' => 'Issue updated successfully!',
+            'message' => __('Issue updated successfully!'),
             'alert-type' => 'success'
         ]);
     }
@@ -289,7 +289,7 @@ class IssueController extends Controller
 
         if (!$this->userCanModifyIssue($issue, Auth::user())) {
             return redirect()->back()->with([
-                'message' => 'You do not have permission to delete this issue',
+                'message' => __('You do not have permission to delete this issue'),
                 'alert-type' => 'warning'
             ]);
         }
@@ -297,7 +297,7 @@ class IssueController extends Controller
         $issue->delete();
 
         return redirect()->route('admin.issues')->with([
-            'message' => 'Issue deleted successfully!',
+            'message' => __('Issue deleted successfully!'),
             'alert-type' => 'success'
         ]);
     }
