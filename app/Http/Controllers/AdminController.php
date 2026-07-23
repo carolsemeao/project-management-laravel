@@ -76,9 +76,6 @@ class AdminController extends Controller
         $data = User::find($id);
         $data->name = $request->name;
         $data->email = $request->email;
-        $data->phone = $request->phone;
-        $data->address = $request->address;
-
         $oldImagePath = $data->photo;
     
         if ($request->hasFile('photo')) {

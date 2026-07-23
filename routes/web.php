@@ -9,7 +9,8 @@ use App\Http\Controllers\OfferController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ChartController;
-
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CustomerController;
 use App\Models\Status;
 use App\Models\Project;
 use App\Models\ProjectStatus;
@@ -140,4 +141,18 @@ Route::middleware('auth')->group(function () {
     // Chart API routes
     Route::get('/api/charts/data', [ChartController::class, 'getChartData'])->name('api.charts.data');
     Route::get('/api/charts/colors', [ChartController::class, 'getChartColors'])->name('api.charts.colors');
+
+    // Customer routes
+    Route::get('/dashboard/customers', [CompanyController::class, 'ShowCompanies'])->name('admin.companies');
+    Route::get('/dashboard/customers/create', [CompanyController::class, 'ShowCompanyCreate'])->name('admin.company.create');
+    Route::get('/dashboard/customers/{id}', [CompanyController::class, 'ShowSingleCompany'])->name('admin.company');
+    Route::get('/dashboard/customers/{id}/edit', [CompanyController::class, 'ShowCompanyUpdate'])->name('admin.company.edit');
+    Route::put('/dashboard/customers/{id}/edit', [CompanyController::class, 'update'])->name('admin.company.update');
+    
+    Route::get('/dashboard/customer/{id}', [CustomerController::class, 'ShowSingleCustomer'])->name('admin.customer.show');
+    Route::get('/dashboard/customer/{id}/edit', [CustomerController::class, 'ShowCustomerUpdate'])->name('admin.customer.edit');
+    //Route::get('/dashboard/customers/create', [CustomerController::class, 'create'])->name('admin.customer.create');
+    //Route::get('/dashboard/customers/{id}', [CustomerController::class, 'ShowSingleCustomer'])->name('admin.customer');
+    //Route::put('/dashboard/customers/{id}', [CustomerController::class, 'update'])->name('admin.customer.show');
+    //Route::delete('/dashboard/customers/{id}', [CustomerController::class, 'delete'])->name('admin.customer.delete');
 });

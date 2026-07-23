@@ -16,13 +16,19 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->string('position')->nullable(); // Job title/role in company
-            $table->boolean('is_primary_contact')->default(false); // Main contact for company
+            $table->text('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('zip')->nullable();
+            $table->string('country')->nullable();
             $table->foreignId('company_id')->constrained()->onDelete('cascade');
+            $table->boolean('status')->default(true); // active/inactive
+            $table->text('notes')->nullable();
             $table->timestamps();
 
             // Indexes
-            $table->index(['company_id', 'is_primary_contact']);
+            $table->index(['company_id', 'status']);
+            $table->index('email');
         });
     }
 

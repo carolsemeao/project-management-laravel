@@ -20,10 +20,12 @@ class DatabaseSeeder extends Seeder
             ProjectStatusSeeder::class,  // Creates project statuses first
             ProjectPrioritySeeder::class, // Creates project priorities first
             RoleSeeder::class,          // Creates roles first
+            UserSeeder::class,          // Creates users first (needed by other seeders)
+            CustomerSeeder::class,      // Creates companies and customers
             ProjectSeeder::class,       // Creates projects and assigns teams
             IssueSeeder::class,         // Creates issues and assigns to projects
             TimeTrackingSeeder::class,  // Adds time tracking data to issues
-            OfferSystemSeeder::class,   // Creates offers, customers, companies
+            OfferSystemSeeder::class,   // Creates offers using existing customers and companies
         ]);
     }
 }
